@@ -1,0 +1,432 @@
+/* ============================================================================
+   Shibumi Stack — style.css
+   A small, opinionated baseline. Easy to extend, easier to delete.
+
+   Structure:
+   1. Design tokens (custom properties)
+   2. Modern reset
+   3. Typography
+   4. Elements
+   5. Layout
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. Design tokens
+   --------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light dark;
+
+  /* Colors — light-dark() keeps both palettes in one place.
+     Flip with data-theme="dark|light" on <html>; otherwise follows OS. */
+  --color-bg: light-dark(#faf8f4, #1a1a1a);
+  --color-surface: light-dark(#f0ebe0, #23201c);
+  --color-text: light-dark(#1a1a1a, #e8e2d6);
+  --color-text-muted: light-dark(#5c5852, #a8a39a);
+  --color-border: light-dark(#e5e0d8, #33302b);
+  --color-accent: light-dark(#a14b2c, #c76647);
+  --color-accent-hover: light-dark(#8a3f25, #d97a5d);
+
+  /* Type — system stack, no web font dependency by default */
+  --font-serif: ui-serif, Georgia, "Iowan Old Style", "Apple Garamond",
+    Cambria, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --font-body: var(--font-serif);
+  --font-heading: var(--font-serif);
+  --font-code: var(--font-mono);
+
+  /* Type scale — fluid, clamp-based, perfect-fourth ratio */
+  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --text-sm: clamp(0.875rem, 0.85rem + 0.15vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.8vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.7rem + 2.7vw, 3.5rem);
+  --text-5xl: clamp(2.75rem, 1.9rem + 4.2vw, 5rem);
+
+  /* Line heights */
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  /* Letter spacing */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.04em;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Layout */
+  --content-width: 64ch;
+  --content-width-wide: 80ch;
+  --radius: 4px;
+  --hairline: 1px solid var(--color-border);
+
+  /* Motion */
+  --transition-fast: 120ms ease;
+  --transition: 200ms ease;
+}
+
+/* Manual theme override via Alpine / JS toggle */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Modern reset
+   --------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html:focus-within {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100svh;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. Typography
+   --------------------------------------------------------------------------- */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  font-feature-settings: "kern", "liga";
+  font-optical-sizing: auto;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+  margin-bottom: var(--space-4);
+}
+
+h1 {
+  font-size: var(--text-5xl);
+  margin-bottom: var(--space-6);
+}
+
+h2 {
+  font-size: var(--text-3xl);
+  margin-top: var(--space-16);
+  margin-bottom: var(--space-4);
+}
+
+h3 {
+  font-size: var(--text-2xl);
+  margin-top: var(--space-12);
+  margin-bottom: var(--space-3);
+}
+
+h4 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-8);
+}
+
+h5 {
+  font-size: var(--text-lg);
+}
+
+h6 {
+  font-size: var(--text-base);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-muted);
+}
+
+p {
+  margin-bottom: var(--space-4);
+  text-wrap: pretty;
+}
+
+small {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+strong,
+b {
+  font-weight: 600;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Elements
+   --------------------------------------------------------------------------- */
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+ul,
+ol {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-6);
+}
+
+li {
+  margin-bottom: var(--space-2);
+}
+
+blockquote {
+  margin: var(--space-6) 0;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-accent);
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+hr {
+  border: 0;
+  border-top: var(--hairline);
+  margin: var(--space-12) 0;
+}
+
+/* Tables */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-6);
+  font-size: var(--text-sm);
+}
+
+th,
+td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: var(--hairline);
+}
+
+th {
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Code */
+
+code {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+  background-color: var(--color-surface);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius);
+  font-feature-settings: "liga" 0;
+}
+
+pre {
+  font-family: var(--font-code);
+  font-size: var(--text-sm);
+  background-color: var(--color-surface);
+  padding: var(--space-4);
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin-bottom: var(--space-6);
+  line-height: var(--leading-snug);
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Forms */
+
+input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  border: var(--hairline);
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
+  transition: border-color var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+
+label {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+button {
+  display: inline-block;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+  border: none;
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+button:hover {
+  background-color: var(--color-accent-hover);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Selection */
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+/* ---------------------------------------------------------------------------
+   5. Layout
+   --------------------------------------------------------------------------- */
+
+main {
+  width: 100%;
+  max-width: var(--content-width-wide);
+  margin-inline: auto;
+  padding-inline: var(--space-4);
+  padding-block: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  main {
+    padding-inline: var(--space-6);
+    padding-block: var(--space-12);
+  }
+}
