@@ -1,11 +1,17 @@
-<img src="og.png" width="128" alt="Shibumi Stack">
+<div align="center">
+  <img src="og.png" width="128" alt="Shibumi Stack">
+  <h1>shibumistack.dev</h1>
+</div>
 
-# shibumistack.dev
-
-> refined simplicity for shipping web apps
+> *Refined simplicity for shipping web apps*
 
 A lean, opinionated web stack: Bun, Hono, SQLite, Alpine.  
-Small pieces chosen with care. No lock-in. Ages well.
+
+Small pieces chosen with care. 
+
+No lock-in. 
+
+Ages well.
 
 ---
 
