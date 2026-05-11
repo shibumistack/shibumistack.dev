@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs — Shibumi Stack</title>
+    <meta name="description" content="Technical decisions behind Shibumi Stack: Bun, Hono, Drizzle, Alpine, Zod, owned source, and deploy targets.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script>try{if(sessionStorage.getItem('shibumi-page-blur')==='1')document.documentElement.classList.add('is-page-entering')}catch{}</script>
+    <link rel="stylesheet" href="/page-transitions.css?v=2">
+    <link rel="stylesheet" href="/docs.css?v=1">
+</head>
+<body>
+    <div class="shell">
+        <!-- shibumi-nav -->
+
+        <main>
+            <section class="hero">
+                <div>
+                    <p class="eyebrow">Docs</p>
+                    <h1>Technical decisions<span class="dot">.</span></h1>
+                </div>
+                <div>
+                    <p class="dek">The public package is still being built. These notes document the product decisions first: what Shibumi will generate, why the stack is small, and where the seams stay visible.</p>
+                    <div class="toc" aria-label="On this page"><a href="#now">What exists now</a><a href="#stack">The five pieces</a><a href="#decisions">Design decisions</a><a href="#extensions">Extensions</a><a href="#targets">Deploy targets</a></div>
+                </div>
+            </section>
+
+            <section id="now">
+                <h2>What exists now.</h2>
+                <div class="intro">
+                    <p>This site is the first Shibumi artifact. It is built with Bun and Hono, serves static HTML, and exposes source-shaped Markdown for pages that benefit from it.</p>
+                    <p>The scaffolder, templates, and extensions are next. Until those ship, the docs are intentionally about decisions rather than package APIs.</p>
+                    <a class="command" href="/dx.md">Read the raw DX plan</a>
+                </div>
+            </section>
+
+            <section id="stack">
+                <h2>The five pieces.</h2>
+                <ol class="rows">
+                    <li><span class="label">Bun</span><span><strong>One command surface.</strong> Runtime, package manager, test runner, and build tool stay in one place.</span></li>
+                    <li><span class="label">Hono</span><span><strong>The universal route layer.</strong> The same app shape can run locally, on edge platforms, or behind a Bun server.</span></li>
+                    <li><span class="label">Drizzle</span><span><strong>Typed data without hiding SQL.</strong> Schema, queries, and migrations stay readable.</span></li>
+                    <li><span class="label">Alpine</span><span><strong>Small browser behavior.</strong> Add interaction without turning every page into a client app.</span></li>
+                    <li><span class="label">Zod</span><span><strong>Validation at the edges.</strong> Inputs are parsed where data enters the app.</span></li>
+                </ol>
+            </section>
+
+            <section id="decisions">
+                <h2>Design decisions.</h2>
+                <div class="rows">
+                    <article class="decision"><span class="label">Not a framework</span><div><h3>Shibumi is glue.</h3><p>It chooses files, conventions, and deploy config. The generated app is plain source code, not a runtime hidden behind a new abstraction.</p></div></article>
+                    <article class="decision"><span class="label">Create first</span><div><h3>The first package is a scaffolder.</h3><p><code>create-shibumi</code> will ask what kind of app you are building, write the files, and then get out of the way.</p><pre class="code-block" glow><code language="bash"><b>bun</b> create <strong>shibumi@latest</strong> <em>my-app</em>
+<b>cd</b> <em>my-app</em>
+<b>bun</b> dev</code></pre></div></article>
+                    <article class="decision"><span class="label">Owned code</span><div><h3>Extensions copy source.</h3><p>Auth, email, uploads, payments, and admin should be added explicitly. If an extension creates tables or routes, those files live in the app where they can be changed or deleted.</p></div></article>
+                    <article class="decision"><span class="label">Agents</span><div><h3>Conventions should be legible to tools.</h3><p>Generated projects will include an <code>agents.md</code> file. Extensions can append local guidance so coding agents know where sessions, routes, forms, and tests belong.</p></div></article>
+                    <article class="decision"><span class="label">Security</span><div><h3>CSRF belongs in core.</h3><p>Security defaults should not be something you remember after the app is live. The base template should include the helper every app needs.</p></div></article>
+                </div>
+            </section>
+
+            <section id="extensions">
+                <h2>Extensions.</h2>
+                <div class="intro">
+                    <p>Extensions are how Shibumi grows without becoming a framework. Official extensions are maintained with the core project. Community extensions can be submitted to the registry and installed with the same flow once they pass the checks.</p>
+                    <p>An extension is not just a dependency. It is an install plan: source files, metadata, agent guidance, migrations, dependencies, environment variables, and tests that prove the generated app still works.</p>
+                </div>
+                <div class="rows">
+                    <article class="decision"><span class="label">Manifest</span><div><h3>The registry needs structured metadata.</h3><p>Name, version, description, author, license, source repo, compatibility, categories, supported themes, supported deploy targets, and whether the extension is official or community.</p></div></article>
+                    <article class="decision"><span class="label">Files</span><div><h3>The payload is copied source.</h3><p>Routes, libraries, components, styles, config, migrations, fixtures, and tests are written into the app. Every file declares its target path and conflict behavior so installs can be reviewed before they run.</p></div></article>
+                    <article class="decision"><span class="label">Prompts</span><div><h3>Some extensions need choices.</h3><p>Auth may ask for cookie session or OAuth. Email may ask for Resend or SMTP. Uploads may ask for local disk or S3. The answers become generated config, not hidden state.</p></div></article>
+                    <article class="decision"><span class="label">Agents</span><div><h3>Each extension carries local guidance.</h3><p>An <code>agents.md</code> fragment explains the conventions it adds: where sessions live, how routes are protected, which helpers to use, and what files agents should avoid editing casually.</p></div></article>
+                    <article class="decision"><span class="label">Checks</span><div><h3>Submissions should prove they install.</h3><p>The registry can install an extension into fixture apps, run tests, check formatting, verify declared files, and reject packages that require undeclared network access or install scripts.</p><pre class="code-block" glow><code language="json"><i>{</i>
+  <b>"name"</b><i>:</i> <em>"auth"</em><i>,</i>
+  <b>"title"</b><i>:</i> <em>"Auth"</em><i>,</i>
+  <b>"type"</b><i>:</i> <em>"official"</em><i>,</i>
+  <b>"compatibility"</b><i>:</i> <i>{</i>
+    <b>"shibumi"</b><i>:</i> <em>"&gt;=0.1.0"</em><i>,</i>
+    <b>"themes"</b><i>:</i> <i>[</i><em>"full-stack"</em><i>],</i>
+    <b>"deploy"</b><i>:</i> <i>[</i><em>"self-hosted"</em><i>,</i> <em>"fly"</em><i>,</i> <em>"cloudflare"</em><i>,</i> <em>"vercel"</em><i>]</i>
+  <i>},</i>
+  <b>"files"</b><i>:</i> <i>[{</i> <b>"from"</b><i>:</i> <em>"files/src/lib/session.ts"</em><i>,</i> <b>"to"</b><i>:</i> <em>"src/lib/session.ts"</em> <i>}],</i>
+  <b>"agents"</b><i>:</i> <i>[</i><em>"agents.md"</em><i>],</i>
+  <b>"env"</b><i>:</i> <i>[</i><em>"SESSION_SECRET"</em><i>],</i>
+  <b>"checks"</b><i>:</i> <i>[</i><em>"bun test"</em><i>]</i>
+<i>}</i></code></pre></div></article>
+                </div>
+            </section>
+
+            <section id="targets">
+                <h2>Deploy targets.</h2>
+                <p class="intro">The app shape should stay familiar across deploy targets. Only the adapter, config file, and data driver should change.</p>
+                <ul class="rows">
+                    <li><span class="label">Self-hosted</span><span><strong>Bun and Docker.</strong> SQLite on a volume, Caddy for HTTPS, and ordinary server ownership.</span></li>
+                    <li><span class="label">Fly.io</span><span><strong>Bun runtime.</strong> Same Docker path with persistent volume support.</span></li>
+                    <li><span class="label">Cloudflare</span><span><strong>Workers or Pages.</strong> Hono adapter plus D1 for SQLite-shaped data.</span></li>
+                    <li><span class="label">Vercel</span><span><strong>Serverless adapter.</strong> Hono routes with Turso or another external database.</span></li>
+                    <li><span class="label">Static CDN</span><span><strong>No runtime.</strong> Pre-built output for sites that do not need server behavior.</span></li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>Docs are also available as <a href="/docs.md">Markdown</a>. The longer working plan lives at <a href="/dx.md">dx.md</a>.</footer>
+    </div>
+    <script src="/page-transitions.js?v=2"></script>
+</body>
+</html>

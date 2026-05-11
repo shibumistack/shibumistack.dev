@@ -5,6 +5,8 @@
 ## Pages
 
 - [Home](/index.md)
+- [Roadmap](/building.md)
+- [DX plan](/dx.md)
 - [Brand](/brand.md)
 
 ## Docs

@@ -2,7 +2,10 @@
   "name": "shibumistack.dev",
   "private": true,
   "scripts": {
-    "dev": "bun --hot serve.ts"
+    "dev": "bun --hot serve.ts",
+    "start": "bun run serve.ts",
+    "test": "bun test",
+    "check": "bun test"
   },
   "dependencies": {
     "hono": "^4"

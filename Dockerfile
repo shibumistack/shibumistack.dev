@@ -6,4 +6,4 @@ RUN bun install --frozen-lockfile --production
 COPY . .
 
 EXPOSE 9001
-CMD ["bun", "run", "serve.ts"]
+CMD ["bun", "start"]
