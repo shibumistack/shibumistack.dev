@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand — Shibumi Stack</title>
+    <meta name="description" content="Shibumi Stack brand assets, logos, and color palette.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/base.css">
+    <style>
+        .brand-intro {
+            margin-bottom: var(--space-12);
+        }
+
+        .brand-intro p {
+            font-size: var(--text-lg);
+            color: var(--color-text-muted);
+        }
+
+        /* Asset grid */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        .asset-card {
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            padding: var(--space-8) var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+        }
+
+        .asset-card.dark {
+            background: #1a1a1a;
+        }
+
+        .asset-card img,
+        .asset-card svg {
+            max-height: 64px;
+            width: auto;
+        }
+
+        .asset-label {
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+            margin-top: var(--space-2);
+        }
+
+        /* Color swatches */
+        .swatch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .swatch {
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: var(--hairline);
+        }
+
+        .swatch-color {
+            height: 80px;
+        }
+
+        .swatch-info {
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+        }
+
+        .swatch-name {
+            font-weight: 600;
+            display: block;
+        }
+
+        .swatch-hex {
+            font-family: var(--font-code);
+            font-size: var(--text-xs);
+            color: var(--color-text-muted);
+        }
+
+        /* Do/Don't */
+        .guidelines {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+
+        @media (max-width: 600px) {
+            .guidelines {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .guidelines h3 {
+            margin-top: 0;
+            font-size: var(--text-lg);
+        }
+
+        .guidelines ul {
+            padding-left: var(--space-4);
+        }
+
+        .guidelines li {
+            font-size: var(--text-sm);
+        }
+
+        .do h3 { color: #2a7d4f; }
+        .dont h3 { color: var(--color-accent); }
+
+        .download-btn {
+            display: inline-block;
+            padding: var(--space-2) var(--space-6);
+            background: var(--color-accent);
+            color: var(--color-bg);
+            border-radius: var(--radius);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color var(--transition-fast);
+        }
+
+        .download-btn:hover {
+            background: var(--color-accent-hover);
+            color: var(--color-bg);
+            text-decoration: none;
+        }
+
+        .contact {
+            margin-top: var(--space-12);
+            padding-top: var(--space-8);
+            border-top: var(--hairline);
+            font-size: var(--text-sm);
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="brand-intro">
+            <h1>Brand</h1>
+            <p>Assets and guidelines for referencing Shibumi Stack. Use them as-is. Give the logo room to breathe.</p>
+        </div>
+
+        <!-- Logos -->
+        <h2>Logos</h2>
+        <div class="asset-grid">
+            <div>
+                <div class="asset-card">
+                    <img src="/brand/kanji/shibumi.svg" alt="Shibumi kanji on light">
+                </div>
+                <p class="asset-label">Kanji mark, light</p>
+            </div>
+            <div>
+                <div class="asset-card dark">
+                    <img src="/brand/kanji/shibumi.svg" alt="Shibumi kanji on dark" style="color: #e8e2d6;">
+                </div>
+                <p class="asset-label">Kanji mark, dark</p>
+            </div>
+        </div>
+
+        <!-- Colors -->
+        <h2>Colors</h2>
+        <p>Two palettes, light and dark. The accent is the signature tone across both.</p>
+
+        <h3>Light</h3>
+        <div class="swatch-grid">
+            <div class="swatch">
+                <div class="swatch-color" style="background: #faf8f4;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Washi</span>
+                    <span class="swatch-hex">#faf8f4</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #f0ebe0;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Parchment</span>
+                    <span class="swatch-hex">#f0ebe0</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #1a1a1a;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Sumi</span>
+                    <span class="swatch-hex">#1a1a1a</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #5c5852;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Stone</span>
+                    <span class="swatch-hex">#5c5852</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #a14b2c;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Torii</span>
+                    <span class="swatch-hex">#a14b2c</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>Dark</h3>
+        <div class="swatch-grid">
+            <div class="swatch">
+                <div class="swatch-color" style="background: #1a1a1a;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Sumi</span>
+                    <span class="swatch-hex">#1a1a1a</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #23201c;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Charcoal</span>
+                    <span class="swatch-hex">#23201c</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #e8e2d6;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Moonlight</span>
+                    <span class="swatch-hex">#e8e2d6</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #a8a39a;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Ash</span>
+                    <span class="swatch-hex">#a8a39a</span>
+                </div>
+            </div>
+            <div class="swatch">
+                <div class="swatch-color" style="background: #c76647;"></div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Ember</span>
+                    <span class="swatch-hex">#c76647</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guidelines -->
+        <h2>Usage</h2>
+        <div class="guidelines">
+            <div class="do">
+                <h3>Do</h3>
+                <ul>
+                    <li>Use the SVG logos provided here</li>
+                    <li>Keep clear space around the logo (at least its own height)</li>
+                    <li>Write "Shibumi Stack" with both words capitalized</li>
+                    <li>Use on solid backgrounds, light or dark</li>
+                </ul>
+            </div>
+            <div class="dont">
+                <h3>Don't</h3>
+                <ul>
+                    <li>Alter, rotate, or distort the logo</li>
+                    <li>Place on busy backgrounds</li>
+                    <li>Write as "shibumi stack", "ShibumiStack", or "SHIBUMI STACK"</li>
+                    <li>Use the logo to imply endorsement</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Download -->
+        <h2>Download</h2>
+        <p>All logos, the kanji SVG, and color tokens in one package.</p>
+        <a href="/brand/" class="download-btn">Browse assets</a>
+
+        <div class="contact">
+            Need something specific or want to use the brand in a way not covered here? Reach out at <a href="mailto:gh@bitbonsai.com">gh@bitbonsai.com</a>.
+        </div>
+    </main>
+</body>
+</html>

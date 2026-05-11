@@ -1,0 +1,20 @@
+{
+  "light": {
+    "bg": "#faf8f4",
+    "surface": "#f0ebe0",
+    "text": "#1a1a1a",
+    "text-muted": "#5c5852",
+    "border": "#e5e0d8",
+    "accent": "#a14b2c",
+    "accent-hover": "#8a3f25"
+  },
+  "dark": {
+    "bg": "#1a1a1a",
+    "surface": "#23201c",
+    "text": "#e8e2d6",
+    "text-muted": "#a8a39a",
+    "border": "#33302b",
+    "accent": "#c76647",
+    "accent-hover": "#d97a5d"
+  }
+}
