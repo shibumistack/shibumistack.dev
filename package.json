@@ -1,0 +1,7 @@
+{
+  "name": "shibumistack.dev",
+  "private": true,
+  "scripts": {
+    "dev": "bun --hot serve.ts"
+  }
+}
