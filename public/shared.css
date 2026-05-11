@@ -3,7 +3,6 @@
 :root {
     color-scheme: light dark;
     --bg: light-dark(#faf8f4, #1a1a1a);
-    --surface: light-dark(#f0ebe0, #23201c);
     --text: light-dark(#1a1a1a, #e8e2d6);
     --muted: light-dark(#5c5852, #bdb7ad);
     --quiet: light-dark(rgba(26, 26, 26, 0.06), rgba(232, 226, 214, 0.12));
@@ -15,17 +14,10 @@
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-serif: ui-serif, Georgia, "Iowan Old Style", "Apple Garamond", Cambria, "Times New Roman", serif;
     --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-
-    /* typescale — major third (1.25) from 1rem base */
     --text-xs: 0.8rem;
     --text-sm: 0.875rem;
     --text-base: 1rem;
-    --text-lg: 1.125rem;
-    --text-xl: 1.25rem;
     --text-2xl: 1.563rem;
-    --text-3xl: 1.953rem;
-    --text-4xl: 2.441rem;
-    --text-5xl: 3.052rem;
 }
 
 [data-theme="dark"] { color-scheme: dark; }
@@ -272,6 +264,156 @@ nav a[aria-current="page"] {
     display: flex;
     gap: 1.25rem;
     align-items: center;
+}
+
+/* ---- install dialog ---- */
+
+.nav-install {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+}
+
+.nav-install:hover {
+    border-bottom-color: var(--accent);
+    color: var(--text);
+}
+
+.install-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 1rem;
+    border: 0;
+    background: transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 250ms ease, visibility 250ms ease;
+}
+
+.install-dialog[open] {
+    opacity: 1;
+    visibility: visible;
+}
+
+.install-dialog::backdrop {
+    background: light-dark(rgba(250, 248, 244, 0.7), rgba(10, 10, 10, 0.7));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+.install-dialog-content {
+    width: min(28rem, 100%);
+    padding: 2.5rem;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--bg);
+    box-shadow: 0 24px 64px light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+    transform: translateY(8px) scale(0.97);
+    transition: transform 250ms ease;
+}
+
+.install-dialog[open] .install-dialog-content {
+    transform: translateY(0) scale(1);
+}
+
+.install-dialog-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+.install-dialog-head .kanji {
+    color: var(--accent);
+    font-size: 1.1em;
+}
+
+.install-dialog-command {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--quiet);
+    font-family: var(--font-mono);
+}
+
+.install-dialog-command .prompt-mark {
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.install-dialog-command code {
+    flex: 1;
+    color: var(--text);
+    font-weight: 700;
+    font-size: var(--text-base);
+    white-space: nowrap;
+}
+
+.install-dialog-command .copy-command {
+    appearance: none;
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 150ms ease, background-color 150ms ease;
+}
+
+.install-dialog-command .copy-command:hover {
+    color: var(--text);
+    background: var(--quiet);
+}
+
+.install-dialog-command .copy-command svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.copy-command .icon-check { display: none; }
+.copy-command.copied .icon-copy { display: none; }
+.copy-command.copied .icon-check { display: block; color: #64b464; }
+
+.install-dialog-hint {
+    margin: 0 0 1.2rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.5;
+}
+
+.install-dialog-alt {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+}
+
+.install-dialog-alt code {
+    color: var(--text);
 }
 
 /* ---- responsive ---- */

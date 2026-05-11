@@ -119,13 +119,25 @@
       return;
     }
 
+    const installBtn = event.target.closest(".nav-install");
+    if (installBtn) {
+      const dialog = document.getElementById("install-dialog");
+      if (dialog) dialog.showModal();
+      return;
+    }
+
+    const dialog = event.target.closest(".install-dialog");
+    if (dialog && event.target === dialog) {
+      dialog.close();
+      return;
+    }
+
     const copyButton = event.target.closest("[data-copy]");
     if (copyButton) {
       const value = copyButton.getAttribute("data-copy") || "";
       navigator.clipboard.writeText(value);
-      const original = copyButton.innerHTML;
-      copyButton.textContent = "Copied";
-      setTimeout(() => { copyButton.innerHTML = original; }, 1400);
+      copyButton.classList.add("copied");
+      setTimeout(() => { copyButton.classList.remove("copied"); }, 1400);
       return;
     }
 
@@ -133,6 +145,13 @@
     if (!shouldIntercept(event, link)) return;
     event.preventDefault();
     navigate(new URL(link.href, location.href).pathname, true);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      const dialog = document.getElementById("install-dialog");
+      if (dialog && dialog.open) dialog.close();
+    }
   });
 
   window.addEventListener("popstate", (event) => {
