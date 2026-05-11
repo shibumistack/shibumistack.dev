@@ -1,127 +1,141 @@
 (() => {
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const supportsViewTransition = typeof document.startViewTransition === "function";
   const parser = new DOMParser();
+  const cache = {};
 
-  function samePage(url) {
-    return url.pathname === window.location.pathname && url.search === window.location.search;
+  function initTheme() {
+    const stored = localStorage.getItem("shibumi-theme");
+    if (stored) {
+      document.documentElement.setAttribute("data-theme", stored);
+    } else {
+      const pref = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", pref);
+    }
   }
 
-  function shouldHandleLink(event, link) {
+  initTheme();
+
+  function shouldIntercept(event, link) {
     if (event.defaultPrevented || event.button !== 0) return false;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
-    if (!link) return false;
+    if (!link || link.hasAttribute("download")) return false;
     if (link.target && link.target !== "_self") return false;
-    if (link.hasAttribute("download")) return false;
-
-    const url = new URL(link.href, window.location.href);
-    if (url.origin !== window.location.origin) return false;
-    if (samePage(url)) return false;
-
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin) return false;
+    if (url.pathname === location.pathname) return false;
     return true;
   }
 
-  async function fetchPage(url) {
-    const response = await fetch(url.href, {
-      headers: { accept: "text/html" },
-    });
-
-    if (!response.ok) throw new Error(`Page request failed: ${response.status}`);
-
-    const html = await response.text();
-    return parser.parseFromString(html, "text/html");
+  async function fetchPage(path) {
+    if (cache[path]) return cache[path];
+    const res = await fetch(path, { headers: { accept: "text/html" } });
+    if (!res.ok) throw new Error(res.status);
+    const doc = parser.parseFromString(await res.text(), "text/html");
+    cache[path] = doc;
+    return doc;
   }
 
-  function swapPage(nextDocument, url) {
-    document.head.replaceWith(nextDocument.head);
-    document.body.replaceWith(nextDocument.body);
-    history.pushState({}, "", url.href);
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  function loadStyles(nextDoc) {
+    const current = new Set(
+      Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+        .map((l) => l.getAttribute("href"))
+    );
+    const pending = [];
+    for (const link of nextDoc.querySelectorAll('link[rel="stylesheet"]')) {
+      const href = link.getAttribute("href");
+      if (!current.has(href)) {
+        pending.push(new Promise((resolve) => {
+          const el = document.createElement("link");
+          el.rel = "stylesheet";
+          el.href = href;
+          el.onload = resolve;
+          el.onerror = resolve;
+          document.head.appendChild(el);
+        }));
+      }
+    }
+    return Promise.all(pending);
   }
 
-  async function navigate(url) {
-    document.documentElement.classList.add("is-page-blurring");
+  function swap(nextDoc) {
+    document.title = nextDoc.title;
 
-    const pagePromise = fetchPage(url);
-    await new Promise((resolve) => window.setTimeout(resolve, 500));
+    const oldStyle = document.head.querySelector("style[data-page]");
+    const newStyle = nextDoc.head.querySelector("style[data-page]");
+    if (oldStyle) oldStyle.remove();
+    if (newStyle) document.head.appendChild(newStyle);
 
-    let nextDocument;
+    const oldMain = document.querySelector("main");
+    const newMain = nextDoc.querySelector("main");
+    if (oldMain && newMain) oldMain.replaceWith(newMain);
+
+    const oldNav = document.querySelector("nav");
+    const newNav = nextDoc.querySelector("nav");
+    if (oldNav && newNav) {
+      for (const a of oldNav.querySelectorAll("a[aria-current]")) {
+        a.removeAttribute("aria-current");
+      }
+      for (const a of newNav.querySelectorAll("a[aria-current]")) {
+        const match = oldNav.querySelector(`a[href="${a.getAttribute("href")}"]`);
+        if (match) match.setAttribute("aria-current", "page");
+      }
+    }
+
+    const oldFooter = document.querySelector(".site-footer");
+    const newFooter = nextDoc.querySelector(".site-footer");
+    if (oldFooter && newFooter) oldFooter.replaceWith(newFooter);
+  }
+
+  async function navigate(path, push) {
+    let nextDoc;
     try {
-      nextDocument = await pagePromise;
+      nextDoc = await fetchPage(path);
     } catch {
-      window.location.href = url.href;
+      location.href = path;
       return;
     }
 
-    if (!supportsViewTransition) {
-      swapPage(nextDocument, url);
-      requestAnimationFrame(() => {
-        document.documentElement.classList.remove("is-page-blurring");
-      });
-      return;
-    }
+    await loadStyles(nextDoc);
 
-    const transition = document.startViewTransition(() => {
-      swapPage(nextDocument, url);
-    });
-
-    await transition.finished;
-    requestAnimationFrame(() => {
-      document.documentElement.classList.remove("is-page-blurring");
-    });
-  }
-
-  async function restore(url) {
-    document.documentElement.classList.add("is-page-blurring");
-
-    let nextDocument;
-    try {
-      nextDocument = await fetchPage(url);
-    } catch {
-      window.location.href = url.href;
-      return;
-    }
-
-    if (supportsViewTransition) {
-      const transition = document.startViewTransition(() => {
-        document.head.replaceWith(nextDocument.head);
-        document.body.replaceWith(nextDocument.body);
-        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      });
-      await transition.finished;
-    } else {
-      document.head.replaceWith(nextDocument.head);
-      document.body.replaceWith(nextDocument.body);
+    const doSwap = () => {
+      swap(nextDoc);
+      if (push) history.pushState({ path }, "", path);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    }
+    };
 
-    requestAnimationFrame(() => {
-      document.documentElement.classList.remove("is-page-blurring");
-    });
+    if (document.startViewTransition) {
+      await document.startViewTransition(doSwap).finished;
+    } else {
+      doSwap();
+    }
   }
 
-  document.addEventListener("click", async (event) => {
+  document.addEventListener("click", (event) => {
+    const toggle = event.target.closest(".theme-toggle");
+    if (toggle) {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("shibumi-theme", next);
+      return;
+    }
+
     const copyButton = event.target.closest("[data-copy]");
     if (copyButton) {
       const value = copyButton.getAttribute("data-copy") || "";
-      await navigator.clipboard.writeText(value);
+      navigator.clipboard.writeText(value);
       const original = copyButton.innerHTML;
       copyButton.textContent = "Copied";
-      window.setTimeout(() => { copyButton.innerHTML = original; }, 1400);
+      setTimeout(() => { copyButton.innerHTML = original; }, 1400);
       return;
     }
 
-    if (reduceMotion) return;
-
     const link = event.target.closest("a[href]");
-    if (!shouldHandleLink(event, link)) return;
-
+    if (!shouldIntercept(event, link)) return;
     event.preventDefault();
-    navigate(new URL(link.href, window.location.href));
+    navigate(new URL(link.href, location.href).pathname, true);
   });
 
-  window.addEventListener("popstate", () => {
-    if (reduceMotion) return;
-    restore(new URL(window.location.href));
+  window.addEventListener("popstate", (event) => {
+    navigate(location.pathname, false);
   });
 })();
