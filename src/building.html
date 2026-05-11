@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roadmap — Shibumi Stack</title>
-    <meta name="description" content="How Shibumi Stack is designed: composed defaults, owned code, extensions, and self-hostable deploys.">
+    <meta name="description" content="What ships first, what comes next, and where the design is still open.">
     <link rel="icon" type="image/png" href="/favicon.png">
+    <!-- shibumi-meta -->
     <link rel="stylesheet" href="/shared.css">
     <style data-page>
         .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr); gap: clamp(2rem, 7vw, 6rem); align-items: end; margin-top: clamp(4rem, 8vw, 6rem); margin-bottom: clamp(4rem, 9vw, 7rem); }
@@ -44,7 +45,7 @@
                 <article class="principle">
                     <span class="label">Next</span>
                     <h2>Ship create-shibumi</h2>
-                    <p>Release the scaffolder with bare, blog, SSR, and static starts plus deploy config chosen during setup.</p>
+                    <p>Release the scaffolder with Minimal, Full-stack, and Static themes plus deploy config chosen during setup.</p>
                 </article>
                 <article class="principle">
                     <span class="label">Then</span>
@@ -57,7 +58,7 @@
                 <h2>What is planned.</h2>
                 <div class="steps">
                     <div class="step"><span class="pill">create</span><p><strong>create-shibumi.</strong> A Bun-first scaffolder with prompts for template, deploy target, git, and dependencies.</p></div>
-                    <div class="step"><span class="pill">themes</span><p><strong>Bare, blog, SSR, static.</strong> Different starts for different projects, not one template forced everywhere.</p></div>
+                    <div class="step"><span class="pill">themes</span><p><strong>Minimal, Full-stack, Static.</strong> Different starts for different projects, not one template forced everywhere.</p></div>
                     <div class="step"><span class="pill">deploy</span><p><strong>Config generated up front.</strong> Cloudflare, Vercel, Fly.io, static CDN, and self-hosted Bun with Docker.</p></div>
                     <div class="step"><span class="pill">data</span><p><strong>SQLite in development.</strong> Drizzle keeps schema and queries familiar while production follows the target.</p></div>
                     <div class="step"><span class="pill">core</span><p><strong>CSRF included.</strong> Security defaults should not be an optional extension.</p></div>
