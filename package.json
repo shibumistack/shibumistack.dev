@@ -3,5 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot serve.ts"
+  },
+  "dependencies": {
+    "hono": "^4"
   }
 }

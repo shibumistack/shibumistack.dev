@@ -1,6 +1,7 @@
 .env
 .env.*
 node_modules/
+bun.lockb
 dist/
 .DS_Store
 *.log

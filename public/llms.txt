@@ -1,0 +1,14 @@
+# shibumistack.dev
+
+> A lean, opinionated web stack: Bun, Hono, SQLite, Alpine. Small pieces chosen with care. No lock-in. Ages well.
+
+## Pages
+
+- [Home](/index.md)
+- [Brand](/brand.md)
+
+## Docs
+
+- [Contributing](/CONTRIBUTING.md)
+- [License](/LICENSE)
+- [README](/README.md)
