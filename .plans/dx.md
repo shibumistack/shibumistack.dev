@@ -358,9 +358,33 @@ npm publish
 # users install with: bun run shibumi add comments
 ```
 
+## shibumi-server
+
+Personal mini-PaaS for self-hosted deploys. One Bun process + Caddy API. No dashboard.
+
+Single source of truth: `deploy.json` maps domain → path, port, secret.
+
+What it does:
+1. Receives webhook from any git host (GitHub, Codeberg, Gitea, anything)
+2. Runs git pull + podman-compose up --build
+3. Registers domain with Caddy API (auto-TLS, reverse proxy)
+
+CLI:
+```
+shibumi-server init           # deploy.json + systemd unit + Caddy API setup
+shibumi-server add myapp.com  # adds entry, generates secret, registers with Caddy
+shibumi-server ls             # lists apps, ports, status
+shibumi-server logs myapp.com # tails podman logs
+```
+
+Integration: `create-shibumi` can wire up the webhook URL when user picks "Self-hosted".
+Git-host agnostic. No SSH keys in CI. No Actions/Woodpecker dependency.
+
+Package: `shibumi-server` (claim on npm). Priority: after create-shibumi.
+
 ## Resolved Decisions
 
-- **GitHub Actions**: yes, scaffold a minimal build + deploy workflow per platform
+- **GitHub Actions**: optional, not default. Default self-hosted deploy uses shibumi-server webhook
 - **Blog template**: Markdown with frontmatter, no MDX. Parsed at build time.
 - **base.css**: ships with every template. Delete if you don't want it.
 - **Extension registry**: npm-only. `@shibumi/*` for official, `shibumi-ext-*` for community. Listing page on shibumistack.dev.
