@@ -30,152 +30,18 @@
     <meta name="theme-color" content="#FAF8F4" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#1A1A1A" media="(prefers-color-scheme: dark)">
     <link rel="icon" type="image/png" href="/favicon.png">
-    <script>try{if(sessionStorage.getItem('shibumi-page-blur')==='1')document.documentElement.classList.add('is-page-entering')}catch{}</script>
-    <link rel="stylesheet" href="/page-transitions.css?v=2">
+    <link rel="stylesheet" href="/shared.css">
+    <link rel="stylesheet" href="/page-transitions.css">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://shibumistack.dev/">
 
-    <style>
-        :root {
-            color-scheme: dark;
-            --bg: #1a1a1a;
-            --surface: #23201c;
-            --text: #e8e2d6;
-            --muted: #bdb7ad;
-            --quiet: rgba(232, 226, 214, 0.12);
-            --line: rgba(232, 226, 214, 0.16);
-            --accent: #c76647;
-            --accent-soft: rgba(199, 102, 71, 0.16);
-            --max: 1120px;
-            --font-mono-ui: "JetBrains Mono", "Mono UI", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-        }
-
-        * { box-sizing: border-box; }
-
-        html { min-height: 100%; }
-
-        body {
-            margin: 0;
-            min-height: 100svh;
-            font-family: ui-serif, Georgia, "Iowan Old Style", "Apple Garamond", Cambria, "Times New Roman", serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at 25% 12%, rgba(199, 102, 71, 0.09), transparent 30rem),
-                radial-gradient(circle at 10% 80%, rgba(240, 235, 224, 0.035), transparent 26rem),
-                linear-gradient(135deg, #171514 0%, var(--bg) 54%, #1f1c19 100%);
-        }
-
-        a { color: inherit; }
-
-        .shell {
-            width: min(var(--max), calc(100% - 2rem));
-            margin: 0 auto;
-            padding: 6.5rem 0 4rem;
-            position: relative;
-        }
-
-        header {
-            position: fixed;
-            top: 0;
-            left: 50%;
-            z-index: 20;
-            width: min(var(--max), calc(100% - 2rem));
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 0;
-            transform: translateX(-50%);
-        }
-
-        header::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 50%;
-            z-index: -1;
-            width: 100vw;
-            height: 100%;
-            transform: translateX(-50%);
-            background: rgba(26, 26, 26, 0.72);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        .mark {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--muted);
-            text-decoration: none;
-            font-family: var(--font-mono-ui);
-            font-size: 0.86rem;
-            letter-spacing: 0.02em;
-        }
-
-                .mark {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            font-size: 0.95rem;
-            font-weight: 400;
-            letter-spacing: -0.035em;
-        }
-
-        .mark-tld {
-            color: rgba(189, 183, 173, 0.62);
-            font-weight: 300;
-        }
-
-.mark img {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-family: var(--font-mono-ui);
-            font-size: 0.86rem;
-            color: var(--muted);
-        }
-
-        nav a {
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-        }
-
-        nav a:hover { border-bottom-color: var(--accent); color: var(--text); }
-
-        .github-link {
-            display: inline-flex;
-            align-items: center;
-            border-bottom: 0;
-            color: var(--muted);
-        }
-
-        .github-link svg {
-            width: 1.05rem;
-            height: 1.05rem;
-            fill: currentColor;
-        }
-
-        .github-link:hover { color: var(--text); border-bottom: 0; }
-
+    <style data-page>
         .hero {
             display: grid;
             grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-            gap: clamp(2.5rem, 7vw, 6rem);
+            gap: clamp(2.5rem, 7vw, 5rem);
             align-items: center;
             min-height: calc(100svh - 15rem);
-        }
-
-        .eyebrow {
-            color: var(--accent);
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            font: 700 0.76rem/1 var(--font-mono-ui);
-            margin: 0 0 1rem;
         }
 
         h1 {
@@ -187,59 +53,55 @@
             font-weight: 400;
         }
 
-        .line-2 {
-            white-space: nowrap;
-        }
-
-        .dot,
-        .accent-word { color: var(--accent); }
+        .line-2 { white-space: nowrap; }
 
         .dek {
             max-width: 38rem;
             margin: 1.85rem 0 0;
-            color: var(--muted);
             font-size: clamp(1.16rem, 1.65vw, 1.42rem);
-            line-height: 1.6;
         }
 
-        .panel {
-            min-height: clamp(25rem, 38vw, 34rem);
-            display: flex;
-            align-items: center;
-        }
+        /* ---- cli ---- */
 
         .cli {
             width: 100%;
-            font: clamp(0.62rem, 0.82vw, 0.76rem)/1.48 var(--font-mono-ui);
-            letter-spacing: -0.025em;
-            color: rgba(232, 226, 214, 0.86);
-            overflow-x: auto;
-            filter: drop-shadow(0 18px 42px rgba(0, 0, 0, 0.18));
+            font: 0.875rem/1.55 var(--font-mono);
+            letter-spacing: -0.02em;
+            color: light-dark(rgba(26, 26, 26, 0.82), rgba(232, 226, 214, 0.86));
         }
 
         .install-command {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr) auto;
-            gap: 0.8rem;
+            display: flex;
             align-items: center;
-            margin-bottom: 1.6rem;
-            padding: 1rem 1.05rem;
-            border: 1px solid rgba(232, 226, 214, 0.13);
-            border-radius: 22px;
-            background:
-                linear-gradient(135deg, rgba(35, 32, 28, 0.98), rgba(26, 24, 21, 0.98));
-            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2);
+            gap: 0.6rem;
+            margin-bottom: 1.8rem;
         }
 
         .prompt-mark {
             color: var(--muted);
-            font: 700 1.25rem/1 var(--font-mono-ui);
+            font-weight: 700;
         }
 
         .install-command code {
             color: var(--text);
-            font: 700 clamp(0.92rem, 1.2vw, 1.12rem)/1.2 var(--font-mono-ui);
+            font-weight: 700;
             white-space: nowrap;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 0.55em;
+            height: 1.15em;
+            margin-left: 1px;
+            background: var(--accent);
+            vertical-align: text-bottom;
+            animation: blink 600ms step-end infinite;
+        }
+
+        .typing-cursor.done { display: none; }
+
+        @keyframes blink {
+            50% { opacity: 0; }
         }
 
         .copy-command {
@@ -265,6 +127,19 @@
 
         .copy-command:hover { color: var(--text); }
 
+        .cli-output { overflow: hidden; }
+
+        .cli-step {
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 300ms ease, transform 300ms ease;
+        }
+
+        .cli-step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .cli-head {
             display: flex;
             align-items: baseline;
@@ -275,46 +150,38 @@
 
         .kanji { color: var(--accent); font-size: 1.25em; }
         .cli-name { color: var(--text); font-weight: 700; }
-        .cli-tagline { color: rgba(189, 183, 173, 0.84); }
+        .cli-tagline { color: light-dark(rgba(92, 88, 82, 0.84), rgba(189, 183, 173, 0.84)); }
 
         .cli-row {
             display: grid;
-            grid-template-columns: 3.9rem minmax(0, 1fr);
-            gap: 0.65rem;
-            margin: 0.78rem 0;
+            grid-template-columns: 4.5rem minmax(0, 1fr);
+            gap: 0.75rem;
+            margin: 0.85rem 0;
         }
 
         .cli-label {
             justify-self: end;
             align-self: start;
-            min-width: 3.35rem;
-            padding: 0.06rem 0.38rem 0.1rem;
+            min-width: 3.8rem;
+            padding: 0.1rem 0.42rem 0.14rem;
             background: #64b464;
             color: #17331f;
             font-weight: 800;
+            font-size: 0.88em;
             text-align: center;
         }
 
-        .cli-label.next {
-            background: #8a3f25;
-            color: #f0ebe0;
-            font-weight: 500;
-        }
-
-        .cli-label.docs {
-            background: #a8afc4;
-            color: #3c4250;
-            font-weight: 500;
-        }
-
-        .cli-question { color: rgba(232, 226, 214, 0.92); }
-        .cli-muted { color: rgba(189, 183, 173, 0.82); }
+        .cli-label.next { background: #8a3f25; color: #f0ebe0; font-weight: 500; }
+        .cli-label.docs { background: #a8afc4; color: #3c4250; font-weight: 500; }
+        .cli-question { color: light-dark(rgba(26, 26, 26, 0.88), rgba(232, 226, 214, 0.92)); }
+        .cli-muted { color: light-dark(rgba(92, 88, 82, 0.82), rgba(189, 183, 173, 0.82)); }
         .cli-selected { color: var(--text); }
         .cli-dot { color: #64b464; }
         .cli-ok { color: #64b464; font-weight: 800; }
         .cli-next { color: var(--accent); font-weight: 700; }
         .cli-option { margin-left: 1.35rem; }
-        .cli-steps { margin-top: 0.35rem; }
+
+        /* ---- rest of page ---- */
 
         .why {
             display: grid;
@@ -323,40 +190,24 @@
             margin-top: clamp(2rem, 4vw, 3.5rem);
         }
 
-        .card {
-            min-height: 10.75rem;
-            padding-top: 0;
-        }
+        .card { min-height: 10.75rem; padding-top: 0; }
 
         .card span {
             color: var(--accent);
-            font: 700 0.75rem/1 var(--font-mono-ui);
+            font: 700 0.75rem/1 var(--font-mono);
             letter-spacing: 0.16em;
             text-transform: uppercase;
         }
 
-        .card h3 {
-            margin: 1.1rem 0 0.55rem;
-            font-size: 1.38rem;
-            font-weight: 500;
-        }
+        .card h3 { margin: 1.1rem 0 0.55rem; font-size: 1.38rem; font-weight: 500; }
+        .card p { margin: 0; color: var(--muted); line-height: 1.6; }
 
-        .card p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        .pieces,
-        .themes,
-        .feature-section {
+        .pieces, .themes, .feature-section {
             margin-top: clamp(4rem, 8vw, 7rem);
             padding-top: 0;
         }
 
-        .pieces h2,
-        .themes h2,
-        .feature-section h2 {
+        .pieces h2, .themes h2, .feature-section h2 {
             margin: 0 0 1rem;
             font-size: clamp(2rem, 5vw, 4.5rem);
             line-height: 0.95;
@@ -369,11 +220,11 @@
             width: max-content;
             margin: 0.8rem 0 0;
             padding: 0.18rem 0.42rem 0.2rem;
-            border: 1px solid rgba(199, 102, 71, 0.32);
+            border: 1px solid light-dark(rgba(161, 75, 44, 0.25), rgba(199, 102, 71, 0.32));
             border-radius: 999px;
             color: var(--accent);
             opacity: 0.5;
-            font-family: var(--font-mono-ui);
+            font-family: var(--font-mono);
             font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -394,35 +245,7 @@
             line-height: 1.65;
         }
 
-        .feature-copy p {
-            margin: 0 0 1rem;
-        }
-
-        .mini-list {
-            display: grid;
-            gap: 0.8rem;
-        }
-
-        .mini-item {
-            display: grid;
-            grid-template-columns: 5.5rem 1fr;
-            gap: 1rem;
-            align-items: baseline;
-            color: var(--muted);
-            font-family: var(--font-mono-ui);
-            font-size: 0.84rem;
-            line-height: 1.55;
-        }
-
-        .mini-label {
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .mini-item strong {
-            color: var(--text);
-            font-weight: 500;
-        }
+        .feature-copy p { margin: 0 0 1rem; }
 
         .stack-list {
             display: grid;
@@ -440,21 +263,14 @@
             gap: 0.7rem;
             align-items: baseline;
             padding: 0.45rem 0;
-            border-bottom: 1px solid rgba(232, 226, 214, 0.08);
-            font-family: var(--font-mono-ui);
+            border-bottom: 1px solid var(--quiet);
+            font-family: var(--font-mono);
             font-size: 0.84rem;
             color: var(--muted);
         }
 
-        .stack-list .num {
-            color: var(--accent);
-            font-weight: 700;
-        }
-
-        .stack-list strong {
-            color: var(--text);
-            font-weight: 700;
-        }
+        .stack-list .num { color: var(--accent); font-weight: 700; }
+        .stack-list strong { color: var(--text); font-weight: 700; }
 
         .theme-grid {
             display: grid;
@@ -466,36 +282,27 @@
         .theme-card {
             min-height: 9.5rem;
             padding: 1rem;
-            border: 1px solid rgba(232, 226, 214, 0.1);
+            border: 1px solid light-dark(var(--line), rgba(232, 226, 214, 0.06));
             border-radius: 18px;
-            background: rgba(232, 226, 214, 0.035);
+            background: light-dark(var(--quiet), rgba(232, 226, 214, 0.025));
         }
 
         .theme-card span {
             color: var(--accent);
-            font: 700 0.7rem/1 var(--font-mono-ui);
+            font: 700 0.7rem/1 var(--font-mono);
             letter-spacing: 0.14em;
             text-transform: uppercase;
         }
 
-        .theme-card h3 {
-            margin: 1.3rem 0 0.45rem;
-            font-size: 1.25rem;
-            font-weight: 500;
-        }
-
-        .theme-card p {
-            margin: 0;
-            color: var(--muted);
-            line-height: 1.55;
-        }
+        .theme-card h3 { margin: 1.3rem 0 0.45rem; font-size: 1.25rem; font-weight: 500; }
+        .theme-card p { margin: 0; color: var(--muted); line-height: 1.55; }
 
         .final-cta {
             display: grid;
             justify-items: center;
             margin-top: clamp(5rem, 10vw, 8rem);
             padding: clamp(3rem, 7vw, 5rem) 1rem;
-            border-top: 1px solid rgba(232, 226, 214, 0.08);
+            border-top: 1px solid var(--quiet);
             text-align: center;
         }
 
@@ -514,25 +321,14 @@
             text-align: left;
         }
 
-        footer {
-            margin-top: 2rem;
-            color: var(--muted);
-            font-family: var(--font-mono-ui);
-            font-size: 0.86rem;
+        @media (max-width: 820px) {
+            .hero { grid-template-columns: 1fr; min-height: auto; }
+            .why, .theme-grid, .feature-grid { grid-template-columns: 1fr; }
         }
 
-        @media (max-width: 820px) {
-            .shell { padding-top: 7rem; }
-            header { align-items: flex-start; }
-            .hero { grid-template-columns: 1fr; min-height: auto; }
-            .why,
-            .theme-grid,
-            .feature-grid { grid-template-columns: 1fr; }
-            .mini-item { grid-template-columns: 1fr; gap: 0.2rem; }
-            .stack-list li { grid-template-columns: 2.4rem 5.2rem 1fr; }
-            nav { flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem; }
-            .install-command { grid-template-columns: auto minmax(0, 1fr) auto; }
-            .install-command code { white-space: normal; }
+        @media (prefers-reduced-motion: reduce) {
+            .typing-cursor { animation: none; opacity: 1; }
+            .cli-step { opacity: 1; transform: none; transition: none; }
         }
     </style>
 </head>
@@ -548,21 +344,20 @@
                     <p class="dek">Choose a theme. <span class="accent-word">Add just what you need</span>. Code you and agents can read, change, and ship.</p>
                 </div>
 
-                <aside class="panel" aria-label="Shibumi CLI preview" id="install">
-                    <div class="cli" role="img" aria-label="Shibumi CLI preview">
-                        <div class="install-command">
-                            <span class="prompt-mark">›</span>
-                            <code>bun create shibumi@latest</code>
-                            <button class="copy-command" type="button" data-copy="bun create shibumi@latest" aria-label="Copy install command"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="1.5"/><path d="M5 16V5h11"/></svg></button>
-                        </div>
+                <div class="cli" id="install" aria-label="Shibumi CLI preview">
+                    <div class="install-command">
+                        <span class="prompt-mark">›</span>
+                        <code><span id="typed"></span><span class="typing-cursor" id="cursor"></span></code>
+                    </div>
 
-                        <div class="cli-head">
+                    <div class="cli-output">
+                        <div class="cli-step cli-head">
                             <span class="kanji">渋み</span>
                             <span class="cli-name">shibumi</span>
                             <span class="cli-tagline">Refined simplicity</span>
                         </div>
 
-                        <div class="cli-row">
+                        <div class="cli-step cli-row">
                             <span class="cli-label">dir</span>
                             <div>
                                 <div class="cli-question">Where should we create your project?</div>
@@ -570,7 +365,7 @@
                             </div>
                         </div>
 
-                        <div class="cli-row">
+                        <div class="cli-step cli-row">
                             <span class="cli-label">theme</span>
                             <div>
                                 <div class="cli-question">Choose a theme</div>
@@ -580,22 +375,22 @@
                             </div>
                         </div>
 
-                        <div class="cli-row">
+                        <div class="cli-step cli-row">
                             <span class="cli-label">done</span>
-                            <div class="cli-steps"><span class="cli-ok">✓ Project ready</span></div>
+                            <div><span class="cli-ok">✓ Project ready</span></div>
                         </div>
 
-                        <div class="cli-row">
+                        <div class="cli-step cli-row">
                             <span class="cli-label next">next</span>
                             <div class="cli-next">cd quiet-bamboo && bun dev</div>
                         </div>
 
-                        <div class="cli-row">
+                        <div class="cli-step cli-row">
                             <span class="cli-label docs">docs</span>
                             <div class="cli-muted">https://shibumistack.dev/docs</div>
                         </div>
                     </div>
-                </aside>
+                </div>
             </section>
 
             <section class="why" aria-label="Why this stack">
@@ -680,10 +475,55 @@
             </section>
         </main>
 
-        <footer>
-            Shibumi Stack serves both HTML and Markdown: request <code>text/markdown</code> to read the source-shaped version.
-        </footer>
+        <!-- shibumi-footer -->
     </div>
-    <script src="/page-transitions.js?v=2"></script>
+    <script src="/page-transitions.js"></script>
+    <script>
+    (() => {
+        const text = "bun create shibumi@latest";
+        const typed = document.getElementById("typed");
+        const cursor = document.getElementById("cursor");
+        const steps = document.querySelectorAll(".cli-step");
+        if (!typed || !cursor) return;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            typed.textContent = text;
+            cursor.classList.add("done");
+            steps.forEach((s) => s.classList.add("visible"));
+            return;
+        }
+
+        // ms to wait after each step appears before showing the next
+        const delays = [
+            400,   // header → dir
+            700,   // dir → theme
+            900,   // theme → done
+            250,   // done → next
+            250,   // next → docs
+        ];
+
+        let i = 0;
+
+        function type() {
+            if (i < text.length) {
+                typed.textContent += text[i];
+                i++;
+                setTimeout(type, 55 + (Math.random() * 30 - 15));
+                return;
+            }
+            cursor.classList.add("done");
+            setTimeout(() => revealSteps(0), 350);
+        }
+
+        function revealSteps(idx) {
+            if (idx >= steps.length) return;
+            steps[idx].classList.add("visible");
+            const delay = delays[idx] ?? 250;
+            setTimeout(() => revealSteps(idx + 1), delay);
+        }
+
+        setTimeout(type, 600);
+    })();
+    </script>
 </body>
 </html>
