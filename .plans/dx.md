@@ -275,6 +275,89 @@ Anyone can publish a Shibumi extension as an npm package (`@shibumi/auth`, `shib
 
 `shibumi add <name>` resolves from npm, copies files in, appends agents.md, runs migration.
 
+## Example Workflows
+
+### Solo dev, new SaaS
+```
+npm create shibumi@latest invoicely
+  → template: SSR
+  → deploy: Self-hosted (Docker)
+
+cd invoicely && bun dev
+bun run shibumi add auth
+bun run shibumi add stripe
+bun run shibumi add email
+```
+Three extensions = login, payments, transactional email. Full SaaS skeleton in minutes. Docker + Caddy = auto-HTTPS on any $5 VPS.
+
+### Content creator, blog
+```
+npm create shibumi@latest my-blog
+  → template: Blog
+  → deploy: Static CDN
+
+bun dev              # write markdown posts
+bun run build        # outputs dist/
+```
+Markdown + frontmatter, RSS feed, SEO tags. No database, no server. Deploys anywhere static files go.
+
+### Agency shipping client projects
+```
+npm create shibumi@latest client-dashboard --yes
+  → defaults: SSR + Self-hosted
+
+bun run shibumi add auth
+bun run shibumi add admin
+```
+`--yes` skips prompts for CI/scripting. Admin extension gives instant CRUD UI from schema.
+
+### Edge deploy on Cloudflare
+```
+npm create shibumi@latest edge-app
+  → template: SSR
+  → deploy: Cloudflare Workers
+
+bun dev              # local SQLite, same as always
+```
+Same Hono routes, same Drizzle schema. Dev is local SQLite, prod is D1. Zero code changes.
+
+### Team migrating off Next.js
+```
+bun run shibumi migrate --from next
+```
+Not a full auto-migration (Next surface area too large for that). Analysis + scaffolding tool:
+1. Scaffolds new shibumi project with matching deploy target
+2. Maps `pages/` or `app/` routes to `src/routes/` stubs
+3. Extracts API routes into Hono route files (translate cleanly)
+4. Generates migration report: what mapped, what needs manual work
+
+```
+  渋み migrate   Scanned 23 routes, 8 API endpoints
+
+  ✓ mapped    8 API routes → src/routes/api/
+  ✓ mapped    12 pages → src/routes/ (markup only)
+  ⚠ manual    3 pages use RSC server components
+  ⚠ manual    next/image → replace with <img> or extension
+  ⚠ manual    next-auth → run shibumi add auth
+
+  Report: migration-report.md
+```
+API routes are the real win (basically Hono handlers already). Pages become route stubs with TODOs. React interactivity flagged for Alpine rewrite. Priority: after core CLI + auth/admin extensions are solid. Could ship as `shibumi-ext-migrate-next`.
+
+### Extension author
+```
+mkdir shibumi-ext-comments && cd $_
+```
+Three exports, that's the whole contract:
+- `files/` directory with source to copy
+- `agents.md` fragment
+- `migration.sql` (optional)
+
+```
+npm publish
+# users install with: bun run shibumi add comments
+```
+
 ## Resolved Decisions
 
 - **GitHub Actions**: yes, scaffold a minimal build + deploy workflow per platform
