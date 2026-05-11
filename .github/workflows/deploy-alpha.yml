@@ -9,9 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: alpha
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy via rsync
+      - name: Deploy via SSH pull
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           HOST: ${{ secrets.DEPLOY_HOST }}
@@ -23,13 +21,5 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key" \
-            --exclude '.git' \
-            --exclude '.github' \
-            --exclude '.plans' \
-            --exclude 'node_modules' \
-            --exclude 'serve.ts' \
-            --exclude 'package.json' \
-            --exclude 'bun.lockb' \
-            ./ "${USER}@${HOST}:${PATH_REMOTE}/"
+          ssh -i ~/.ssh/deploy_key "${USER}@${HOST}" \
+            "cd ${PATH_REMOTE} && git pull origin main"
