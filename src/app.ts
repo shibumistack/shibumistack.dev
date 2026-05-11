@@ -80,6 +80,7 @@ function siteNav(active?: NavItem["key"]): string {
 function siteFooter(): string {
   return `<footer class="site-footer">
             <span>MIT License &copy; ${new Date().getFullYear()} Shibumi Stack</span>
+            <span class="made-with">Made with &hearts; by <a href="https://bitbonsai.com">@bitbonsai</a></span>
             <div class="footer-links">
                 <a href="/docs">Docs</a>
                 <a href="/building">Roadmap</a>
