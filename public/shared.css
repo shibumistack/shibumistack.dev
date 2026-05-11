@@ -82,7 +82,7 @@ header::before {
     color: var(--muted);
     text-decoration: none;
     font-family: var(--font-sans);
-    font-size: 0.95rem;
+    font-size: 1.125rem;
     font-weight: 400;
     letter-spacing: 0.03rem;
 }

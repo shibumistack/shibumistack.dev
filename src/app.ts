@@ -55,6 +55,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+  { href: "/", label: "Home", key: "home" },
   { href: "#install", label: "Install", key: "install" },
   { href: "/docs", label: "Docs", key: "docs" },
   { href: "/building", label: "Roadmap", key: "roadmap" },
@@ -142,7 +143,7 @@ app.get("/", async (c) => {
   if (wantsMarkdown(c)) {
     return markdown(c, "public/index.md");
   }
-  return c.html(await html("src/index.html"));
+  return c.html(await html("src/index.html", "home"));
 });
 
 app.get("/brand", async (c) => {
