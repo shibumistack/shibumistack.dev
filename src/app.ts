@@ -465,12 +465,13 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 
   const postBody = Bun.markdown.html(body).replaceAll("{{", "&#123;&#123;").replaceAll("}}", "&#125;&#125;");
 
-  const page = await renderTokens(
+  let page = await renderTokens(
     `blog post ${slug}`,
     await read("src/pages/blog/post.html"),
-    { title: escapeHtml(title), "date-iso": dateIso, date: dateDisplay, body: postBody },
+    { title: escapeHtml(title), "date-iso": dateIso, date: dateDisplay },
     "blog",
   );
+  page = insert(page, "body", postBody);
 
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: `${escapeHtml(title)} — Shibumi Stack`,
