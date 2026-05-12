@@ -5,39 +5,113 @@
 }
 
 .post-meta {
+    text-align: center;
     margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.blog-post h1 {
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
 }
 
 .blog-post time {
     font-size: 0.875rem;
+    font-weight: 500;
     color: var(--text-muted);
+    opacity: 0.7;
 }
 
 .post-body {
+    font-size: 1.125rem;
     line-height: 1.7;
+    text-wrap: pretty;
+}
+
+.post-body h1 {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+    text-wrap: pretty;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 .post-body h2 {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 600;
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
+    margin: 2.5rem 0 0.75rem;
+    line-height: 1.25;
+}
+
+.post-body h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2rem 0 0.5rem;
 }
 
 .post-body p {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    overflow-wrap: break-word;
+}
+
+.post-body a {
+    color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: text-underline-offset 0.2s ease;
+}
+
+.post-body a:hover {
+    text-underline-offset: 4px;
+}
+
+.post-body ul,
+.post-body ol {
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.post-body li {
+    margin: 0.5rem 0;
+}
+
+.post-body blockquote {
+    margin: 2rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--line);
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.post-body code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    background: var(--quiet);
+    border: 1px solid var(--line);
+    border-radius: 0.375rem;
+    padding: 0.15rem 0.4rem;
+    color: var(--text);
+}
+
+.post-body pre {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    background: var(--quiet);
+    border: 1px solid var(--line);
+}
+
+.post-body pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 0.8rem;
+    line-height: 1.6;
 }
 
 .post-body strong {
     font-weight: 600;
+}
+
+.post-body hr {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 2.5rem 0;
 }
