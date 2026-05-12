@@ -463,7 +463,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   const dateIso = date.toISOString().split("T")[0];
   const dateDisplay = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-  const postBody = Bun.markdown.html(body);
+  const postBody = Bun.markdown.html(body).replaceAll("{{", "&#123;&#123;").replaceAll("}}", "&#125;&#125;");
 
   const page = await renderTokens(
     `blog post ${slug}`,
