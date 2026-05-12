@@ -422,6 +422,26 @@ function parseDirectMarkdownPath(pathname: string): string | undefined {
   return `src/content/${name}.md`;
 }
 
+function isSafeHref(href: string): boolean {
+  return /^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href) || /^\//.test(href) || /^#/.test(href);
+}
+
+function escapeCommentMarkers(text: string): string {
+  return text.replace(/<!--/g, "&lt;!--").replace(/-->/g, "--&gt;");
+}
+
+function safeMarkdownHtml(markdown: string): string {
+  return Bun.markdown.render(markdown, {
+    html: () => "",
+    codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
+    code: (text) => `<pre><code>${escapeCommentMarkers(text)}</code></pre>`,
+    link: (children, attrs: { href: string }) => {
+      if (!isSafeHref(attrs.href)) return children;
+      return `<a href="${attrs.href}">${children}</a>`;
+    },
+  });
+}
+
 async function renderBlogList(): Promise<string> {
   const posts = await discoverBlogPosts();
   const items = posts
@@ -465,7 +485,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   const dateIso = date.toISOString().split("T")[0];
   const dateDisplay = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-  const postBody = Bun.markdown.html(body).replaceAll("{{", "&#123;&#123;").replaceAll("}}", "&#125;&#125;");
+  const postBody = safeMarkdownHtml(body).replaceAll("{{", "&#123;&#123;").replaceAll("}}", "&#125;&#125;");
 
   let page = await renderTokens(
     `blog post ${slug}`,
