@@ -49,6 +49,13 @@ const unresolvedTokenPattern = /{{[^}]+}}/;
 const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
 const iconCache = new Map<string, string>();
 
+const assetVersion = String(
+  Math.max(
+    Bun.file("public/shared.css").lastModified,
+    Bun.file("public/main.js").lastModified,
+  ),
+);
+
 const pageMeta: Record<string, PageMeta> = {
   index: {
     title: "Shibumi Stack: refined simplicity for shipping web apps",
@@ -340,6 +347,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
     title: meta?.title ?? "Shibumi Stack",
     description: meta?.description ?? "A lean, opinionated web stack for building calm, durable apps.",
     canonical: `https://shibumistack.dev${meta?.path ?? files.routePath}`,
+    "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(new Date().getFullYear()) });
   const installDialog = await part("install-dialog");
@@ -472,6 +480,7 @@ async function renderBlogList(): Promise<string> {
     title: "Blog — Shibumi Stack",
     description: "Notes on building calm, durable web apps.",
     canonical: "https://shibumistack.dev/blog",
+    "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(new Date().getFullYear()) });
   const installDialog = await part("install-dialog");
@@ -513,6 +522,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
     title: `${escapeHtml(title)} — Shibumi Stack`,
     description: "Notes on building calm, durable web apps.",
     canonical: `https://shibumistack.dev/blog/${slug}`,
+    "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(new Date().getFullYear()) });
   const installDialog = await part("install-dialog");
