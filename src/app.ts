@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import type { Context } from "hono";
 import { readdir } from "node:fs/promises";
+import { YAML } from "bun";
 
 const app = new Hono();
 
@@ -10,7 +11,7 @@ type MediaRange = {
   quality: number;
 };
 
-const activePages = ["home", "docs", "roadmap", "brand"] as const;
+const activePages = ["home", "docs", "roadmap", "brand", "blog"] as const;
 
 type ActivePage = (typeof activePages)[number];
 
@@ -29,11 +30,19 @@ type PageFiles = {
   markdownPath?: string;
 };
 
+type BlogPost = {
+  slug: string;
+  title: string;
+  date: Date;
+  path: string;
+};
+
 const safeNameSource = "[a-z0-9][a-z0-9-]*";
 const fileStemPattern = new RegExp(`^${safeNameSource}$`);
 const iconTokenPattern = new RegExp(`{{icon\\((${safeNameSource})\\)}}`, "g");
 const activeTokenPattern = new RegExp(`{{active\\((${safeNameSource})\\)}}`, "g");
 const pageRoutePattern = new RegExp(`^\\/(${safeNameSource})\\/?$`);
+const blogPostPattern = new RegExp(`^\\/blog\\/(${safeNameSource})$`);
 const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
 const unresolvedTokenPattern = /{{[^}]+}}/;
 const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
@@ -111,6 +120,57 @@ async function existingPath(paths: string[]): Promise<string | undefined> {
       return path;
     }
   }
+}
+
+function parseFrontmatter(text: string): { frontmatter: Record<string, unknown>; body: string } {
+  if (!text.startsWith("---")) {
+    return { frontmatter: {}, body: text };
+  }
+
+  const end = text.indexOf("---", 3);
+  if (end === -1) {
+    return { frontmatter: {}, body: text };
+  }
+
+  return {
+    frontmatter: (YAML.parse(text.slice(3, end).trim()) as Record<string, unknown> | undefined) ?? {},
+    body: text.slice(end + 3).trimStart(),
+  };
+}
+
+async function discoverBlogPosts(): Promise<BlogPost[]> {
+  const dir = "src/content/blog";
+  const posts: BlogPost[] = [];
+
+  try {
+    const stat = await import("node:fs/promises").then((fs) => fs.stat(dir));
+    if (!stat.isDirectory()) return posts;
+  } catch {
+    return posts;
+  }
+
+  const entries = await readdir(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith(".md")) continue;
+
+    const slug = entry.name.slice(0, -3);
+    if (!fileStemPattern.test(slug)) {
+      throw new Error(`Unsafe file name in ${dir}: ${entry.name}`);
+    }
+
+    const text = await read(`${dir}/${entry.name}`);
+    const { frontmatter } = parseFrontmatter(text);
+    const date = frontmatter?.date ? new Date(String(frontmatter.date)) : new Date(0);
+
+    posts.push({
+      slug,
+      title: String(frontmatter?.title || slug),
+      date,
+      path: `${dir}/${entry.name}`,
+    });
+  }
+
+  return posts.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
 async function discoverNames(dir: string, extension: string): Promise<Set<string>> {
@@ -360,12 +420,99 @@ function parseDirectMarkdownPath(pathname: string): string | undefined {
   return `src/content/${name}.md`;
 }
 
+async function renderBlogList(): Promise<string> {
+  const posts = await discoverBlogPosts();
+  const items = posts
+    .map(
+      (post) =>
+        `<li><a href="/blog/${post.slug}">${escapeHtml(post.title)}</a><time datetime="${post.date.toISOString().split("T")[0]}">${post.date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></li>`,
+    )
+    .join("\n");
+
+  const page = await renderTokens("blog list", await read("src/pages/blog.html"), { posts: items }, "blog");
+  let layout = await renderTokens("layout", await read("src/layout.html"), {
+    title: "Blog — Shibumi Stack",
+    description: "Notes on building calm, durable web apps.",
+    canonical: "https://shibumistack.dev/blog",
+  });
+  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const installDialog = await part("install-dialog");
+
+  layout = insert(layout, "meta", await metaTags({ title: "Blog — Shibumi Stack", description: "Notes on building calm, durable web apps.", path: "/blog" }));
+  layout = insert(layout, "page-style", await pageStyle("src/pages/blog.css"));
+  layout = insert(layout, "nav", await nav("blog"));
+  layout = insert(layout, "page", page);
+  layout = insert(layout, "footer", footer + installDialog);
+  layout = insert(layout, "page-script", "");
+
+  assertNoInserts(layout);
+  return layout;
+}
+
+async function renderBlogPost(slug: string): Promise<string | undefined> {
+  const posts = await discoverBlogPosts();
+  const post = posts.find((p) => p.slug === slug);
+  if (!post) return;
+
+  const text = await read(post.path);
+  const { frontmatter, body } = parseFrontmatter(text);
+  const title = String(frontmatter.title || post.slug);
+  const date = post.date;
+  const dateIso = date.toISOString().split("T")[0];
+  const dateDisplay = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  const postBody = Bun.markdown.html(body);
+
+  const page = await renderTokens(
+    `blog post ${slug}`,
+    await read("src/pages/blog/post.html"),
+    { title: escapeHtml(title), "date-iso": dateIso, date: dateDisplay, body: postBody },
+    "blog",
+  );
+
+  let layout = await renderTokens("layout", await read("src/layout.html"), {
+    title: `${escapeHtml(title)} — Shibumi Stack`,
+    description: "Notes on building calm, durable web apps.",
+    canonical: `https://shibumistack.dev/blog/${slug}`,
+  });
+  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const installDialog = await part("install-dialog");
+
+  layout = insert(
+    layout,
+    "meta",
+    await metaTags({ title: `${title} — Shibumi Stack`, description: "Notes on building calm, durable web apps.", path: `/blog/${slug}` }),
+  );
+  layout = insert(layout, "page-style", await pageStyle("src/pages/blog/post.css"));
+  layout = insert(layout, "nav", await nav("blog"));
+  layout = insert(layout, "page", page);
+  layout = insert(layout, "footer", footer + installDialog);
+  layout = insert(layout, "page-script", "");
+
+  assertNoInserts(layout);
+  return layout;
+}
+
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {
     return next();
   }
 
   const pathname = new URL(c.req.url).pathname;
+
+  if (pathname === "/blog") {
+    return c.html(await renderBlogList());
+  }
+
+  const blogMatch = pathname.match(blogPostPattern);
+  if (blogMatch) {
+    const postHtml = await renderBlogPost(blogMatch[1]);
+    if (postHtml) {
+      return c.html(postHtml);
+    }
+    return next();
+  }
+
   const directMarkdown = parseDirectMarkdownPath(pathname);
   if (directMarkdown && await Bun.file(directMarkdown).exists()) {
     return markdown(c, directMarkdown, "text/plain");

@@ -84,6 +84,32 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Nothing here.");
   });
+
+  test("serves blog listing page", async () => {
+    const res = await app.request("/blog");
+    const body = await res.text();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/html");
+    expect(body).toContain("Blog");
+    expect(body).toContain("Hello, Shibumi");
+  });
+
+  test("serves individual blog posts", async () => {
+    const res = await app.request("/blog/hello-shibumi");
+    const body = await res.text();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/html");
+    expect(body).toContain("Hello, Shibumi");
+    expect(body).toContain("own your source");
+  });
+
+  test("returns 404 for unknown blog posts", async () => {
+    const res = await app.request("/blog/not-a-post");
+
+    expect(res.status).toBe(404);
+  });
 });
 
 describe("icons", () => {
