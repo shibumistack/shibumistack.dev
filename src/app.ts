@@ -1,12 +1,65 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import type { Context } from "hono";
+import { readdir } from "node:fs/promises";
 
 const app = new Hono();
 
 type MediaRange = {
   type: string;
   quality: number;
+};
+
+const activePages = ["home", "docs", "roadmap", "brand"] as const;
+
+type ActivePage = (typeof activePages)[number];
+
+type PageMeta = {
+  title: string;
+  description: string;
+  path: string;
+};
+
+type PageFiles = {
+  key: string;
+  routePath: string;
+  pagePath?: string;
+  stylePath?: string;
+  scriptPath?: string;
+  markdownPath?: string;
+};
+
+const safeNameSource = "[a-z0-9][a-z0-9-]*";
+const fileStemPattern = new RegExp(`^${safeNameSource}$`);
+const iconTokenPattern = new RegExp(`{{icon\\((${safeNameSource})\\)}}`, "g");
+const activeTokenPattern = new RegExp(`{{active\\((${safeNameSource})\\)}}`, "g");
+const pageRoutePattern = new RegExp(`^\\/(${safeNameSource})\\/?$`);
+const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
+const unresolvedTokenPattern = /{{[^}]+}}/;
+const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
+const iconCache = new Map<string, string>();
+
+const pageMeta: Record<string, PageMeta> = {
+  index: {
+    title: "Shibumi Stack: refined simplicity for shipping web apps",
+    description: "A lean, opinionated web stack for building calm, durable apps with Bun, Hono, Drizzle, Alpine, and Zod.",
+    path: "/",
+  },
+  brand: {
+    title: "Brand — Shibumi Stack",
+    description: "Shibumi Stack brand assets, logos, colors, and usage guidance.",
+    path: "/brand",
+  },
+  docs: {
+    title: "Docs — Shibumi Stack",
+    description: "Technical decisions behind Shibumi Stack: Bun, Hono, Drizzle, Alpine, Zod, owned source, and deploy targets.",
+    path: "/docs",
+  },
+  building: {
+    title: "Roadmap — Shibumi Stack",
+    description: "What ships first, what comes next, and where the design is still open.",
+    path: "/building",
+  },
 };
 
 function parseAccept(accept: string): MediaRange[] {
@@ -48,149 +101,296 @@ async function markdown(c: Context, path: string, contentType = "text/markdown")
   });
 }
 
-type NavItem = {
-  href: string;
-  label: string;
-  key: "install" | "docs" | "roadmap" | "brand";
-};
-
-const navItems: NavItem[] = [
-  { href: "/", label: "Home", key: "home" },
-  { href: "#install", label: "Install", key: "install" },
-  { href: "/docs", label: "Docs", key: "docs" },
-  { href: "/building", label: "Roadmap", key: "roadmap" },
-  { href: "/brand", label: "Brand", key: "brand" },
-];
-
-const themeToggle = `<button class="theme-toggle" type="button" aria-label="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>`;
-
-const installDialog = `<dialog class="install-dialog" id="install-dialog">
-  <div class="install-dialog-content">
-    <div class="install-dialog-head">
-      <span class="kanji">渋み</span>
-      <span>Get started</span>
-    </div>
-    <p class="install-dialog-hint">Run this in your terminal to scaffold a new project.</p>
-    <div class="install-dialog-command">
-      <span class="prompt-mark">›</span>
-      <code>bun create shibumi@latest</code>
-      <button class="copy-command" type="button" data-copy="bun create shibumi@latest" aria-label="Copy install command"><svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg><svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></button>
-    </div>
-    <p class="install-dialog-alt">or <code>npm create shibumi@latest</code></p>
-  </div>
-</dialog>`;
-
-function siteNav(active?: NavItem["key"]): string {
-  const links = navItems
-    .map((item) => {
-      if (item.key === "install") {
-        return `<button class="nav-install" type="button">${item.label}</button>`;
-      }
-      const current = item.key === active ? ' aria-current="page"' : "";
-      return `<a href="${item.href}"${current}>${item.label}</a>`;
-    })
-    .join("");
-
-  return `<header>
-            <a class="mark" href="/" aria-label="Shibumi Stack home"><img src="/brand/logos/shibumistack-light.png" alt=""><span>shibumistack<span class="mark-tld">.dev</span></span></a>
-            <nav aria-label="Primary">${links}<a class="github-link" href="https://github.com/shibumistack/shibumistack.dev" aria-label="GitHub repository"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg></a>${themeToggle}</nav>
-        </header>`;
+async function read(path: string): Promise<string> {
+  return Bun.file(path).text();
 }
 
-function siteFooter(): string {
-  return `<footer class="site-footer">
-            <span>MIT License &copy; ${new Date().getFullYear()} Shibumi Stack</span>
-            <span class="made-with">Made with &hearts; by <a href="https://bitbonsai.com">@bitbonsai</a></span>
-            <div class="footer-links">
-                <a href="/docs">Docs</a>
-                <a href="/building">Roadmap</a>
-                <a href="https://github.com/shibumistack" aria-label="GitHub">GitHub</a>
-                <a href="mailto:info@shibumistack.dev">Contact</a>
-            </div>
-        </footer>`;
-}
-
-function siteMeta(title: string, description: string, path: string): string {
-  const url = `https://shibumistack.dev${path}`;
-  return `<meta property="og:type" content="website">
-    <meta property="og:url" content="${url}">
-    <meta property="og:title" content="${title}">
-    <meta property="og:description" content="${description}">
-    <meta property="og:image" content="https://shibumistack.dev/og.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:site_name" content="Shibumi Stack">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="${url}">
-    <meta name="twitter:title" content="${title}">
-    <meta name="twitter:description" content="${description}">
-    <meta name="twitter:image" content="https://shibumistack.dev/og.png">
-    <meta name="twitter:creator" content="@bitbonsai">`;
-}
-
-async function html(path: string, active?: NavItem["key"], meta?: { title: string; description: string; path: string }): Promise<string> {
-  let content = (await Bun.file(path).text())
-    .replace("<!-- shibumi-nav -->", siteNav(active))
-    .replace("<!-- shibumi-footer -->", siteFooter() + installDialog);
-  if (meta) {
-    content = content.replace("<!-- shibumi-meta -->", siteMeta(meta.title, meta.description, meta.path));
+async function existingPath(paths: string[]): Promise<string | undefined> {
+  for (const path of paths) {
+    if (await Bun.file(path).exists()) {
+      return path;
+    }
   }
+}
+
+async function discoverNames(dir: string, extension: string): Promise<Set<string>> {
+  const names = new Set<string>();
+  const entries = await readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith(extension)) continue;
+
+    const name = entry.name.slice(0, -extension.length);
+    if (!fileStemPattern.test(name)) {
+      throw new Error(`Unsafe file name in ${dir}: ${entry.name}`);
+    }
+
+    names.add(name);
+  }
+
+  return names;
+}
+
+async function hasDiscoveredName(dir: string, extension: string, name: string): Promise<boolean> {
+  if (!fileStemPattern.test(name)) return false;
+
+  const names = await discoverNames(dir, extension);
+  return names.has(name);
+}
+
+export async function iconNames(): Promise<string[]> {
+  return Array.from(await discoverNames("src/icons", ".svg")).sort();
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+export async function icon(name: string): Promise<string> {
+  if (!(await hasDiscoveredName("src/icons", ".svg", name))) {
+    throw new Error(`Unknown icon: ${name}`);
+  }
+
+  const cached = iconCache.get(name);
+  if (cached) return cached;
+
+  const svg = await read(`src/icons/${name}.svg`);
+  iconCache.set(name, svg);
+  return svg;
+}
+
+function isActivePage(page: string): page is ActivePage {
+  return activePages.includes(page as ActivePage);
+}
+
+async function replaceAsync(
+  content: string,
+  pattern: RegExp,
+  replace: (match: RegExpMatchArray) => Promise<string> | string,
+): Promise<string> {
+  let result = "";
+  let lastIndex = 0;
+
+  for (const match of content.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    result += content.slice(lastIndex, index);
+    result += await replace(match);
+    lastIndex = index + match[0].length;
+  }
+
+  return result + content.slice(lastIndex);
+}
+
+async function replaceIconTokens(content: string): Promise<string> {
+  return replaceAsync(content, iconTokenPattern, async (match) => {
+    const name = match[1];
+    if (!(await hasDiscoveredName("src/icons", ".svg", name))) {
+      throw new Error(`Unknown icon token: ${name}`);
+    }
+    return icon(name);
+  });
+}
+
+function replaceActiveTokens(content: string, active?: ActivePage): string {
+  return content.replaceAll(activeTokenPattern, (_token, page: string) => {
+    if (!isActivePage(page)) {
+      throw new Error(`Unknown active page token: ${page}`);
+    }
+    return active === page ? ' aria-current="page"' : "";
+  });
+}
+
+function replaceValueTokens(content: string, vars: Record<string, string>): string {
+  for (const [key, value] of Object.entries(vars)) {
+    content = content.replaceAll(`{{${key}}}`, escapeHtml(value));
+  }
+
   return content;
 }
 
-app.get("/", async (c) => {
-  if (wantsMarkdown(c)) {
-    return markdown(c, "public/index.md");
+function assertNoTokens(label: string, content: string): void {
+  const unresolved = content.match(unresolvedTokenPattern);
+  if (unresolved) {
+    throw new Error(`Unresolved token in ${label}: ${unresolved[0]}`);
   }
-  return c.html(await html("src/index.html", "home"));
-});
+}
 
-app.get("/brand", async (c) => {
-  if (wantsMarkdown(c)) {
-    return markdown(c, "public/brand.md");
+function assertNoInserts(content: string): void {
+  const unresolved = content.match(unresolvedInsertPattern);
+  if (unresolved) {
+    throw new Error(`Unresolved insert: ${unresolved[0]}`);
   }
-  return c.html(await html("src/brand.html", "brand", {
-    title: "Brand — Shibumi Stack",
-    description: "Shibumi Stack brand assets, logos, colors, and usage guidance.",
-    path: "/brand",
-  }));
-});
+}
 
-app.get("/docs", async (c) => {
-  if (wantsMarkdown(c)) {
-    return markdown(c, "public/docs.md");
+async function renderTokens(label: string, content: string, vars: Record<string, string> = {}, active?: ActivePage): Promise<string> {
+  content = await replaceIconTokens(content);
+  content = replaceActiveTokens(content, active);
+  content = replaceValueTokens(content, vars);
+  assertNoTokens(label, content);
+
+  return content;
+}
+
+async function part(name: string, vars: Record<string, string> = {}, active?: ActivePage): Promise<string> {
+  if (!(await hasDiscoveredName("src/parts", ".html", name))) {
+    throw new Error(`Unknown part: ${name}`);
   }
-  return c.html(await html("src/docs.html", "docs", {
-    title: "Docs — Shibumi Stack",
-    description: "Technical decisions behind Shibumi Stack: Bun, Hono, Drizzle, Alpine, Zod, owned source, and deploy targets.",
-    path: "/docs",
-  }));
-});
 
-app.get("/building", async (c) => {
-  if (wantsMarkdown(c)) {
-    return markdown(c, "public/building.md");
+  return renderTokens(`part ${name}`, await read(`src/parts/${name}.html`), vars, active);
+}
+
+async function nav(active?: ActivePage): Promise<string> {
+  return part("nav", {}, active);
+}
+
+async function metaTags(meta?: PageMeta): Promise<string> {
+  if (!meta) return "";
+
+  return part("meta", {
+    url: `https://shibumistack.dev${meta.path}`,
+    title: meta.title,
+    description: meta.description,
+  });
+}
+
+function insert(content: string, name: string, value: string): string {
+  return content.replaceAll(`<!-- insert:${name} -->`, value);
+}
+
+async function pageStyle(path?: string): Promise<string> {
+  if (!path) return "";
+  return `<style data-page>\n${await read(path)}\n</style>`;
+}
+
+async function pageScript(path?: string): Promise<string> {
+  if (!path) return "";
+  return `<script data-page-script>\n${await read(path)}\n</script>`;
+}
+
+async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Promise<string> {
+  const page = files.pagePath ? await renderTokens(`page ${files.key}`, await read(files.pagePath)) : "";
+  let layout = await renderTokens("layout", await read("src/layout.html"), {
+    title: meta?.title ?? "Shibumi Stack",
+    description: meta?.description ?? "A lean, opinionated web stack for building calm, durable apps.",
+    canonical: `https://shibumistack.dev${meta?.path ?? files.routePath}`,
+  });
+  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const installDialog = await part("install-dialog");
+
+  layout = insert(layout, "meta", await metaTags(meta));
+  layout = insert(layout, "page-style", await pageStyle(files.stylePath));
+  layout = insert(layout, "nav", await nav(active));
+  layout = insert(layout, "page", page);
+  layout = insert(layout, "footer", footer + installDialog);
+  layout = insert(layout, "page-script", await pageScript(files.scriptPath));
+
+  assertNoInserts(layout);
+
+  return layout;
+}
+
+function activePageFor(key: string): ActivePage | undefined {
+  if (key === "index") return "home";
+  if (key === "building") return "roadmap";
+  if (isActivePage(key)) return key;
+}
+
+function parseRouteKey(pathname: string): { key: string; routePath: string } | undefined {
+  if (pathname === "/") {
+    return { key: "index", routePath: "/" };
   }
-  return c.html(await html("src/building.html", "roadmap", {
-    title: "Roadmap — Shibumi Stack",
-    description: "What ships first, what comes next, and where the design is still open.",
-    path: "/building",
-  }));
-});
 
-app.get("/index.md", (c) => markdown(c, "public/index.md", "text/plain"));
-app.get("/brand.md", (c) => markdown(c, "public/brand.md", "text/plain"));
-app.get("/docs.md", (c) => markdown(c, "public/docs.md", "text/plain"));
-app.get("/building.md", (c) => markdown(c, "public/building.md", "text/plain"));
-app.get("/dx.md", (c) => markdown(c, "public/dx.md", "text/plain"));
-app.get("/README.md", (c) => markdown(c, "public/README.md", "text/plain"));
-app.get("/CONTRIBUTING.md", (c) => markdown(c, "public/CONTRIBUTING.md", "text/plain"));
+  const match = pathname.match(pageRoutePattern);
+  if (!match || match[1] === "404") {
+    return;
+  }
+
+  return { key: match[1], routePath: `/${match[1]}` };
+}
+
+async function pageFiles(pathname: string): Promise<PageFiles | undefined> {
+  const route = parseRouteKey(pathname);
+  if (!route) return;
+
+  const pagePath = await existingPath([
+    `src/pages/${route.key}.html`,
+    `src/pages/${route.key}/index.html`,
+  ]);
+  const stylePath = await existingPath([
+    `src/pages/${route.key}.css`,
+    `src/pages/${route.key}/index.css`,
+  ]);
+  const scriptPath = await existingPath([
+    `src/pages/${route.key}.js`,
+    `src/pages/${route.key}/index.js`,
+  ]);
+  const markdownPath = await existingPath([
+    `public/${route.key}.md`,
+    `public/${route.key}/index.md`,
+  ]);
+
+  if (!pagePath && !markdownPath) {
+    return;
+  }
+
+  return {
+    key: route.key,
+    routePath: route.routePath,
+    pagePath,
+    stylePath,
+    scriptPath,
+    markdownPath,
+  };
+}
+
+function parseDirectMarkdownPath(pathname: string): string | undefined {
+  const match = pathname.match(directMarkdownPattern);
+  if (!match) return;
+
+  return `public/${match[1]}.md`;
+}
+
+app.use("*", async (c, next) => {
+  if (c.req.method !== "GET" && c.req.method !== "HEAD") {
+    return next();
+  }
+
+  const pathname = new URL(c.req.url).pathname;
+  const directMarkdown = parseDirectMarkdownPath(pathname);
+  if (directMarkdown && await Bun.file(directMarkdown).exists()) {
+    return markdown(c, directMarkdown, "text/plain");
+  }
+
+  const files = await pageFiles(pathname);
+  if (!files) {
+    return next();
+  }
+
+  if (files.markdownPath && (!files.pagePath || wantsMarkdown(c))) {
+    return markdown(c, files.markdownPath);
+  }
+
+  if (files.pagePath) {
+    return c.html(await html(files, activePageFor(files.key), pageMeta[files.key]));
+  }
+
+  return next();
+});
 
 app.use("/*", serveStatic({ root: "./public" }));
 
 app.notFound(async (c) => {
-  return c.html(await html("src/404.html", undefined, {
+  return c.html(await html({
+    key: "404",
+    routePath: "/404",
+    pagePath: "src/pages/404.html",
+    stylePath: "src/pages/404.css",
+  }, undefined, {
     title: "404 — Shibumi Stack",
     description: "Page not found.",
     path: "/404",

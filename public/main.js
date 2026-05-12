@@ -1,6 +1,7 @@
 (() => {
   const parser = new DOMParser();
-  const cache = {};
+  const cache = new Map();
+  let navigationId = 0;
 
   function initTheme() {
     const stored = localStorage.getItem("shibumi-theme");
@@ -26,12 +27,14 @@
   }
 
   async function fetchPage(path) {
-    if (cache[path]) return cache[path];
+    let text = cache.get(path);
+    if (text) return parser.parseFromString(text, "text/html");
+
     const res = await fetch(path, { headers: { accept: "text/html" } });
     if (!res.ok) throw new Error(res.status);
-    const doc = parser.parseFromString(await res.text(), "text/html");
-    cache[path] = doc;
-    return doc;
+    text = await res.text();
+    cache.set(path, text);
+    return parser.parseFromString(text, "text/html");
   }
 
   function loadStyles(nextDoc) {
@@ -83,20 +86,35 @@
     const oldFooter = document.querySelector(".site-footer");
     const newFooter = nextDoc.querySelector(".site-footer");
     if (oldFooter && newFooter) oldFooter.replaceWith(newFooter);
+
+    for (const script of document.querySelectorAll("script[data-page-script]")) {
+      script.remove();
+    }
+    const newScript = nextDoc.querySelector("script[data-page-script]");
+    if (newScript) {
+      const script = document.createElement("script");
+      script.setAttribute("data-page-script", "");
+      script.textContent = newScript.textContent;
+      document.body.appendChild(script);
+    }
   }
 
   async function navigate(path, push) {
+    const id = ++navigationId;
     let nextDoc;
     try {
       nextDoc = await fetchPage(path);
     } catch {
+      if (id !== navigationId) return;
       location.href = path;
       return;
     }
 
     await loadStyles(nextDoc);
+    if (id !== navigationId) return;
 
     const doSwap = () => {
+      if (id !== navigationId) return;
       swap(nextDoc);
       if (push) history.pushState({ path }, "", path);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });

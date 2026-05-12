@@ -192,6 +192,24 @@ nav a[aria-current="page"] {
     font: 700 0.75rem/1 var(--font-mono);
 }
 
+.hero {
+    display: grid;
+    grid-template-columns: var(--hero-columns, minmax(0, 1fr) minmax(15.625rem, 0.55fr));
+    gap: var(--hero-gap, clamp(2rem, 7vw, 6rem));
+    align-items: var(--hero-align, start);
+    margin-top: clamp(2.5rem, 6vw, 4.5rem);
+    margin-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+.hero h1 {
+    max-width: var(--hero-title-max, 9ch);
+    margin: 0;
+    font-size: var(--hero-title-size, clamp(4rem, 10vw, 8.2rem));
+    line-height: 0.88;
+    letter-spacing: -0.065em;
+    font-weight: 400;
+}
+
 /* ---- buttons ---- */
 
 .btn {
@@ -422,6 +440,8 @@ nav a[aria-current="page"] {
     .shell { padding-top: 6rem; }
     header { align-items: flex-start; }
     nav { flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem; }
+    .hero { grid-template-columns: 1fr; }
+    .hero h1 { max-width: var(--hero-title-mobile-max, 10ch); }
     .site-footer { flex-direction: column; gap: 0.75rem; text-align: center; }
 }
 

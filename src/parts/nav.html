@@ -1,0 +1,20 @@
+<header>
+    <a class="mark" href="/" aria-label="Shibumi Stack home">
+        <img src="/brand/logos/shibumistack-light.png" alt="">
+        <span>shibumistack<span class="mark-tld">.dev</span></span>
+    </a>
+    <nav aria-label="Primary">
+        <a href="/"{{active(home)}}>Home</a>
+        <button class="nav-install" type="button">Install</button>
+        <a href="/docs"{{active(docs)}}>Docs</a>
+        <a href="/building"{{active(roadmap)}}>Roadmap</a>
+        <a href="/brand"{{active(brand)}}>Brand</a>
+        <a class="github-link" href="https://github.com/shibumistack/shibumistack.dev" aria-label="GitHub repository">
+            {{icon(github)}}
+        </a>
+        <button class="theme-toggle" type="button" aria-label="Toggle theme">
+            {{icon(sun)}}
+            {{icon(moon)}}
+        </button>
+    </nav>
+</header>

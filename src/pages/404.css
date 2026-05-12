@@ -1,0 +1,31 @@
+.lost {
+            display: grid;
+            place-content: center;
+            min-height: calc(100svh - 12rem);
+            text-align: center;
+        }
+
+        .lost h1 {
+            margin: 0;
+            font-size: clamp(5rem, 12vw, 10rem);
+            line-height: 0.88;
+            letter-spacing: -0.065em;
+            font-weight: 400;
+        }
+
+        .lost p {
+            margin: 1.5rem 0 0;
+            color: var(--muted);
+            font-size: clamp(1.08rem, 1.55vw, 1.28rem);
+            line-height: 1.6;
+        }
+
+        .lost a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid light-dark(rgba(161, 75, 44, 0.35), rgba(199, 102, 71, 0.35));
+        }
+
+        .lost a:hover {
+            border-bottom-color: var(--accent);
+        }
