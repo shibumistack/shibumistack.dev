@@ -438,7 +438,10 @@ function safeMarkdownHtml(markdown: string): string {
     strong: (children) => `<strong>${children}</strong>`,
     emphasis: (children) => `<em>${children}</em>`,
     codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
-    code: (text) => `<pre><code>${escapeCommentMarkers(text)}</code></pre>`,
+    code: (text, meta?: { language?: string }) => {
+      const lang = meta?.language ? ` language="${meta.language}"` : "";
+      return `<pre><code${lang}>${escapeCommentMarkers(text)}</code></pre>`;
+    },
     link: (children, attrs: { href: string }) => {
       if (!isSafeHref(attrs.href)) return children;
       return `<a href="${attrs.href}">${children}</a>`;
