@@ -87,6 +87,7 @@
     border-radius: 0.375rem;
     padding: 0.15rem 0.4rem;
     color: var(--text);
+    white-space: nowrap;
 }
 
 .post-body pre {
