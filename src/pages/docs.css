@@ -14,10 +14,10 @@ section { margin-top:clamp(4rem,8vw,6rem); }
 code { font-family:var(--font-mono); }
 .code-block { margin:1.6rem 0 0; padding:1rem; overflow-x:auto; border:.0625rem solid var(--line); border-radius:.5rem; background:var(--quiet); color:light-dark(rgba(26,26,26,.82), rgba(232,226,214,.82)); font:.88rem/1.6 var(--font-mono); }
 .code-block code { font:inherit; }
-[glow] b { color:#cba6f7; font-weight:700; }
-[glow] em { color:#a6e3a1; font-style:normal; }
-[glow] strong { color:#89dceb; font-weight:700; }
-[glow] i { color:#f5c2e7; font-style:normal; opacity:.72; }
-[glow] sup { color:#6c7086; font-size:inherit; vertical-align:baseline; }
+[glow] b { color:light-dark(#7287fd, #cba6f7); font-weight:700; }
+[glow] em { color:light-dark(#40a02b, #a6e3a1); font-style:normal; }
+[glow] strong { color:light-dark(#04a5e5, #89dceb); font-weight:700; }
+[glow] i { color:light-dark(#ea76cb, #f5c2e7); font-style:normal; opacity:.72; }
+[glow] sup { color:light-dark(#9ca0b0, #6c7086); font-size:inherit; vertical-align:baseline; }
 .command { margin-top:1.5rem; }
 @media (max-width:51.25rem) { .rows li, .decision { grid-template-columns:1fr; gap:.25rem; } }
