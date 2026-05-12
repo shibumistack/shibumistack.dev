@@ -1,6 +1,7 @@
 ---
 title: Hello, Shibumi
 date: 2026-05-12
+excerpt: The first post on the Shibumi Stack blog. An introduction to the stack and what we're building.
 ---
 
 # Hello, Shibumi

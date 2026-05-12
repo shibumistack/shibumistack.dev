@@ -34,6 +34,7 @@ type BlogPost = {
   slug: string;
   title: string;
   date: Date;
+  excerpt: string;
   path: string;
 };
 
@@ -166,6 +167,7 @@ async function discoverBlogPosts(): Promise<BlogPost[]> {
       slug,
       title: String(frontmatter?.title || slug),
       date,
+      excerpt: String(frontmatter?.excerpt || ""),
       path: `${dir}/${entry.name}`,
     });
   }
@@ -425,7 +427,7 @@ async function renderBlogList(): Promise<string> {
   const items = posts
     .map(
       (post) =>
-        `<li><a href="/blog/${post.slug}">${escapeHtml(post.title)}</a><time datetime="${post.date.toISOString().split("T")[0]}">${post.date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></li>`,
+        `<li><a href="/blog/${post.slug}"><time datetime="${post.date.toISOString().split("T")[0]}">${post.date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time><h2>${escapeHtml(post.title)}</h2>${post.excerpt ? `<p>${escapeHtml(post.excerpt)}</p>` : ""}</a></li>`,
     )
     .join("\n");
 

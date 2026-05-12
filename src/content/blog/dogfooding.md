@@ -1,6 +1,7 @@
 ---
 title: Dogfooding Shibumi
 date: 2026-05-12
+excerpt: We are building create-shibumi by building shibumistack.dev with it. Not alongside it. With it.
 ---
 
 # Dogfooding Shibumi
