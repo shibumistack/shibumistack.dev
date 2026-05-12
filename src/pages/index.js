@@ -1,4 +1,4 @@
-(() => {
+    (() => {
         const text = "bun create shibumi@latest";
         const typed = document.getElementById("typed");
         const cursor = document.getElementById("cursor");
@@ -11,15 +11,6 @@
             steps.forEach((s) => s.classList.add("visible"));
             return;
         }
-
-        // ms to wait after each step appears before showing the next
-        const delays = [
-            400,   // header → dir
-            700,   // dir → theme
-            900,   // theme → done
-            250,   // done → next
-            250,   // next → docs
-        ];
 
         let i = 0;
 
@@ -37,7 +28,7 @@
         function revealSteps(idx) {
             if (idx >= steps.length) return;
             steps[idx].classList.add("visible");
-            const delay = delays[idx] ?? 250;
+            const delay = 500; // half a second
             setTimeout(() => revealSteps(idx + 1), delay);
         }
 
