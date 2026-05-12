@@ -16,7 +16,8 @@ decisions, roadmap, brand, and planned DX for `create-shibumi`.
 - Static serving: `hono/bun` `serveStatic` from `public/`.
 - Templates: `src/layout.html`, page bodies in `src/pages/`, and fragments in
   `src/parts/`.
-- Shared assets and public Markdown: `public/`.
+- Shared assets: `public/`.
+- Markdown alternates and Markdown-only page content: `src/content/`.
 - Tests: Bun test runner in `test/app.test.ts`.
 - Deployment: Bun server on port `9001`, with Docker and `compose.yaml`.
 
@@ -48,13 +49,14 @@ There is no lint or build script at the moment.
 - `/` maps to the `index` page.
 - One-segment lowercase routes such as `/brand`, `/docs`, and `/building` are
   resolved from `src/pages/{page}.html`, `src/pages/{page}/index.html`,
-  `public/{page}.md`, or `public/{page}/index.md`.
+  `src/content/{page}.md`, or `src/content/{page}/index.md`.
 - When both HTML and Markdown exist, HTML is served by default and Markdown is
   served only when the request prefers `Accept: text/markdown`.
 - Markdown-only pages such as `/dx` serve Markdown directly.
 - Direct Markdown routes such as `/index.md`, `/docs.md`, `/dx.md`, and
-  `/CONTRIBUTING.md` resolve from `public/{name}.md` and return `text/plain`
-  with inline disposition.
+  `/CONTRIBUTING.md` return `text/plain` with inline disposition. Page docs
+  resolve from `src/content/{name}.md`; `README.md` and `CONTRIBUTING.md`
+  resolve from the repo root.
 - Unknown routes render `src/pages/404.html` with status `404`.
 - Remaining paths are served statically from `public/`.
 
@@ -85,15 +87,15 @@ test passing so missing SVG files fail in tests.
 
 ## Content
 
-The public Markdown files are not incidental duplicates. They are part of the
+The Markdown content files are not incidental duplicates. They are part of the
 site contract for humans, agents, and direct source-shaped docs:
 
-- `public/index.md`: homepage source copy.
-- `public/docs.md`: product and architecture decisions.
-- `public/building.md`: roadmap.
-- `public/brand.md`: brand guidance.
-- `public/dx.md`: long-form DX plan.
-- `public/README.md` and `public/CONTRIBUTING.md`: public project docs.
+- `src/content/index.md`: homepage source copy.
+- `src/content/docs.md`: product and architecture decisions.
+- `src/content/building.md`: roadmap.
+- `src/content/brand.md`: brand guidance.
+- `src/content/dx.md`: long-form DX plan.
+- `README.md` and `CONTRIBUTING.md`: repo docs, served inline from root.
 - `public/llms.txt`: crawler/agent-facing summary.
 
 When changing page copy, keep the HTML page and its related Markdown page in
@@ -133,8 +135,8 @@ principle still applies: quiet, readable, deliberate.
 
 Useful planning references:
 
-- `.plans/dx.md` and `public/dx.md`: CLI, templates, extensions, deploy targets,
-  and AI-native `agents.md` fragments.
+- `.plans/dx.md` and `src/content/dx.md`: CLI, templates, extensions, deploy
+  targets, and AI-native `agents.md` fragments.
 - `.plans/vps-deploy-guide.md`: intended self-hosted/VPS deploy documentation.
 - `.plans/design.md`: visual and copy constraints.
 

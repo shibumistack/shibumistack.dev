@@ -66,6 +66,14 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/plain");
     expect(res.headers.get("content-disposition")).toBe("inline");
     expect(body).toContain("# Shibumi Stack");
+
+    const readmeRes = await app.request("/README.md");
+    const readmeBody = await readmeRes.text();
+
+    expect(readmeRes.status).toBe(200);
+    expect(readmeRes.headers.get("content-type")).toContain("text/plain");
+    expect(readmeRes.headers.get("content-disposition")).toBe("inline");
+    expect(readmeBody).toContain("shibumistack.dev");
   });
 
   test("serves 404 page for unknown routes", async () => {

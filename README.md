@@ -26,24 +26,26 @@ bun test    # run route tests
 bun check   # TypeScript check
 ```
 
-## How the site is shaped
+## Project structure
 
 - `src/layout.html` is the document shell.
 - `src/pages/` contains page bodies plus optional page CSS and JS.
 - `src/parts/` contains shared fragments such as nav, footer, and metadata.
 - `src/icons/` contains SVG icons inlined with `{{icon(name)}}`.
+- `src/content/` contains Markdown alternates and Markdown-only pages.
 - `public/main.js` is the shared browser entrypoint.
-- Static files and public Markdown live in `public/`.
+- Static assets live in `public/`.
 
 ## Routing
 
 - `/` maps to the `index` page.
 - One-segment routes such as `/brand`, `/docs`, and `/building` are discovered
-  from `src/pages/{page}.html` and optional `public/{page}.md`.
+  from `src/pages/{page}.html` and optional `src/content/{page}.md`.
 - Markdown-only pages such as `/dx` serve Markdown directly.
 - Requests with `Accept: text/markdown` receive Markdown when a page has a
   Markdown alternate.
-- Direct Markdown links such as `/README.md` are served inline as plain text.
+- Direct Markdown links such as `/docs.md` and `/README.md` are served inline as
+  plain text.
 
 ## Stack
 

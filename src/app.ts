@@ -330,8 +330,8 @@ async function pageFiles(pathname: string): Promise<PageFiles | undefined> {
     `src/pages/${route.key}/index.js`,
   ]);
   const markdownPath = await existingPath([
-    `public/${route.key}.md`,
-    `public/${route.key}/index.md`,
+    `src/content/${route.key}.md`,
+    `src/content/${route.key}/index.md`,
   ]);
 
   if (!pagePath && !markdownPath) {
@@ -352,7 +352,12 @@ function parseDirectMarkdownPath(pathname: string): string | undefined {
   const match = pathname.match(directMarkdownPattern);
   if (!match) return;
 
-  return `public/${match[1]}.md`;
+  const name = match[1];
+  if (name === "README" || name === "CONTRIBUTING") {
+    return `${name}.md`;
+  }
+
+  return `src/content/${name}.md`;
 }
 
 app.use("*", async (c, next) => {
