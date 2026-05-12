@@ -429,7 +429,9 @@ async function renderBlogList(): Promise<string> {
     )
     .join("\n");
 
-  const page = await renderTokens("blog list", await read("src/pages/blog.html"), { posts: items }, "blog");
+  let page = await renderTokens("blog list", await read("src/pages/blog.html"), {}, "blog");
+  page = insert(page, "posts", items);
+
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: "Blog — Shibumi Stack",
     description: "Notes on building calm, durable web apps.",
