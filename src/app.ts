@@ -433,12 +433,23 @@ function escapeCommentMarkers(text: string): string {
 function safeMarkdownHtml(markdown: string): string {
   return Bun.markdown.render(markdown, {
     html: () => "",
+    heading: (children, attrs: { level: number }) => `<h${attrs.level}>${children}</h${attrs.level}>`,
+    paragraph: (children) => `<p>${children}</p>`,
+    strong: (children) => `<strong>${children}</strong>`,
+    emphasis: (children) => `<em>${children}</em>`,
     codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
     code: (text) => `<pre><code>${escapeCommentMarkers(text)}</code></pre>`,
     link: (children, attrs: { href: string }) => {
       if (!isSafeHref(attrs.href)) return children;
       return `<a href="${attrs.href}">${children}</a>`;
     },
+    list: (children, attrs: { ordered: boolean }) => {
+      const tag = attrs.ordered ? "ol" : "ul";
+      return `<${tag}>${children}</${tag}>`;
+    },
+    listItem: (children) => `<li>${children}</li>`,
+    blockquote: (children) => `<blockquote>${children}</blockquote>`,
+
   });
 }
 
