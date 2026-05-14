@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import type { Context } from "hono";
-import { readdir } from "node:fs/promises";
+import { readdir, stat } from "node:fs/promises";
 import { YAML } from "bun";
 
 const app = new Hono();
@@ -48,6 +48,7 @@ const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
 const unresolvedTokenPattern = /{{[^}]+}}/;
 const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
 const iconCache = new Map<string, string>();
+const namesCache = new Map<string, Set<string>>();
 
 const assetVersion = String(
   Math.max(
@@ -151,8 +152,8 @@ async function discoverBlogPosts(): Promise<BlogPost[]> {
   const posts: BlogPost[] = [];
 
   try {
-    const stat = await import("node:fs/promises").then((fs) => fs.stat(dir));
-    if (!stat.isDirectory()) return posts;
+    const s = await stat(dir);
+    if (!s.isDirectory()) return posts;
   } catch {
     return posts;
   }
@@ -183,6 +184,10 @@ async function discoverBlogPosts(): Promise<BlogPost[]> {
 }
 
 async function discoverNames(dir: string, extension: string): Promise<Set<string>> {
+  const key = `${dir}:${extension}`;
+  const cached = namesCache.get(key);
+  if (cached) return cached;
+
   const names = new Set<string>();
   const entries = await readdir(dir, { withFileTypes: true });
 
@@ -197,6 +202,7 @@ async function discoverNames(dir: string, extension: string): Promise<Set<string
     names.add(name);
   }
 
+  namesCache.set(key, names);
   return names;
 }
 

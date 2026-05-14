@@ -1,0 +1,5 @@
+<svg class="icon-menu" viewBox="0 0 24 24" aria-hidden="true">
+    <line class="bar-top" x1="3" y1="12" x2="21" y2="12"/>
+    <line class="bar-mid" x1="3" y1="12" x2="21" y2="12"/>
+    <line class="bar-bot" x1="3" y1="12" x2="21" y2="12"/>
+</svg>

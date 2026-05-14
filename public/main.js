@@ -15,6 +15,23 @@
 
   initTheme();
 
+  function closeMenu() {
+    document.querySelector("header")?.classList.remove("menu-open");
+    const btn = document.querySelector(".menu-toggle");
+    if (btn) btn.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleMenu() {
+    const header = document.querySelector("header");
+    if (header?.classList.contains("menu-open")) {
+      closeMenu();
+    } else {
+      header?.classList.add("menu-open");
+      const btn = document.querySelector(".menu-toggle");
+      if (btn) btn.setAttribute("aria-expanded", "true");
+    }
+  }
+
   function shouldIntercept(event, link) {
     if (event.defaultPrevented || event.button !== 0) return false;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
@@ -115,6 +132,7 @@
 
     const doSwap = () => {
       if (id !== navigationId) return;
+      closeMenu();
       swap(nextDoc);
       if (push) history.pushState({ path }, "", path);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -128,6 +146,18 @@
   }
 
   document.addEventListener("click", (event) => {
+    const menuToggle = event.target.closest(".menu-toggle");
+    if (menuToggle) {
+      toggleMenu();
+      return;
+    }
+
+    if (document.querySelector("header")?.classList.contains("menu-open")) {
+      if (!event.target.closest(".menu-toggle")) {
+        closeMenu();
+      }
+    }
+
     const toggle = event.target.closest(".theme-toggle");
     if (toggle) {
       const current = document.documentElement.getAttribute("data-theme");
@@ -168,7 +198,13 @@
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       const dialog = document.getElementById("install-dialog");
-      if (dialog && dialog.open) dialog.close();
+      if (dialog && dialog.open) {
+        dialog.close();
+        return;
+      }
+      if (document.querySelector("header")?.classList.contains("menu-open")) {
+        closeMenu();
+      }
     }
   });
 

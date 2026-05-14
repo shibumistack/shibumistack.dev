@@ -3,19 +3,28 @@
         <img src="/brand/logos/shibumistack-light.png" alt="">
         <span>shibumistack<span class="mark-tld">.dev</span></span>
     </a>
-    <nav aria-label="Primary">
-        <a href="/"{{active(home)}}>Home</a>
-        <a href="/blog"{{active(blog)}}>Blog</a>
-        <a href="/docs"{{active(docs)}}>Docs</a>
-        <a href="/building"{{active(roadmap)}}>Roadmap</a>
-        <a href="/brand"{{active(brand)}}>Brand</a>
-        <button class="nav-install" type="button">Install</button>
-        <a class="github-link" href="https://github.com/shibumistack/shibumistack.dev" aria-label="GitHub repository">
-            {{icon(github)}}
-        </a>
-        <button class="theme-toggle" type="button" aria-label="Toggle theme">
-            {{icon(sun)}}
-            {{icon(moon)}}
-        </button>
+    <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+        {{icon(menu)}}
+    </button>
+    <nav id="primary-nav" aria-label="Primary">
+        <div class="nav-links">
+            <a href="/"{{active(home)}}>Home</a>
+            <a href="/blog"{{active(blog)}}>Blog</a>
+            <a href="/docs"{{active(docs)}}>Docs</a>
+            <a href="/building"{{active(roadmap)}}>Roadmap</a>
+            <a href="/brand"{{active(brand)}}>Brand</a>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-install" type="button">Install</button>
+            <div class="nav-icons">
+                <a class="github-link" href="https://github.com/shibumistack/shibumistack.dev" aria-label="GitHub repository">
+                    {{icon(github)}}
+                </a>
+                <button class="theme-toggle" type="button" aria-label="Toggle theme">
+                    {{icon(sun)}}
+                    {{icon(moon)}}
+                </button>
+            </div>
+        </div>
     </nav>
 </header>

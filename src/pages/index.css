@@ -279,6 +279,7 @@
 
         @media (max-width: 820px) {
             .why, .theme-grid, .feature-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 5rem; }
         }
 
         @media (prefers-reduced-motion: reduce) {
