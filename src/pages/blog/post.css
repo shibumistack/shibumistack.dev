@@ -16,6 +16,12 @@
     display: inline-block;
     width: 5rem;
     line-height: 0;
+    opacity: 0.5;
+    transition: opacity 200ms ease;
+}
+
+.post-logo:hover {
+    opacity: 1;
 }
 
 .post-logo img {
