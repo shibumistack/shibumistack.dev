@@ -1,134 +1,217 @@
-            <section class="hero" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
+    <div>
+        <p class="eyebrow">A tech stack to keep</p>
+        <h1 id="hero-title">
+            <span>Simple.</span><br /><span class="line-2"
+                >Yours<span class="dot">.</span></span
+            >
+        </h1>
+        <p class="dek">
+            A lean, opinionated web stack for building calm, durable apps with
+            Bun, Hono, Drizzle, Alpine, and Zod.
+        </p>
+        <p class="status-badge">Coming soon</p>
+    </div>
+
+    <div class="cli" id="install" aria-label="Shibumi CLI preview">
+        <div class="install-command">
+            <span class="prompt-mark">›</span>
+            <code
+                ><span id="typed"></span
+                ><span class="typing-cursor" id="cursor"></span
+            ></code>
+        </div>
+
+        <div class="cli-output">
+            <div class="cli-step cli-head">
+                <span class="kanji">渋み</span>
+                <span class="cli-name">shibumi</span>
+                <span class="cli-tagline">Refined simplicity</span>
+            </div>
+
+            <div class="cli-step cli-row">
+                <span class="cli-label">dir</span>
                 <div>
-                    <p class="eyebrow">A tech stack to keep</p>
-                    <h1 id="hero-title"><span>Simple.</span><br><span class="line-2">Yours<span class="dot">.</span></span></h1>
-                    <p class="dek">A lean, opinionated web stack for building calm, durable apps with Bun, Hono, Drizzle, Alpine, and Zod.</p>
-                    <p class="status-badge">Coming soon</p>
-                </div>
-
-                <div class="cli" id="install" aria-label="Shibumi CLI preview">
-                    <div class="install-command">
-                        <span class="prompt-mark">›</span>
-                        <code><span id="typed"></span><span class="typing-cursor" id="cursor"></span></code>
+                    <div class="cli-question">
+                        Where should we create your project?
                     </div>
+                    <div class="cli-muted cli-option">./quiet-bamboo</div>
+                </div>
+            </div>
 
-                    <div class="cli-output">
-                        <div class="cli-step cli-head">
-                            <span class="kanji">渋み</span>
-                            <span class="cli-name">shibumi</span>
-                            <span class="cli-tagline">Refined simplicity</span>
-                        </div>
-
-                        <div class="cli-step cli-row">
-                            <span class="cli-label">dir</span>
-                            <div>
-                                <div class="cli-question">Where should we create your project?</div>
-                                <div class="cli-muted cli-option">./quiet-bamboo</div>
-                            </div>
-                        </div>
-
-                        <div class="cli-step cli-row">
-                            <span class="cli-label">theme</span>
-                            <div>
-                                <div class="cli-question">Choose a theme</div>
-                                <div class="cli-muted cli-option">○ Minimal: smallest useful app</div>
-                                <div class="cli-selected cli-option"><span class="cli-dot">●</span> Full-stack: routes, data, validation</div>
-                                <div class="cli-muted cli-option">○ Static: content site, zero server</div>
-                            </div>
-                        </div>
-
-                        <div class="cli-step cli-row">
-                            <span class="cli-label">done</span>
-                            <div><span class="cli-ok">✓ Project ready</span></div>
-                        </div>
-
-                        <div class="cli-step cli-row">
-                            <span class="cli-label next">next</span>
-                            <div class="cli-next">cd quiet-bamboo && bun dev</div>
-                        </div>
-
-                        <div class="cli-step cli-row">
-                            <span class="cli-label docs">docs</span>
-                            <div class="cli-muted">https://shibumistack.dev/docs</div>
-                        </div>
+            <div class="cli-step cli-row">
+                <span class="cli-label">theme</span>
+                <div>
+                    <div class="cli-question">Choose a theme</div>
+                    <div class="cli-muted cli-option">
+                        ○ Minimal: smallest useful app
+                    </div>
+                    <div class="cli-selected cli-option">
+                        <span class="cli-dot">●</span> Full-stack: routes, data,
+                        validation
+                    </div>
+                    <div class="cli-muted cli-option">
+                        ○ Static: content site, zero server
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section class="why" aria-label="Why this stack">
-                <article class="card">
-                    <span>Create</span>
-                    <h3>Themes, not boilerplate</h3>
-                    <p>Choose a theme for the thing you are building. Shibumi writes plain files into your repo.</p>
-                </article>
-                <article class="card">
-                    <span>Add</span>
-                    <h3>Grow when ready</h3>
-                    <p>Auth, email, uploads, payments, or admin copied as source code when the project needs it.</p>
-                </article>
-                <article class="card">
-                    <span>Ship</span>
-                    <h3>Few moving parts</h3>
-                    <p>Prepare static, edge, or self-hosted deploys with clear config and little ceremony.</p>
-                </article>
-            </section>
+            <div class="cli-step cli-row">
+                <span class="cli-label">done</span>
+                <div><span class="cli-ok">✓ Project ready</span></div>
+            </div>
 
-            <section class="pieces" aria-labelledby="pieces-title">
-                <h2 id="pieces-title">Five pieces, chosen with care.</h2>
-                <ol class="stack-list">
-                    <li><span class="num">01</span><strong>Bun</strong><span>runtime, bundler, test runner, package manager</span></li>
-                    <li><span class="num">02</span><strong>Hono</strong><span>small routes, middleware, SSR</span></li>
-                    <li><span class="num">03</span><strong>Drizzle</strong><span>typed schema, queries, migrations</span></li>
-                    <li><span class="num">04</span><strong>Alpine</strong><span>small interactions, no client app required</span></li>
-                    <li><span class="num">05</span><strong>Zod</strong><span>validation at the edges</span></li>
-                </ol>
-            </section>
+            <div class="cli-step cli-row">
+                <span class="cli-label next">next</span>
+                <div class="cli-next">cd quiet-bamboo && bun dev</div>
+            </div>
 
-            <section class="themes" aria-labelledby="themes-title">
-                <h2 id="themes-title">Start with a theme.</h2>
-                <div class="theme-grid">
-                    <article class="theme-card"><span>01</span><h3>Minimal</h3><p>Smallest useful app. Routes, layout, styles, and tests.</p></article>
-                    <article class="theme-card"><span>02</span><h3>Full-stack</h3><p>SSR, API routes, Drizzle, Zod, and tiny Alpine sprinkles.</p></article>
-                    <article class="theme-card"><span>03</span><h3>Static</h3><p>Content site, zero server. Pre-built output for pages that do not need runtime.</p></article>
-                </div>
-            </section>
+            <div class="cli-step cli-row">
+                <span class="cli-label docs">docs</span>
+                <div class="cli-muted">https://shibumistack.dev/docs</div>
+            </div>
+        </div>
+    </div>
+</section>
 
-            <section class="feature-section" aria-labelledby="agents-title">
-                <div class="feature-grid">
-                    <h2 id="agents-title">For humans and agents</h2>
-                    <div class="feature-copy">
-                        <p>Every project includes an <span class="accent-word">agents.md</span> file with the local conventions: routes, data, tests, and boundaries.</p>
-                        <p>Every extension must include its own <span class="accent-word">agents.md</span> fragment. Shibumi merges those fragments with the project guidance so agentic coding gets more efficient as the app grows.</p>
-                    </div>
-                </div>
-            </section>
+<section class="intro" aria-label="What Shibumi is">
+    <div class="intro-copy">
+        <p>
+            You install a small and elegant new framework. Then, one day you
+            realize you're debugging 600MB of dependencies you never wanted.
+        </p>
+        <p>
+            Shibumi is a
+            <span class="accent-word">frameworkless framework</span>. Every file
+            is something you can open, read, and understand. Extensions ship
+            with an <span class="accent-word">agents.md</span> so your coding
+            agent knows how they work. Nothing runs unless you can own it.
+        </p>
+    </div>
+</section>
 
-            <section class="feature-section" aria-labelledby="extensions-title">
-                <div class="feature-grid">
-                    <h2 id="extensions-title">Extensions<span class="status-badge">coming soon</span></h2>
-                    <div class="feature-copy">
-                        <p>Add auth, email, uploads, payments, or admin when the project needs it. Extensions copy source files into your repo, so the code stays visible, removable, and yours.</p>
-                        <p>Community extensions can be submitted to the registry and installed with the same flow once they pass the checks.</p>
-                    </div>
-                </div>
-            </section>
+<section class="why" aria-label="Why this stack">
+    <article class="card">
+        <span>Create</span>
+        <h3>Themes, not boilerplate</h3>
+        <p>
+            Choose a theme for the thing you are building. Minimal, Blog,
+            Landing, SPA, Fullstack, AI app... Shibumi writes the minimal amount
+            of code for you.
+        </p>
+    </article>
+    <article class="card">
+        <span>Add</span>
+        <h3>Born with extensions</h3>
+        <p>
+            Auth, email, uploads, payments, or admin. Add and source code is
+            added. For humans and agents.
+        </p>
+    </article>
+    <article class="card">
+        <span>Ship</span>
+        <h3>Deploy anywhere</h3>
+        <p>
+            Static, edge, or self-hosted deploys with clear config and little
+            ceremony. Just the necessary bits.
+        </p>
+    </article>
+</section>
 
-            <section class="feature-section" aria-labelledby="deploy-title">
-                <div class="feature-grid">
-                    <h2 id="deploy-title">Deploy anywhere<span class="status-badge">coming soon</span></h2>
-                    <div class="feature-copy">
-                        <p>Ship to Cloudflare, Vercel, Railway, Fly.io, a static CDN, or <span class="accent-word">your own VPS</span>. Shibumi generates the config for the path you choose.</p>
-                        <p>For VPS deploys, <span class="accent-word">shibumi-server</span> will receive a webhook, pull the repo, rebuild the app, and ask Caddy to route the domain with HTTPS.</p>
-                        <p>Read the <a href="/building">Roadmap</a> for targets, extension plans, and self-hosting details.</p>
-                    </div>
-                </div>
-            </section>
 
-            <section class="final-cta" aria-labelledby="final-cta-title">
-                <h2 id="final-cta-title">The frameworkless framework<span class="dot">.</span></h2>
-                <div class="install-command">
-                    <span class="prompt-mark">›</span>
-                    <code>bun create shibumi@latest</code>
-                    <button class="copy-command" type="button" data-copy="bun create shibumi@latest" aria-label="Copy install command">{{icon(copy)}}{{icon(check)}}</button>
-                </div>
-            </section>
+
+<section class="themes" aria-labelledby="themes-title">
+    <h2 id="themes-title">Start with a theme.</h2>
+    <div class="theme-grid">
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(circle)}}</span> Minimal</h3>
+            <p>Smallest useful app. Routes, layout, styles, and tests.</p>
+        </article>
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(book-open)}}</span> Blog</h3>
+            <p>Markdown-driven content, RSS, and permalinks.</p>
+        </article>
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(rocket)}}</span> Landing</h3>
+            <p>Marketing page with waitlist or signup form.</p>
+        </article>
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(refresh-cw)}}</span> SPA</h3>
+            <p>Client-side routing with Alpine. No server required.</p>
+        </article>
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(layers)}}</span> Fullstack</h3>
+            <p>SSR, API routes, Drizzle, Zod, and Alpine.</p>
+        </article>
+        <article class="theme-card">
+            <h3><span class="theme-icon">{{icon(brain)}}</span> AI app</h3>
+            <p>Streaming responses, prompt templates, model integration.</p>
+        </article>
+    </div>
+</section>
+
+<section class="feature-section" aria-labelledby="agents-title">
+    <div class="feature-grid">
+        <h2 id="agents-title">Your agent knows the project</h2>
+        <div class="feature-copy">
+            <p>Every Shibumi project ships with an <span class="accent-word">agents.md</span> file. It tells your coding agent the rules: where routes live, how data flows, what tests exist, and where the boundaries are.</p>
+            <p>Extensions add their own fragments. Install auth, and the agent learns the session model. Add payments, and it knows the webhook flow. The more you build, the smarter it gets.</p>
+        </div>
+    </div>
+</section>
+
+<section class="feature-section" aria-labelledby="extensions-title">
+    <div class="feature-grid">
+        <h2 id="extensions-title">Extensions</h2>
+        <div class="feature-copy">
+            <p>Auth, email, uploads, payments, admin — not dependencies, but source files copied into your project. You own them from the moment they land.</p>
+            <p>Run <code>shi add auth</code> and watch the terminal:</p>
+            <pre><code>  <span class="created">created</span>  <span class="path">src/auth/index.ts</span>
+  <span class="created">created</span>  <span class="path">src/auth/session.ts</span>
+  <span class="created">created</span>  <span class="path">src/auth/agents.md</span>
+
+  <span class="success">✓</span> 3 files written to ./my-app/src/auth/</code></pre>
+            <p>Every extension includes an <span class="accent-word">agents.md</span> fragment. Your coding agent reads it and knows how the code works — no guessing, no hidden behavior.</p>
+            <p>Extensions are plain TypeScript. Read them, change them, or delete them. They're yours now.</p>
+        </div>
+    </div>
+</section>
+
+<section class="feature-section" aria-labelledby="deploy-title">
+    <div class="feature-grid">
+        <h2 id="deploy-title">Deploy anywhere</h2>
+        <div class="feature-copy">
+            <p>Cloudflare, Vercel, Railway, Fly.io, a static CDN, or your own VPS. Shibumi generates the config for the path you choose.</p>
+            <p>For self-hosted deploys, set up <span class="accent-word">shibumi-server</span> once:</p>
+            <pre><code>  <span class="wrote">$</span> shi server install user@your-vps
+  <span class="created">installed</span>  shibumi-server (container)
+  <span class="created">running</span>   Caddy + build service
+  <span class="success">✓</span> ready to deploy</code></pre>
+            <p>Then deploy with one command:</p>
+            <pre><code>  <span class="wrote">$</span> shi deploy vps
+  <span class="created">sending</span>   12 files
+  <span class="wrote">building</span>  bun run build
+  <span class="created">deployed</span>  https://myapp.com
+  <span class="success">✓</span> live</code></pre>
+            <p>shibumi-server runs as a container with Caddy. It builds your app, routes the domain, and provisions HTTPS. The files are yours — read them, modify them, or remove the server entirely.</p>
+        </div>
+    </div>
+</section>
+
+<section class="final-cta" aria-labelledby="final-cta-title">
+    <h2 id="final-cta-title">
+        The frameworkless framework<span class="dot">.</span>
+    </h2>
+    <div class="install-command">
+        <span class="prompt-mark">›</span>
+        <code>bun create shibumi@latest</code>
+        <button
+            class="copy-command"
+            type="button"
+            data-copy="bun create shibumi@latest"
+            aria-label="Copy install command"
+        >
+            {{icon(copy)}}{{icon(check)}}
+        </button>
+    </div>
+</section>
