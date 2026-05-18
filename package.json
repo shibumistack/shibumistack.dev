@@ -5,6 +5,7 @@
     "start": "bun run serve.ts",
     "test": "bun test",
     "check": "tsc --noEmit",
+    "deploy": "./scripts/deploy.sh",
     "deploy:server": "git pull && podman-compose down && podman-compose up -d --build"
   },
   "dependencies": {
