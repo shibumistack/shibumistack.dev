@@ -15,18 +15,16 @@ Assets and guidelines for referencing Shibumi Stack. Use them as-is. Give the lo
 ## Colors
 
 ### Light palette
-- Washi: #faf8f4 (background)
-- Parchment: #f0ebe0 (surface)
-- Sumi: #1a1a1a (text)
-- Stone: #5c5852 (muted text)
-- Torii: #a14b2c (accent)
+- Kozo: #f7f3e8 (background)
+- Walnut: #252116 (text)
+- Earth: #7a6f5d (muted text)
+- Oranje: #ff6600 (accent)
 
 ### Dark palette
-- Sumi: #1a1a1a (background)
-- Charcoal: #23201c (surface)
-- Moonlight: #e8e2d6 (text)
-- Ash: #a8a39a (muted text)
-- Ember: #c76647 (accent)
+- Walnut: #1e1510 (background)
+- Parchment: #e4ddd0 (text)
+- Ash: #b0a898 (muted text)
+- Oranje: #ff8833 (accent)
 
 ## Color tokens
 

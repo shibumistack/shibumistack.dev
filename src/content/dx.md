@@ -30,15 +30,15 @@ Package: `create-shibumi` (already claimed on npm).
 Dependencies: `@clack/prompts`, `ora` (spinners), `chalk` (colors).
 
 Color palette:
-- Kanji (渋み): bold, terracotta (#c76647)
+- Kanji (渋み): bold, orange (#ff6600)
 - "shibumi": bold white
 - "Refined simplicity": dim gray
 - Step pills (dir, tmpl, deploy, git, deps): Moss green (#64b464) bg, bold dark text
-- "next" pill: dark orange (#8a3f25) bg, non-bold white text
+- "next" pill: dark orange (#e55a00) bg, non-bold white text
 - Selected radio (●): Moss green
 - Unselected options: ANSI dim (adapts to terminal theme)
 - "✓ Project ready": Moss green
-- Final command: terracotta, && in white
+- Final command: orange, && in white
 - Docs link: dim
 
 Default project name: random zen-themed (quiet-bamboo, still-water, bare-stone).
