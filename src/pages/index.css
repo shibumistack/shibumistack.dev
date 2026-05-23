@@ -30,7 +30,7 @@
             width: 100%;
             font: 0.875rem/1.55 var(--font-mono);
             letter-spacing: -0.02em;
-            color: light-dark(rgba(26, 26, 26, 0.82), rgba(232, 226, 214, 0.86));
+            color: light-dark(rgba(37, 33, 22, 0.82), rgba(228, 221, 208, 0.86));
         }
 
         .install-command {
@@ -113,7 +113,7 @@
 
         .kanji { color: var(--accent); font-size: 1.25em; }
         .cli-name { color: var(--text); font-weight: 700; }
-        .cli-tagline { color: light-dark(rgba(92, 88, 82, 0.84), rgba(189, 183, 173, 0.84)); }
+        .cli-tagline { color: light-dark(rgba(122, 111, 93, 0.84), rgba(176, 168, 152, 0.84)); }
 
         .cli-row {
             display: grid;
@@ -134,10 +134,10 @@
             text-align: center;
         }
 
-        .cli-label.next { background: #8a3f25; color: #f0ebe0; font-weight: 500; }
+        .cli-label.next { background: #e55a00; color: var(--bg); font-weight: 500; }
         .cli-label.docs { background: #a8afc4; color: #3c4250; font-weight: 500; }
-        .cli-question { color: light-dark(rgba(26, 26, 26, 0.88), rgba(232, 226, 214, 0.92)); }
-        .cli-muted { color: light-dark(rgba(92, 88, 82, 0.82), rgba(189, 183, 173, 0.82)); }
+        .cli-question { color: light-dark(rgba(37, 33, 22, 0.88), rgba(228, 221, 208, 0.92)); }
+        .cli-muted { color: light-dark(rgba(122, 111, 93, 0.82), rgba(176, 168, 152, 0.82)); }
         .cli-selected { color: var(--text); }
         .cli-dot { color: #64b464; }
         .cli-ok { color: #64b464; font-weight: 800; }
@@ -183,7 +183,7 @@
             width: max-content;
             margin: 0.8rem 0 0;
             padding: 0.18rem 0.42rem 0.2rem;
-            border: 1px solid light-dark(rgba(161, 75, 44, 0.25), rgba(199, 102, 71, 0.32));
+            border: 1px solid light-dark(rgba(255, 102, 0, 0.25), rgba(255, 136, 51, 0.32));
             border-radius: 999px;
             color: var(--accent);
             opacity: 0.5;
@@ -213,11 +213,11 @@
         .feature-copy pre {
             margin: 1rem 0;
             padding: 1rem;
-            background: light-dark(rgba(26, 26, 26, 0.04), rgba(0, 0, 0, 0.4));
+            background: light-dark(rgba(37, 33, 22, 0.04), rgba(0, 0, 0, 0.4));
             border: 1px solid var(--line);
             border-radius: 8px;
             font: 0.875rem/1.55 var(--font-mono);
-            color: light-dark(rgba(26, 26, 26, 0.82), rgba(232, 226, 214, 0.86));
+            color: light-dark(rgba(37, 33, 22, 0.82), rgba(228, 221, 208, 0.86));
             overflow-x: auto;
         }
 
@@ -226,7 +226,7 @@
         }
 
         .feature-copy .cmd { color: var(--text); }
-        .feature-copy .path { color: light-dark(rgba(92, 88, 82, 0.82), rgba(189, 183, 173, 0.82)); }
+        .feature-copy .path { color: light-dark(rgba(122, 111, 93, 0.82), rgba(176, 168, 152, 0.82)); }
         .feature-copy .created { color: #64b464; }
         .feature-copy .wrote { color: var(--accent); }
         .feature-copy .success { color: #64b464; font-weight: 700; }
@@ -267,9 +267,9 @@
         .theme-card {
             min-height: 9.5rem;
             padding: 1rem;
-            border: 1px solid light-dark(var(--line), rgba(232, 226, 214, 0.06));
+            border: 1px solid light-dark(var(--line), rgba(228, 221, 208, 0.06));
             border-radius: 18px;
-            background: light-dark(var(--quiet), rgba(232, 226, 214, 0.025));
+            background: light-dark(var(--quiet), rgba(228, 221, 208, 0.025));
         }
 
         .theme-card span {

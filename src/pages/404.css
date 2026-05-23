@@ -23,7 +23,7 @@
         .lost a {
             color: var(--accent);
             text-decoration: none;
-            border-bottom: 1px solid light-dark(rgba(161, 75, 44, 0.35), rgba(199, 102, 71, 0.35));
+            border-bottom: 1px solid light-dark(rgba(255, 102, 0, 0.35), rgba(255, 136, 51, 0.35));
         }
 
         .lost a:hover {
