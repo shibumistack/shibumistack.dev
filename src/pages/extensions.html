@@ -1,80 +1,91 @@
-<section class="extensions-hero">
-  <h1>Extensions</h1>
-  <p class="dek">Add features to your project. Copy source, own the code.</p>
+<section class="extensions-header">
+  <h1><em>Extensions</em></h1>
+  <p class="extensions-subtitle">
+    Add features to your project. Copy source, own the code.
+    Install with <code>bun run shibumi add &lt;name&gt;</code>.
+  </p>
 </section>
 
-<section class="extensions-install">
-  <h2>Install an extension</h2>
-  <div class="install-command">
-    <span class="prompt-mark">›</span>
-    <code>bun run shibumi add <span class="accent-word">name</span></code>
+<section class="extensions-registry">
+  <div class="registry-grid">
+
+    <article class="registry-card">
+      <div class="registry-card-preview">
+        <div class="preview-icon preview-icon--auth">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+      </div>
+      <div class="registry-card-body">
+        <h3 class="registry-name">auth</h3>
+        <p class="registry-desc">Cookie sessions with password or magic-link login. Zero npm dependencies — uses <code>Bun.password</code> and <code>bun:sqlite</code>.</p>
+        <div class="registry-meta">
+          <span>official</span>
+          <span>shibumi</span>
+        </div>
+        <div class="registry-badges">
+          <span class="registry-badge">extension</span>
+        </div>
+        <div class="registry-install">
+          <code>$ bun run shibumi add auth</code>
+        </div>
+      </div>
+    </article>
+
+    <article class="registry-card">
+      <div class="registry-card-preview">
+        <div class="preview-icon preview-icon--images">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+      </div>
+      <div class="registry-card-body">
+        <h3 class="registry-name">images</h3>
+        <p class="registry-desc">Automatic WebP optimization. Serves WebP on the fly via middleware, keeps originals untouched. No HTML changes needed.</p>
+        <div class="registry-meta">
+          <span>official</span>
+          <span>shibumi</span>
+        </div>
+        <div class="registry-badges">
+          <span class="registry-badge">extension</span>
+        </div>
+        <div class="registry-install">
+          <code>$ bun run shibumi add images</code>
+        </div>
+      </div>
+    </article>
+
+    <article class="registry-card">
+      <div class="registry-card-preview">
+        <div class="preview-icon preview-icon--email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+      </div>
+      <div class="registry-card-body">
+        <h3 class="registry-name">email</h3>
+        <p class="registry-desc">Transactional email via Resend. One function call: <code>sendEmail({ to, subject, html })</code>.</p>
+        <div class="registry-meta">
+          <span>official</span>
+          <span>shibumi</span>
+        </div>
+        <div class="registry-badges">
+          <span class="registry-badge">extension</span>
+        </div>
+        <div class="registry-install">
+          <code>$ bun run shibumi add email</code>
+        </div>
+      </div>
+    </article>
+
   </div>
 </section>
 
-<section class="extensions-list">
-  <article class="extension">
-    <div class="extension-head">
-      <h3>Auth</h3>
-      <span class="extension-tag">cookie sessions</span>
-    </div>
-    <p>Password or magic-link login. Zero npm dependencies — uses <code>Bun.password</code> and <code>bun:sqlite</code>.</p>
-    <pre><code>bun run shibumi add auth</code></pre>
-    <ul>
-      <li>Session management with 7-day expiry</li>
-      <li>Password hashing with Bun built-in</li>
-      <li>Magic link tokens (15-minute, single use)</li>
-      <li>Auth middleware for protected routes</li>
-      <li>Auto-wires into your app via hooks</li>
-    </ul>
-  </article>
-
-  <article class="extension">
-    <div class="extension-head">
-      <h3>Images</h3>
-      <span class="extension-tag">webp optimization</span>
-    </div>
-    <p>Serves WebP on the fly. Originals stay untouched. No HTML changes needed.</p>
-    <pre><code>bun run shibumi add images</code></pre>
-    <ul>
-      <li>Intercepts image requests via middleware</li>
-      <li>Converts to WebP with <code>Bun.Image</code></li>
-      <li>Caches results in <code>public/images/optimized/</code></li>
-      <li>Originals never modified or deleted</li>
-      <li>Auto-wires into your app via hooks</li>
-    </ul>
-  </article>
-
-  <article class="extension">
-    <div class="extension-head">
-      <h3>Email</h3>
-      <span class="extension-tag">transactional</span>
-    </div>
-    <p>Send emails via Resend. One function call.</p>
-    <pre><code>bun run shibumi add email</code></pre>
-    <ul>
-      <li><code>sendEmail({ to, subject, html })</code></li>
-      <li>Requires <code>RESEND_API_KEY</code> in <code>.env</code></li>
-    </ul>
-  </article>
-</section>
-
-<section class="extensions-how">
-  <h2>How it works</h2>
-  <div class="how-grid">
-    <div class="how-step">
-      <span class="how-num">1</span>
-      <h4>Files</h4>
-      <p>Source files copied into your project. You own them.</p>
-    </div>
-    <div class="how-step">
-      <span class="how-num">2</span>
-      <h4>Hooks</h4>
-      <p>Extensions wire themselves into your code — imports, middleware, routes.</p>
-    </div>
-    <div class="how-step">
-      <span class="how-num">3</span>
-      <h4>Agents</h4>
-      <p>Each extension adds guidance to <code>agents.md</code> so coding agents know how it works.</p>
-    </div>
-  </div>
+<section class="extensions-write">
+  <h2>Write your own</h2>
+  <p>An extension is a directory with a manifest, agent guidance, and source files:</p>
+  <pre><code>src/extensions/my-ext/
+├── manifest.json
+├── agents.md
+└── files/
+    └── src/
+        └── ...</code></pre>
+  <p>Publish to npm. Install with <code>bun run shibumi add my-ext</code>.</p>
 </section>

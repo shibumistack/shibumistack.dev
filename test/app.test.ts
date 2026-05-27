@@ -119,9 +119,9 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Extensions");
     expect(body).toContain("shibumi add");
-    expect(body).toContain("Auth");
-    expect(body).toContain("Images");
-    expect(body).toContain("Email");
+    expect(body).toContain("auth");
+    expect(body).toContain("images");
+    expect(body).toContain("email");
   });
 });
 
