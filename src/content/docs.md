@@ -66,6 +66,42 @@ Some extensions need choices. Auth may ask for cookie session or OAuth. Email ma
 
 Each extension carries an `agents.md` fragment explaining the conventions it adds: where sessions live, how routes are protected, which helpers to use, and what files agents should avoid editing casually.
 
+### Hooks
+
+Extensions can modify existing files when they install. The `hooks` field in the manifest specifies what to find and what to add.
+
+The `images` extension uses this to wire itself into the user's app:
+
+```sh
+bun run shibumi add images
+```
+
+```diff
+  import { Hono } from "hono";
++ import { imageMiddleware } from "./middleware/images";
+  
+  export const app = new Hono();
++ app.use("/images/*", imageMiddleware());
+```
+
+The user runs one command. The middleware intercepts image requests, converts to WebP on the fly, caches the result, and serves it. Originals stay untouched. No HTML changes needed.
+
+Hooks are idempotent — running the same extension twice won't duplicate code.
+
+```json
+{
+  "hooks": [
+    {
+      "file": "src/app.ts",
+      "find": "import { Hono } from \"hono\";",
+      "insert": "import { imageMiddleware } from \"./middleware/images\";",
+      "after": "export const app = new Hono();",
+      "add": "\napp.use(\"/images/*\", imageMiddleware());"
+    }
+  ]
+}
+```
+
 ### Checks
 
 Submissions should prove they install. The registry can install an extension into fixture apps, run tests, check formatting, verify declared files, and reject packages that require undeclared network access or install scripts.

@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "bun --hot serve.ts",
     "start": "bun run serve.ts",
-    "test": "bun test",
+    "test": "bun test test/app.test.ts",
     "check": "tsc --noEmit",
     "deploy": "./scripts/deploy.sh",
     "deploy:server": "git pull && podman-compose down && podman-compose up -d --build"

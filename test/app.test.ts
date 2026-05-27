@@ -110,6 +110,19 @@ describe("routes", () => {
 
     expect(res.status).toBe(404);
   });
+
+  test("serves extensions page", async () => {
+    const res = await app.request("/extensions");
+    const body = await res.text();
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/html");
+    expect(body).toContain("Extensions");
+    expect(body).toContain("shibumi add");
+    expect(body).toContain("Auth");
+    expect(body).toContain("Images");
+    expect(body).toContain("Email");
+  });
 });
 
 describe("icons", () => {

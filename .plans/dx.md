@@ -223,20 +223,40 @@ Extensions are **copy-paste, not dependencies** (like shadcn/ui):
 1. Source files copied into your project, not hidden in node_modules
 2. A migration if it needs DB tables
 3. An `agents.md` fragment appended to the project's `agents.md`
+4. **Hooks** that wire themselves into existing code (imports, middleware, routes)
 
 You own the code. Modify it, delete it, fork it. No lock-in.
 
-### Available Extensions (planned)
+### Hooks
 
-| Extension        | What it adds                                          |
-|------------------|-------------------------------------------------------|
-| `auth`           | Cookie sessions, login/logout routes, session schema  |
-| `flash`          | Session-based one-time messages after redirects       |
-| `html-helpers`   | Tagged template literals, layouts, partials            |
-| `uploads`        | File upload handling, S3/local storage                |
-| `email`          | Transactional email via Resend/SMTP                   |
-| `stripe`         | Checkout, webhooks, subscription helpers              |
-| `admin`          | Auto-generated CRUD UI from Drizzle schema            |
+Extensions can modify existing files when they install. The `hooks` field in the manifest specifies what to find and what to add. The `images` extension demonstrates this:
+
+```sh
+bun run shibumi add images
+```
+
+```diff
+  import { Hono } from "hono";
++ import { imageMiddleware } from "./middleware/images";
+  
+  export const app = new Hono();
++ app.use("/images/*", imageMiddleware());
+```
+
+The user runs one command. No manual wiring. Hooks are idempotent — running the same extension twice won't duplicate code.
+
+### Available Extensions
+
+| Extension        | What it adds                                          | Status |
+|------------------|-------------------------------------------------------|--------|
+| `images`         | WebP optimization middleware, transparent to HTML     | shipped |
+| `auth`           | Cookie sessions, login/logout routes, session schema  | shipped |
+| `email`          | Transactional email via Resend                        | shipped |
+| `flash`          | Session-based one-time messages after redirects       | planned |
+| `html-helpers`   | Tagged template literals, layouts, partials            | planned |
+| `uploads`        | File upload handling, S3/local storage                | planned |
+| `stripe`         | Checkout, webhooks, subscription helpers              | planned |
+| `admin`          | Auto-generated CRUD UI from Drizzle schema            | planned |
 
 ### agents.md: AI-Native DX
 

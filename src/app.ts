@@ -11,7 +11,7 @@ type MediaRange = {
   quality: number;
 };
 
-const activePages = ["home", "docs", "roadmap", "brand", "blog"] as const;
+const activePages = ["home", "docs", "roadmap", "brand", "blog", "extensions"] as const;
 
 type ActivePage = (typeof activePages)[number];
 

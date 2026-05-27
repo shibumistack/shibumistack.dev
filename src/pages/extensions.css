@@ -1,0 +1,123 @@
+.extensions-hero {
+  margin-bottom: 3rem;
+}
+
+.extensions-hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.extensions-hero .dek {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.extensions-install {
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background: var(--code-bg);
+  border-radius: 6px;
+}
+
+.extensions-install h2 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.extensions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.extension {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.extension-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.extension-head h3 {
+  margin: 0;
+}
+
+.extension-tag {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  background: var(--code-bg);
+  border-radius: 3px;
+  color: var(--text-secondary);
+}
+
+.extension pre {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  background: var(--code-bg);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.extension ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.extension li {
+  margin: 0.25rem 0;
+}
+
+.extensions-how h2 {
+  margin-bottom: 1.5rem;
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.how-step {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.how-num {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  text-align: center;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.how-step h4 {
+  margin: 0 0 0.5rem;
+}
+
+.how-step p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  .how-grid {
+    grid-template-columns: 1fr;
+  }
+}

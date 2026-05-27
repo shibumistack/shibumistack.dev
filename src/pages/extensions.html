@@ -1,0 +1,80 @@
+<section class="extensions-hero">
+  <h1>Extensions</h1>
+  <p class="dek">Add features to your project. Copy source, own the code.</p>
+</section>
+
+<section class="extensions-install">
+  <h2>Install an extension</h2>
+  <div class="install-command">
+    <span class="prompt-mark">›</span>
+    <code>bun run shibumi add <span class="accent-word">name</span></code>
+  </div>
+</section>
+
+<section class="extensions-list">
+  <article class="extension">
+    <div class="extension-head">
+      <h3>Auth</h3>
+      <span class="extension-tag">cookie sessions</span>
+    </div>
+    <p>Password or magic-link login. Zero npm dependencies — uses <code>Bun.password</code> and <code>bun:sqlite</code>.</p>
+    <pre><code>bun run shibumi add auth</code></pre>
+    <ul>
+      <li>Session management with 7-day expiry</li>
+      <li>Password hashing with Bun built-in</li>
+      <li>Magic link tokens (15-minute, single use)</li>
+      <li>Auth middleware for protected routes</li>
+      <li>Auto-wires into your app via hooks</li>
+    </ul>
+  </article>
+
+  <article class="extension">
+    <div class="extension-head">
+      <h3>Images</h3>
+      <span class="extension-tag">webp optimization</span>
+    </div>
+    <p>Serves WebP on the fly. Originals stay untouched. No HTML changes needed.</p>
+    <pre><code>bun run shibumi add images</code></pre>
+    <ul>
+      <li>Intercepts image requests via middleware</li>
+      <li>Converts to WebP with <code>Bun.Image</code></li>
+      <li>Caches results in <code>public/images/optimized/</code></li>
+      <li>Originals never modified or deleted</li>
+      <li>Auto-wires into your app via hooks</li>
+    </ul>
+  </article>
+
+  <article class="extension">
+    <div class="extension-head">
+      <h3>Email</h3>
+      <span class="extension-tag">transactional</span>
+    </div>
+    <p>Send emails via Resend. One function call.</p>
+    <pre><code>bun run shibumi add email</code></pre>
+    <ul>
+      <li><code>sendEmail({ to, subject, html })</code></li>
+      <li>Requires <code>RESEND_API_KEY</code> in <code>.env</code></li>
+    </ul>
+  </article>
+</section>
+
+<section class="extensions-how">
+  <h2>How it works</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <span class="how-num">1</span>
+      <h4>Files</h4>
+      <p>Source files copied into your project. You own them.</p>
+    </div>
+    <div class="how-step">
+      <span class="how-num">2</span>
+      <h4>Hooks</h4>
+      <p>Extensions wire themselves into your code — imports, middleware, routes.</p>
+    </div>
+    <div class="how-step">
+      <span class="how-num">3</span>
+      <h4>Agents</h4>
+      <p>Each extension adds guidance to <code>agents.md</code> so coding agents know how it works.</p>
+    </div>
+  </div>
+</section>
