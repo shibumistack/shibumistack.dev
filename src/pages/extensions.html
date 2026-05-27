@@ -1,91 +1,64 @@
-<section class="extensions-header">
-  <h1><em>Extensions</em></h1>
-  <p class="extensions-subtitle">
-    Add features to your project. Copy source, own the code.
-    Install with <code>bun run shibumi add &lt;name&gt;</code>.
-  </p>
+<section class="page-header">
+  <span class="eyebrow">Extensions</span>
+  <h1>Add features.<br>Own the code.</h1>
 </section>
 
-<section class="extensions-registry">
-  <div class="registry-grid">
+<section class="page-body">
+  <div class="page-content">
 
-    <article class="registry-card">
-      <div class="registry-card-preview">
-        <div class="preview-icon preview-icon--auth">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
+    <div class="ext-intro">
+      <p>Extensions copy source files into your project. No hidden dependencies, no abstractions. You own the code from the moment it lands.</p>
+      <div class="ext-install-bar">
+        <code>bun run shibumi add &lt;name&gt;</code>
       </div>
-      <div class="registry-card-body">
-        <h3 class="registry-name">auth</h3>
-        <p class="registry-desc">Cookie sessions with password or magic-link login. Zero npm dependencies — uses <code>Bun.password</code> and <code>bun:sqlite</code>.</p>
-        <div class="registry-meta">
-          <span>official</span>
-          <span>shibumi</span>
-        </div>
-        <div class="registry-badges">
-          <span class="registry-badge">extension</span>
-        </div>
-        <div class="registry-install">
-          <code>$ bun run shibumi add auth</code>
-        </div>
+    </div>
+
+    <article class="ext-item">
+      <h3>auth</h3>
+      <p>Cookie sessions with password or magic-link login. Uses <code>Bun.password</code> and <code>bun:sqlite</code> — zero npm dependencies.</p>
+      <div class="ext-detail">
+        <span>bun:sqlite</span>
+        <span>Bun.password</span>
+        <span>hooks</span>
       </div>
     </article>
 
-    <article class="registry-card">
-      <div class="registry-card-preview">
-        <div class="preview-icon preview-icon--images">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        </div>
-      </div>
-      <div class="registry-card-body">
-        <h3 class="registry-name">images</h3>
-        <p class="registry-desc">Automatic WebP optimization. Serves WebP on the fly via middleware, keeps originals untouched. No HTML changes needed.</p>
-        <div class="registry-meta">
-          <span>official</span>
-          <span>shibumi</span>
-        </div>
-        <div class="registry-badges">
-          <span class="registry-badge">extension</span>
-        </div>
-        <div class="registry-install">
-          <code>$ bun run shibumi add images</code>
-        </div>
+    <article class="ext-item">
+      <h3>images</h3>
+      <p>WebP optimization middleware. Serves WebP on the fly, keeps originals untouched. No HTML changes needed.</p>
+      <div class="ext-detail">
+        <span>Bun.Image</span>
+        <span>middleware</span>
+        <span>hooks</span>
       </div>
     </article>
 
-    <article class="registry-card">
-      <div class="registry-card-preview">
-        <div class="preview-icon preview-icon--email">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-      </div>
-      <div class="registry-card-body">
-        <h3 class="registry-name">email</h3>
-        <p class="registry-desc">Transactional email via Resend. One function call: <code>sendEmail({ to, subject, html })</code>.</p>
-        <div class="registry-meta">
-          <span>official</span>
-          <span>shibumi</span>
-        </div>
-        <div class="registry-badges">
-          <span class="registry-badge">extension</span>
-        </div>
-        <div class="registry-install">
-          <code>$ bun run shibumi add email</code>
-        </div>
+    <article class="ext-item">
+      <h3>email</h3>
+      <p>Transactional email via Resend. One function call.</p>
+      <div class="ext-detail">
+        <span>resend</span>
+        <span>requires RESEND_API_KEY</span>
       </div>
     </article>
 
-  </div>
-</section>
+    <div class="ext-divider"></div>
 
-<section class="extensions-write">
-  <h2>Write your own</h2>
-  <p>An extension is a directory with a manifest, agent guidance, and source files:</p>
-  <pre><code>src/extensions/my-ext/
+    <h2>Write your own</h2>
+    <p>An extension is a directory with a manifest, agent guidance, and source files. Publish to npm. Install with <code>bun run shibumi add my-ext</code>.</p>
+    <pre><code>src/extensions/my-ext/
 ├── manifest.json
 ├── agents.md
-└── files/
-    └── src/
-        └── ...</code></pre>
-  <p>Publish to npm. Install with <code>bun run shibumi add my-ext</code>.</p>
+└── files/</code></pre>
+
+  </div>
+
+  <aside class="page-toc">
+    <nav>
+      <a href="#auth" class="toc-active">auth</a>
+      <a href="#images">images</a>
+      <a href="#email">email</a>
+      <a href="#write-your-own">Write your own</a>
+    </nav>
+  </aside>
 </section>

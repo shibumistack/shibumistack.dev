@@ -1,165 +1,62 @@
-.extensions-header {
-  margin-bottom: 3rem;
+/* ── Extensions page ───────────────────────────────────────────── */
+
+.ext-intro {
+  margin-bottom: 2.5rem;
 }
 
-.extensions-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.75rem;
+.ext-intro p {
+  margin-bottom: 1rem;
 }
 
-.extensions-header h1 em {
-  font-style: italic;
-}
-
-.extensions-subtitle {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
-  max-width: 540px;
-}
-
-.extensions-subtitle code {
-  font-size: 0.9em;
-}
-
-/* ── Registry grid ─────────────────────────────────────────────── */
-
-.registry-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin-bottom: 3rem;
-}
-
-.registry-card {
-  display: flex;
-  background: var(--bg);
-  padding: 1.5rem;
-  gap: 1.25rem;
-}
-
-.registry-card-preview {
-  flex-shrink: 0;
-}
-
-.preview-icon {
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ext-install-bar {
+  display: inline-block;
+  padding: 0.5rem 1rem;
   background: var(--code-bg);
   border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.9rem;
 }
 
-.preview-icon svg {
-  width: 36px;
-  height: 36px;
-  color: var(--text-secondary);
+.ext-item {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
 }
 
-.preview-icon--auth svg {
-  color: var(--accent);
+.ext-item:last-of-type {
+  border-bottom: none;
+  margin-bottom: 2.5rem;
 }
 
-.preview-icon--images svg {
-  color: var(--accent);
-}
-
-.preview-icon--email svg {
-  color: var(--accent);
-}
-
-.registry-card-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.registry-name {
+.ext-item h3 {
   font-family: var(--mono);
   font-size: 1rem;
   font-weight: 600;
-  margin: 0 0 0.5rem;
-}
-
-.registry-desc {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin: 0 0 0.75rem;
-  line-height: 1.5;
-}
-
-.registry-desc code {
-  font-size: 0.85em;
-}
-
-.registry-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: var(--text-secondary);
   margin-bottom: 0.5rem;
-  font-family: var(--mono);
 }
 
-.registry-badges {
+.ext-item p {
+  color: var(--text-secondary);
   margin-bottom: 0.75rem;
 }
 
-.registry-badge {
-  display: inline-block;
-  font-size: 0.7rem;
+.ext-detail {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ext-detail span {
+  font-size: 0.8rem;
   font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-secondary);
   padding: 0.15rem 0.5rem;
   border: 1px solid var(--border);
-  border-radius: 2px;
-  color: var(--text-secondary);
-}
-
-.registry-install {
-  background: var(--code-bg);
-  padding: 0.5rem 0.75rem;
   border-radius: 3px;
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
-.registry-install code {
-  color: var(--text);
-}
-
-/* ── Write your own ────────────────────────────────────────────── */
-
-.extensions-write {
-  padding: 2rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
-
-.extensions-write h2 {
-  font-size: 1.25rem;
-  margin-bottom: 0.75rem;
-}
-
-.extensions-write p {
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
-
-.extensions-write pre {
-  margin-bottom: 1rem;
-}
-
-/* ── Responsive ────────────────────────────────────────────────── */
-
-@media (max-width: 700px) {
-  .registry-grid {
-    grid-template-columns: 1fr;
-  }
+.ext-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2.5rem 0;
 }
