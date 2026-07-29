@@ -1,6 +1,17 @@
 services:
   app:
     build: .
-    restart: unless-stopped
+    # "always", not "unless-stopped": podman-restart.service (which restores
+    # containers at boot) filters on restart-policy=always and silently skips
+    # unless-stopped. Docker treats both alike; rootless podman does not.
+    restart: always
     ports:
       - "9001:9001"
+    healthcheck:
+      # No /health route on this app -- it serves pages, so a 200 on / is the
+      # liveness signal. wget exits non-zero on any non-2xx or connect failure.
+      test: ["CMD-SHELL", "wget -q -T 5 -O /dev/null http://127.0.0.1:9001/"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
