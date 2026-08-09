@@ -3,14 +3,21 @@
   const cache = new Map();
   let navigationId = 0;
 
+  const themeColors = { light: "#f7f3e8", dark: "#1e1510" };
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", themeColors[theme]);
+  }
+
   function initTheme() {
-    const stored = localStorage.getItem("shibumi-theme");
-    if (stored) {
-      document.documentElement.setAttribute("data-theme", stored);
-    } else {
-      const pref = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", pref);
-    }
+    let stored;
+    try { stored = localStorage.getItem("shibumi-theme"); } catch {}
+    const theme = stored === "light" || stored === "dark"
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(theme);
   }
 
   initTheme();
@@ -162,8 +169,8 @@
     if (toggle) {
       const current = document.documentElement.getAttribute("data-theme");
       const next = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("shibumi-theme", next);
+      applyTheme(next);
+      try { localStorage.setItem("shibumi-theme", next); } catch {}
       return;
     }
 

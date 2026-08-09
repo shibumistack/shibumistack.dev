@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <meta name="description" content="{{description}}">
-    <meta name="theme-color" content="#FAF8F4" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#1A1A1A" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f7f3e8">
+    <script>
+        (() => {
+            const colors = { light: "#f7f3e8", dark: "#1e1510" };
+            let stored;
+            try { stored = localStorage.getItem("shibumi-theme"); } catch {}
+            const theme = stored === "light" || stored === "dark"
+                ? stored
+                : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+            document.querySelector('meta[name="theme-color"]').content = colors[theme];
+        })();
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png">
     <!-- insert:meta -->
     <link rel="stylesheet" href="/shared.css?v={{asset-version}}">
