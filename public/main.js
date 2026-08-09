@@ -3,12 +3,11 @@
   const cache = new Map();
   let navigationId = 0;
 
-  const themeColors = { light: "#f7f3e8", dark: "#1e1510" };
-
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
-    const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", themeColors[theme]);
+    for (const meta of document.querySelectorAll("meta[data-theme-color]")) {
+      meta.media = meta.dataset.themeColor === theme ? "all" : "not all";
+    }
   }
 
   function initTheme() {

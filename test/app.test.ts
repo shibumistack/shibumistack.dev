@@ -10,6 +10,8 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Simple.");
     expect(body).toContain("Yours");
+    expect(body).toContain('data-theme-color="light" content="#f7f3e8"');
+    expect(body).toContain('data-theme-color="dark" content="#1e1510"');
   });
 
   test("negotiates Markdown only when preferred", async () => {
