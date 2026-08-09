@@ -30,10 +30,11 @@
                     <div class="step"><span class="pill">create</span><p><strong>create-shibumi.</strong> A Bun-first scaffolder with prompts for template, deploy target, git, and dependencies.</p></div>
                     <div class="step"><span class="pill">themes</span><p><strong>Minimal, Full-stack, Static.</strong> Different starts for different projects, not one template forced everywhere.</p></div>
                     <div class="step"><span class="pill">deploy</span><p><strong>Config generated up front.</strong> Cloudflare, Vercel, Fly.io, static CDN, and self-hosted Bun with Docker.</p></div>
-                    <div class="step"><span class="pill">data</span><p><strong>SQLite in development.</strong> Drizzle keeps schema and queries familiar while production follows the target.</p></div>
+                    <div class="step"><span class="pill">data</span><p><strong>SQLite by default.</strong> Drizzle handles schema, queries, and migrations. The production driver follows the target.</p></div>
+                    <div class="step"><span class="pill">state</span><p><strong>Nanostores for shared state.</strong> Use Alpine inside a component. Use a store only when state is shared.</p></div>
                     <div class="step"><span class="pill">core</span><p><strong>CSRF included.</strong> Security defaults should not be an optional extension.</p></div>
                     <div class="step"><span class="pill">extensions</span><p><strong>Copy code, not dependencies.</strong> Auth, Resend email, uploads, payments, and admin are added explicitly and owned by the app.</p></div>
                     <div class="step"><span class="pill">agents</span><p><strong>agents.md fragments.</strong> Each extension can append local instructions so coding agents know the conventions.</p></div>
-                    <div class="step"><span class="pill">server</span><p><strong>shibumi-server.</strong> A small VPS deploy helper: receive webhook, pull repo, rebuild, and register the route with Caddy.</p></div>
+                    <div class="step"><span class="pill">server</span><p><strong>shibumi-server.</strong> An experimental VPS deploy service: verify a signed webhook, check host capacity, fetch the exact commit, build and test with rootless Podman under resource guards, and run the app behind Caddy. Secrets and machine inventory stay on the server.</p></div>
                 </div>
             </section>

@@ -4,10 +4,12 @@
 
 This repo is the current public site for Shibumi Stack at `shibumistack.dev`.
 It is also the first dogfood artifact for the product idea: a small, Bun-first
-web stack built around Hono, Drizzle, Alpine, and Zod.
+web stack built around Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
 The package/scaffolder does not exist in this repo yet. The site documents the
-decisions, roadmap, brand, and planned DX for `create-shibumi`.
+decisions, roadmap, brand, and planned DX for `create-shibumi`. The experimental
+`shibumi-server` implementation lives in the separate public `shibumi-server`
+repository.
 
 ## Stack
 
@@ -19,11 +21,12 @@ decisions, roadmap, brand, and planned DX for `create-shibumi`.
 - Shared assets: `public/`.
 - Markdown alternates and Markdown-only page content: `src/content/`.
 - Tests: Bun test runner in `test/app.test.ts`.
-- Deployment: Bun server on port `9001`, with Docker and `compose.yaml`.
+- Deployment: Bun server on port `9001`, with `compose.yaml` and a Podman/Docker-compatible container.
 
-Planned stack pieces in the product docs are Bun, Hono, Drizzle, Alpine, and
-Zod. This site currently uses Bun and Hono directly; Drizzle, Alpine, and Zod
-are product roadmap/documentation content, not active dependencies here.
+Planned stack pieces in the product docs are Bun, Hono, Zod, Drizzle, SQLite,
+Alpine, and Nanostores. This site currently uses Bun and Hono directly; SQLite,
+Drizzle, Alpine, Nanostores, and Zod are product roadmap/documentation content,
+not active dependencies here.
 
 ## Commands
 
@@ -95,6 +98,7 @@ site contract for humans, agents, and direct source-shaped docs:
 - `src/content/building.md`: roadmap.
 - `src/content/brand.md`: brand guidance.
 - `src/content/dx.md`: long-form DX plan.
+- `src/content/server.md`: public architecture and security model for `shibumi-server`.
 - `README.md` and `CONTRIBUTING.md`: repo docs, served inline from root.
 - `public/llms.txt`: crawler/agent-facing summary.
 
@@ -103,8 +107,9 @@ sync unless the difference is deliberate.
 
 ## Frontend
 
-Shared styles live in `public/shared.css`. Docs-specific styles live in
-`src/pages/docs.css`. Optional page CSS files in `src/pages/` are inlined as
+Shared styles live in `public/shared.css`. Page-specific styles such as
+`src/pages/docs.css` and `src/pages/server.css` are inlined by the renderer.
+Optional page CSS files in `src/pages/` are inlined as
 page-local `<style data-page>` blocks by the renderer.
 
 `public/main.js` is the shared client entrypoint. It handles:
@@ -157,9 +162,14 @@ Route tests are deliberately small and assert:
 - One direct Markdown/plain-text route.
 - Unknown route 404 handling.
 - Discovered icon files resolve to SVG files and unknown icon names are rejected.
+- The `/server` HTML page and Markdown alternate expose the deploy/security model.
 
 If adding routes or Markdown negotiation behavior, add focused route tests in
 `test/app.test.ts`.
+
+## Gotchas
+
+- Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
 
 ## Implementation Caveats
 

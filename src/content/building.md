@@ -32,7 +32,11 @@ Cloudflare, Vercel, Fly.io, static CDN, and self-hosted Bun with Docker.
 
 ### Data
 
-SQLite in development. Drizzle keeps schema and queries familiar while production follows the target.
+SQLite by default. Drizzle handles schema, queries, and migrations. The production driver follows the target.
+
+### State
+
+Nanostores for shared state. Use Alpine inside a component. Use a store only when state is shared.
 
 ### Core
 
@@ -48,4 +52,4 @@ Each extension can append an `agents.md` fragment so coding agents know the loca
 
 ### shibumi-server
 
-A small VPS deploy helper: receive webhook, pull repo, rebuild, and register the route with Caddy.
+An experimental VPS deploy service: verify a signed webhook, check host capacity, fetch the exact commit, build and test with rootless Podman under resource guards, and run the app behind Caddy. Public code and templates stay in Git; secrets and machine inventory stay on the server.

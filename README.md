@@ -5,9 +5,9 @@
 
 > Refined simplicity for shipping web apps.
 
-Shibumi Stack is a small, opinionated path for building durable web apps with Bun, Hono, Drizzle, Alpine, and Zod.
+Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
-Small pieces chosen with care. Clear seams. No hidden runtime. Built to age well.
+Clear seams. No hidden runtime.
 
 ## Run locally
 
@@ -39,7 +39,7 @@ bun check   # TypeScript check
 ## Routing
 
 - `/` maps to the `index` page.
-- One-segment routes such as `/brand`, `/docs`, and `/building` are discovered
+- One-segment routes such as `/brand`, `/docs`, `/server`, and `/building` are discovered
   from `src/pages/{page}.html` and optional `src/content/{page}.md`.
 - Markdown-only pages such as `/dx` serve Markdown directly.
 - Requests with `Accept: text/markdown` receive Markdown when a page has a
@@ -51,9 +51,15 @@ bun check   # TypeScript check
 
 - **Bun**: runtime, test runner, package manager
 - **Hono**: routes, middleware, and static serving
+- **Zod**: planned validation at input boundaries
 - **Drizzle**: planned schema, queries, and migrations
-- **Alpine**: planned client-side interactivity
-- **Zod**: planned validation and type inference
+- **SQLite**: planned local durable storage
+- **Alpine**: planned component-local interactivity
+- **Nanostores**: planned shared browser state
+
+## Related projects
+
+- [`shibumi-server`](https://github.com/bitbonsai/shibumi-server) is the experimental, open-source webhook deploy service for rootless Podman behind Caddy. It refuses builds without configured memory/disk headroom and bounds build time and resources. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
 
 ## Status
 

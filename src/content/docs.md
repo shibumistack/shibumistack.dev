@@ -8,13 +8,15 @@ This site is the first Shibumi artifact. It is built with Bun and Hono, serves s
 
 The scaffolder, templates, and extensions are next. Until those ship, the docs are intentionally about decisions rather than package APIs.
 
-## The Five Pieces
+## The Seven Pieces
 
 - **Bun**: runtime, package manager, test runner, and build tool.
-- **Hono**: the route layer that can run locally, on edge platforms, or behind a Bun server.
-- **Drizzle**: typed schema, queries, and migrations without hiding SQL.
-- **Alpine**: small browser behavior without a client app by default.
-- **Zod**: validation at the edges where data enters the app.
+- **Hono**: routes and middleware that run locally, on edge platforms, or behind Bun.
+- **Zod**: validate input where it enters the app.
+- **Drizzle**: schema, queries, and migrations. SQL stays visible.
+- **SQLite**: local durable storage with no separate service in development or on a self-hosted deploy.
+- **Alpine**: small browser behavior close to the HTML.
+- **Nanostores**: shared browser state when Alpine's local state is not enough.
 
 ## Design Decisions
 

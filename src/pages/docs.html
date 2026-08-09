@@ -5,7 +5,7 @@
                 </div>
                 <div>
                     <p class="dek">The public package is still being built. These notes document the product decisions first: what Shibumi will generate, why the stack is small, and where the seams stay visible.</p>
-                    <div class="toc" aria-label="On this page"><a href="#now">What exists now</a><a href="#stack">The five pieces</a><a href="#decisions">Design decisions</a><a href="#extensions">Extensions</a><a href="#targets">Deploy targets</a></div>
+                    <div class="toc" aria-label="On this page"><a href="#now">What exists now</a><a href="#stack">The seven pieces</a><a href="#decisions">Design decisions</a><a href="#extensions">Extensions</a><a href="#targets">Deploy targets</a></div>
                 </div>
             </section>
 
@@ -19,13 +19,15 @@
             </section>
 
             <section id="stack">
-                <h2>The five pieces.</h2>
+                <h2>The seven pieces.</h2>
                 <ol class="rows">
-                    <li><span class="label">Bun</span><span><strong>One command surface.</strong> Runtime, package manager, test runner, and build tool stay in one place.</span></li>
-                    <li><span class="label">Hono</span><span><strong>The universal route layer.</strong> The same app shape can run locally, on edge platforms, or behind a Bun server.</span></li>
-                    <li><span class="label">Drizzle</span><span><strong>Typed data without hiding SQL.</strong> Schema, queries, and migrations stay readable.</span></li>
-                    <li><span class="label">Alpine</span><span><strong>Small browser behavior.</strong> Add interaction without turning every page into a client app.</span></li>
-                    <li><span class="label">Zod</span><span><strong>Validation at the edges.</strong> Inputs are parsed where data enters the app.</span></li>
+                    <li><span class="label">Bun</span><span><strong>Runtime, package manager, test runner, build tool.</strong> One command surface.</span></li>
+                    <li><span class="label">Hono</span><span><strong>Routes and middleware.</strong> Runs locally, on edge platforms, or behind Bun.</span></li>
+                    <li><span class="label">Zod</span><span><strong>Validate input at the boundary.</strong> Parse data where it enters the app.</span></li>
+                    <li><span class="label">Drizzle</span><span><strong>Schema, queries, migrations.</strong> SQL stays visible.</span></li>
+                    <li><span class="label">SQLite</span><span><strong>Local durable storage.</strong> No separate service in development or on a self-hosted deploy.</span></li>
+                    <li><span class="label">Alpine</span><span><strong>Small browser behavior.</strong> Keep interaction close to the HTML.</span></li>
+                    <li><span class="label">Nanostores</span><span><strong>Shared browser state.</strong> Use it only when Alpine's local state is not enough.</span></li>
                 </ol>
             </section>
 

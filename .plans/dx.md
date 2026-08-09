@@ -1,16 +1,18 @@
 # Shibumi Stack DX Plan
 
-## The Five Pieces
+## The Seven Pieces
 
 - **Bun**: runtime, bundler, test runner, package manager
 - **Hono**: routes, middleware, SSR
+- **Zod**: validate input at the boundary
 - **Drizzle**: schema, queries, migrations
-- **Alpine**: interactivity, no build step
-- **Zod**: validation, type inference
+- **SQLite**: durable local data with no service to run
+- **Alpine**: interaction close to the HTML
+- **Nanostores**: shared browser state when local state is not enough
 
-Five tools, full stack. Each replaceable, none redundant.
+Seven tools. Clear jobs. No extra layer.
 
-Shibumi is not a framework. It's the opinionated glue: a scaffolder (`create-shibumi`) that wires these five together with the right config for your deploy target, plus shared conventions (project structure, base.css, CSRF). Like create-t3-app, but for the small, self-hostable, no-Next end of the spectrum. Everything else is an extension.
+Shibumi is a scaffolder. It writes source files and deploy config for your target, then stays out of the way. Projects have plain files, base.css, and CSRF. Everything else is an extension.
 
 ## Core Principle
 
@@ -207,7 +209,7 @@ app.use(csrf())
 
 ## 9. Extensions Ecosystem
 
-Everything beyond the five pieces + CSRF is an extension. Added explicitly, owned by the user.
+Everything beyond the seven pieces + CSRF is an extension. Added explicitly, owned by the user.
 
 ### Mechanism
 
@@ -274,7 +276,7 @@ The base scaffolder also generates a root `agents.md` with stack conventions:
 
 ```markdown
 ## Stack
-Bun + Hono + Drizzle + Alpine + Zod. See .plans/dx.md for architecture.
+Bun + Hono + SQLite + Drizzle + Alpine + Nanostores + Zod. See .plans/dx.md for architecture.
 
 ## Conventions
 - Alpine: use x-component="name" pattern, not inline x-data blobs
@@ -380,27 +382,30 @@ npm publish
 
 ## shibumi-server
 
-Personal mini-PaaS for self-hosted deploys. One Bun process + Caddy API. No dashboard.
+Experimental self-hosted deploy service. One pinned Bun process behind the host's existing Caddy service; no dashboard and no privileged container socket.
 
-Single source of truth: `deploy.json` maps domain → path, port, secret.
+Public source defines behavior and templates. Machine-local config maps an app ID to its repository, branch, checkout, Compose service, and loopback port. It references a webhook-secret environment variable but never stores the secret itself.
 
-What it does:
-1. Receives webhook from any git host (GitHub, Codeberg, Gitea, anything)
-2. Runs git pull + podman-compose up --build
-3. Registers domain with Caddy API (auto-TLS, reverse proxy)
+The first GitHub flow:
+1. Verify `X-Hub-Signature-256`, repository, branch, and full commit SHA
+2. Reject a second request for an active app with `409`; do not queue it
+3. Check configured free-memory and free-disk floors before changing the checkout
+4. Fetch the exact commit into a clean deployment checkout
+5. Build under a deadline and systemd resource ceilings, then test with rootless Podman while the current container keeps running
+6. Start the replacement and check its loopback health endpoint
+7. Let Caddy route the public domain to the app's explicit localhost port
 
-CLI:
+Planned installation UX:
 ```
-shibumi-server init           # deploy.json + systemd unit + Caddy API setup
-shibumi-server add myapp.com  # adds entry, generates secret, registers with Caddy
-shibumi-server ls             # lists apps, ports, status
-shibumi-server logs myapp.com # tails podman logs
+bunx shibumi-server init
+bunx shibumi-server add myapp.com
 ```
 
-Integration: `create-shibumi` can wire up the webhook URL when user picks "Self-hosted".
-Git-host agnostic. No SSH keys in CI. No Actions/Woodpecker dependency.
+The installer writes a pinned systemd service. It does not run an unpinned package download at every restart. `create-shibumi` can later wire up the webhook when the user picks Self-hosted.
 
-Package: `shibumi-server` (claim on npm). Priority: after create-shibumi.
+GitHub is the first supported webhook format. Other git hosts, Caddy API changes, automatic port allocation, and health-check rollback follow after dogfooding.
+
+Package: `shibumi-server`. Implementation is public at `github.com/bitbonsai/shibumi-server`.
 
 ## Resolved Decisions
 

@@ -22,10 +22,11 @@ webhook/CI → ssh → git pull
 Build on the VPS itself. No registry, no external CI dependency. Works with any
 git host (GitHub, Codeberg, Gitea, self-hosted).
 ```
-webhook → git pull → docker compose up -d --build
+signed webhook → fetch exact commit → build + test → podman compose up -d
 ```
-This is the default. The VPS is the CI. Save GitHub Actions/Woodpecker as the
-upgrade path for teams that want build/test gates before deploy.
+This is the default. The VPS is the CI. The existing container stays up while
+the replacement builds and tests. Save GitHub Actions/Woodpecker as the upgrade
+path for teams that want centrally managed build/test gates before deploy.
 
 ## Outline
 
@@ -66,13 +67,24 @@ upgrade path for teams that want build/test gates before deploy.
 ### 7. Auto-deploy
 Two options depending on git host:
 
-**Option A: Webhook (git-host agnostic)**
-Simple HTTP listener on the server. Any git host that supports webhooks works:
-GitHub, Codeberg, Gitea, self-hosted Forgejo, anything.
+**Option A: Signed webhook**
+A small Bun system service listens on localhost behind Caddy. GitHub is the
+first supported payload format; additional git hosts can add explicit signature
+and payload adapters later.
 ```
-POST /deploy?secret=xxx → git pull && docker compose up -d --build
+POST /hooks/github/myapp
+  → verify X-Hub-Signature-256 over the raw body
+  → match configured repository and branch
+  → check free memory and disk
+  → fetch the exact commit
+  → build under a deadline and resource limits, then test with rootless Podman
+  → start and health-check the replacement
 ```
-Tiny webhook receiver (could be a Bun one-liner). Validate secret, run command.
+The webhook secret lives in a mode-0600 environment file or systemd credential,
+not in a URL or public JSON config. Commands use argument arrays rather than
+shell-interpolated payload values. A second request for an active app receives
+`409 Conflict` and is not queued. A resource preflight and bounded build protect
+the VPS; app containers also declare Compose limits.
 
 **Option B: CI-triggered SSH (GitHub Actions, Woodpecker, etc.)**
 For teams that want test/lint gates before deploy.

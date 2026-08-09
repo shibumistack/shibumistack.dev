@@ -2,7 +2,7 @@
 
 Refined simplicity for shipping web apps.
 
-Shibumi Stack is a small, opinionated path for building durable apps with Bun, Hono, Drizzle, Alpine, and Zod. Few pieces. Clear seams. Nothing hidden.
+Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores. Clear seams. Nothing hidden.
 
 ## What Shibumi is
 
@@ -27,9 +27,19 @@ Extensions add their own fragments. Install auth, and the agent learns the sessi
 1. **Minimal**: Smallest useful app. Routes, layout, styles, and tests.
 2. **Blog**: Markdown-driven content, RSS, and permalinks.
 3. **Landing**: Marketing page with waitlist or signup form.
-4. **SPA**: Client-side routing with Alpine. No server required.
-5. **Fullstack**: SSR, API routes, Drizzle, Zod, and Alpine.
+4. **SPA**: Client-side routing and shared state with Alpine and Nanostores.
+5. **Fullstack**: SSR, API routes, SQLite, Drizzle, Zod, and Alpine.
 6. **AI app**: Streaming responses, prompt templates, model integration.
+
+## Self-hosted deploys
+
+`shibumi-server` is now in active development. The planned setup installs a pinned system service behind Caddy:
+
+```sh
+bunx shibumi-server init
+```
+
+Once configured, a normal `git push` sends a signed GitHub webhook. The service verifies the push, checks host capacity, fetches the exact commit, then builds and tests with rootless Podman under a deadline and resource limits before starting the healthy app. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
 
 ## Start
 

@@ -28,7 +28,7 @@ Markdown is first-class. Every HTML page has a Markdown alternate served from `s
 
 ## What is still open
 
-We have not touched Alpine yet. The site uses vanilla JS for theme toggling, view transitions, and the install dialog. When `create-shibumi` ships, Alpine will be part of the default stack. We will migrate the site then, not before. Same for Drizzle and Zod. They are in the product direction but not in this repo yet.
+We have not touched Alpine or Nanostores yet. The site uses vanilla JS for theme toggling, view transitions, and the install dialog. When `create-shibumi` ships, Alpine will handle local browser behavior and Nanostores will be there for shared state. We will migrate the site then, not before. The same is true of SQLite, Drizzle, and Zod: they are in the product direction, not active dependencies in this repo yet.
 
 The scaffolder itself does not exist. There is no `bun create shibumi@latest`. This site is the proof that the underlying idea — Bun, Hono, plain files, owned source — is enough to ship something real.
 

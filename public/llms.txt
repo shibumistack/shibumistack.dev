@@ -1,13 +1,18 @@
 # shibumistack.dev
 
-> A lean, opinionated web stack: Bun, Hono, SQLite, Alpine. Small pieces chosen with care. No lock-in. Ages well.
+> A small web stack: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores. Clear seams. No hidden runtime.
 
 ## Pages
 
 - [Home](/index.md)
 - [Roadmap](/building.md)
+- [shibumi-server](/server.md)
 - [DX plan](/dx.md)
 - [Brand](/brand.md)
+
+## In development
+
+- `shibumi-server`: an experimental, open-source Bun service for signed GitHub webhook deploys to rootless Podman behind Caddy, with memory/disk preflight and bounded builds. Public templates contain no machine credentials; real configuration and secrets stay on the VPS.
 
 ## Docs
 

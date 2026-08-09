@@ -7,8 +7,8 @@
             >
         </h1>
         <p class="dek">
-            A lean, opinionated web stack for building calm, durable apps with
-            Bun, Hono, Drizzle, Alpine, and Zod.
+            A small web stack for apps you can understand and keep:
+            Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
         </p>
         <p class="status-badge">Coming soon</p>
     </div>
@@ -137,11 +137,11 @@
         </article>
         <article class="theme-card">
             <h3><span class="theme-icon">{{icon(refresh-cw)}}</span> SPA</h3>
-            <p>Client-side routing with Alpine. No server required.</p>
+            <p>Client-side routing and shared state with Alpine and Nanostores.</p>
         </article>
         <article class="theme-card">
             <h3><span class="theme-icon">{{icon(layers)}}</span> Fullstack</h3>
-            <p>SSR, API routes, Drizzle, Zod, and Alpine.</p>
+            <p>SSR, API routes, SQLite, Drizzle, Zod, and Alpine.</p>
         </article>
         <article class="theme-card">
             <h3><span class="theme-icon">{{icon(brain)}}</span> AI app</h3>
@@ -182,18 +182,18 @@
         <h2 id="deploy-title">Deploy anywhere</h2>
         <div class="feature-copy">
             <p>Cloudflare, Vercel, Railway, Fly.io, a static CDN, or your own VPS. Shibumi generates the config for the path you choose.</p>
-            <p>For self-hosted deploys, set up <span class="accent-word">shibumi-server</span> once:</p>
-            <pre><code>  <span class="wrote">$</span> shi server install user@your-vps
-  <span class="created">installed</span>  shibumi-server (container)
-  <span class="created">running</span>   Caddy + build service
-  <span class="success">✓</span> ready to deploy</code></pre>
-            <p>Then deploy with one command:</p>
-            <pre><code>  <span class="wrote">$</span> shi deploy vps
-  <span class="created">sending</span>   12 files
-  <span class="wrote">building</span>  bun run build
+            <p>For self-hosted deploys, <span class="accent-word">shibumi-server</span> is now in active development. The planned setup is:</p>
+            <pre><code>  <span class="wrote">$</span> bunx shibumi-server init
+  <span class="created">installed</span>  pinned system service
+  <span class="created">connected</span>  Caddy + rootless Podman
+  <span class="success">✓</span> waiting for signed webhooks</code></pre>
+            <p>Once configured, deployment starts with a normal push:</p>
+            <pre><code>  <span class="wrote">$</span> git push
+  <span class="created">received</span>  signed GitHub webhook
+  <span class="wrote">tested</span>    app inside Podman
   <span class="created">deployed</span>  https://myapp.com
-  <span class="success">✓</span> live</code></pre>
-            <p>shibumi-server runs as a container with Caddy. It builds your app, routes the domain, and provisions HTTPS. The files are yours — read them, modify them, or remove the server entirely.</p>
+  <span class="success">✓</span> healthy</code></pre>
+            <p>The experimental service verifies the push, checks host capacity, fetches the exact commit, then builds and tests under resource guards before starting the app behind Caddy. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
         </div>
     </div>
 </section>
