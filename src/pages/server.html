@@ -50,7 +50,7 @@
                     <h2 id="install-title">Installed once.<br>Downloaded never.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>The v0.1 installer is implemented and awaiting package publication. <code>init</code> copies an exact version to the host and writes mode-restricted config, secrets, and a resource-limited systemd user service. Restarts execute that local copy—never an unpinned download.</p>
+                    <p>The v0.1 installer is implemented and awaiting package publication. Once published, run <code>init</code> once on the VPS. It copies an exact version to the host and writes mode-restricted config, secrets, and a resource-limited systemd user service. Restarts execute that local copy—never an unpinned download.</p>
                     <pre class="install-terminal"><code><span class="prompt-mark">›</span> bunx shibumi-server@0.1.0 init
 <span class="prompt-mark">›</span> bunx shibumi-server@0.1.0 add example.com \
     --repository owner/repository \

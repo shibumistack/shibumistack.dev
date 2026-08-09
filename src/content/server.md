@@ -36,7 +36,7 @@ With Astro 7, the Cloudflare dependency changed and the upgrade meant leaving Pa
 
 ## Pinned installation
 
-The v0.1 installer and app registration are implemented. Release `0.1.0` is awaiting package publication. The explicit-version flow will be:
+The v0.1 installer and app registration are implemented. Release `0.1.0` is awaiting package publication. Once published, run the explicit-version flow on the VPS:
 
 ```sh
 bunx shibumi-server@0.1.0 init
