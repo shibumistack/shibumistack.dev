@@ -1,0 +1,91 @@
+            <section class="hero server-hero">
+                <div>
+                    <p class="eyebrow">Self-hosted deploys</p>
+                    <h1>Push.<br><span class="accent-word">Build here.</span></h1>
+                </div>
+                <div class="hero-copy">
+                    <p class="dek">shibumi-server is a small, experimental Bun service for one job: turn a signed push into a tested container on your own VPS.</p>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · dogfooding now</span></div>
+                </div>
+            </section>
+
+            <section class="terminal-section" aria-labelledby="install-title">
+                <div>
+                    <p class="eyebrow">Planned install</p>
+                    <h2 id="install-title">Set it up once.</h2>
+                    <p>The installer will place a pinned copy on the host and create a systemd service. Caddy stays public; the receiver and every app port stay on loopback.</p>
+                </div>
+                <pre class="server-terminal"><code><span class="prompt">$</span> bunx shibumi-server init
+<span class="muted">checking</span>   Caddy + rootless Podman
+<span class="muted">installing</span> pinned system service
+<span class="success">ready</span>      waiting for signed webhooks</code></pre>
+            </section>
+
+            <section class="flow-section" aria-labelledby="flow-title">
+                <div class="section-heading">
+                    <p class="eyebrow">A push, seven deliberate steps</p>
+                    <h2 id="flow-title">The VPS is the CI.</h2>
+                </div>
+                <ol class="deploy-flow">
+                    <li><span>01</span><div><h3>Verify</h3><p>Check the GitHub HMAC over the raw body, then match the configured repository and exact branch.</p></div></li>
+                    <li><span>02</span><div><h3>Lock</h3><p>One deployment per app. A second request receives <code>409 Conflict</code>; nothing waits in a hidden queue.</p></div></li>
+                    <li><span>03</span><div><h3>Preflight</h3><p>Require enough available memory and disk before changing the checkout. A constrained host refuses the build.</p></div></li>
+                    <li><span>04</span><div><h3>Fetch</h3><p>Fetch the branch and require its commit to match the signed webhook SHA. No ambiguous <code>git pull</code>.</p></div></li>
+                    <li><span>05</span><div><h3>Build</h3><p>Build with rootless Podman under a deadline and systemd ceilings while the current container keeps serving traffic.</p></div></li>
+                    <li><span>06</span><div><h3>Test</h3><p>Run the app's configured checks inside the new image. A failure stops before replacement.</p></div></li>
+                    <li><span>07</span><div><h3>Start</h3><p>Start the replacement on its explicit localhost port and poll its health endpoint.</p></div></li>
+                </ol>
+            </section>
+
+            <section class="boundary-section" aria-labelledby="boundary-title">
+                <div class="section-heading">
+                    <p class="eyebrow">Clear boundary</p>
+                    <h2 id="boundary-title">Public code. Private machine.</h2>
+                </div>
+                <div class="boundary-grid">
+                    <article>
+                        <span class="label">In Git</span>
+                        <h3>Everything reusable.</h3>
+                        <ul>
+                            <li>Server and CLI source</li>
+                            <li>Container and Compose templates</li>
+                            <li>Configuration schema</li>
+                            <li>Caddy and systemd examples</li>
+                            <li>Tests and security model</li>
+                        </ul>
+                    </article>
+                    <article>
+                        <span class="label">On the VPS</span>
+                        <h3>Everything specific.</h3>
+                        <ul>
+                            <li>Webhook HMAC secrets</li>
+                            <li>Repository credentials</li>
+                            <li>App paths and assigned ports</li>
+                            <li>Environment files and data</li>
+                            <li>Deployment state and logs</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="config-section" aria-labelledby="ports-title">
+                <div>
+                    <p class="eyebrow">Multiple apps</p>
+                    <h2 id="ports-title">Caddy knows the port because you tell it.</h2>
+                    <p>Each app receives an explicit localhost port in machine-local config. Caddy maps the public domain to that port. Databases and workers remain private inside the Compose network.</p>
+                </div>
+                <pre class="server-terminal config-terminal"><code><span class="domain">myapp.com</span> {
+  reverse_proxy <span class="value">127.0.0.1:9100</span>
+}
+
+<span class="domain">another.app</span> {
+  reverse_proxy <span class="value">127.0.0.1:9101</span>
+}</code></pre>
+            </section>
+
+            <section class="server-cta" aria-labelledby="source-title">
+                <p class="eyebrow">Experimental</p>
+                <h2 id="source-title">Read the whole thing.</h2>
+                <p>The implementation, tests, examples, security decisions, and resource guards are public. Installation automation and rollback come after the first real deployments prove the smaller core.</p>
+                <a class="btn btn-primary" href="https://github.com/bitbonsai/shibumi-server">View shibumi-server on GitHub →</a>
+            </section>

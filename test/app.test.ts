@@ -111,6 +111,22 @@ describe("routes", () => {
     expect(res.status).toBe(404);
   });
 
+  test("serves the shibumi-server page and Markdown alternate", async () => {
+    const htmlRes = await app.request("/server");
+    const htmlBody = await htmlRes.text();
+
+    expect(htmlRes.status).toBe(200);
+    expect(htmlBody).toContain("The VPS is the CI");
+    expect(htmlBody).toContain("409 Conflict");
+    expect(htmlBody).toContain("rootless Podman");
+
+    const markdownRes = await app.request("/server", {
+      headers: { accept: "text/markdown" },
+    });
+    expect(markdownRes.status).toBe(200);
+    expect(await markdownRes.text()).toContain("# shibumi-server");
+  });
+
   test("serves extensions page", async () => {
     const res = await app.request("/extensions");
     const body = await res.text();

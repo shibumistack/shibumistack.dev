@@ -11,7 +11,7 @@ type MediaRange = {
   quality: number;
 };
 
-const activePages = ["home", "docs", "roadmap", "brand", "blog", "extensions"] as const;
+const activePages = ["home", "docs", "server", "roadmap", "brand", "blog", "extensions"] as const;
 
 type ActivePage = (typeof activePages)[number];
 
@@ -60,7 +60,7 @@ const assetVersion = String(
 const pageMeta: Record<string, PageMeta> = {
   index: {
     title: "Shibumi Stack: refined simplicity for shipping web apps",
-    description: "A lean, opinionated web stack for building calm, durable apps with Bun, Hono, Drizzle, Alpine, and Zod.",
+    description: "A small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.",
     path: "/",
   },
   brand: {
@@ -70,8 +70,13 @@ const pageMeta: Record<string, PageMeta> = {
   },
   docs: {
     title: "Docs — Shibumi Stack",
-    description: "Technical decisions behind Shibumi Stack: Bun, Hono, Drizzle, Alpine, Zod, owned source, and deploy targets.",
+    description: "Shibumi Stack's seven pieces: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.",
     path: "/docs",
+  },
+  server: {
+    title: "shibumi-server — signed webhook deploys for your VPS",
+    description: "An experimental Bun service that verifies GitHub pushes, builds and tests with rootless Podman, and runs apps behind Caddy.",
+    path: "/server",
   },
   building: {
     title: "Roadmap — Shibumi Stack",
