@@ -28,11 +28,11 @@ HMAC authentication prevents a forged hook from authorizing a deployment. Caddy,
 
 ## Dogfooding with MCPVault
 
-We connected an isolated test branch from [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian, to the real webhook path. Signature verification, exact repository and branch checks, commit matching, and deterministic checkout passed. The build started from the signed commit.
+I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the job needed.
 
-The existing framework-heavy website build then proved too large for a small production VPS. We stopped, cleaned up the isolated test, and added memory and disk preflight, build cancellation, and hard service limits before trying again.
+With Astro 7, the Cloudflare dependency changed and the upgrade meant leaving Pages for Workers. Workers wasn't a direction I wanted, so I chose a Shibumi rebuild on my own VPS.
 
-The next live dogfood uses the tiny Bun integration fixture or MCPVault's future lightweight Shibumi app—not the current heavy build. Production apps stay out of these experiments.
+`shibumi-server` will handle the deploys. An early build exposed the VPS's limits and led directly to memory and disk preflight, build cancellation, and service ceilings. The migration is now a real test of the stack.
 
 ## Pinned installation
 

@@ -37,9 +37,9 @@
                     <h2 id="dogfood-title">Testing for real.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>We connected an isolated test branch from <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian, to the real webhook path. Signature verification, exact repository and branch checks, commit matching, and deterministic checkout all passed. The build started from the signed commit.</p>
-                    <p>Then the existing framework-heavy website build proved too large for a small production VPS. That was useful failure, not a launch: we stopped, cleaned up the test, and added memory and disk preflight, build cancellation, and hard service limits before trying again.</p>
-                    <p>The next live dogfood uses the tiny Bun fixture or MCPVault's future lightweight Shibumi app—not the current heavy build. Production apps keep serving while these isolated deploy tests continue.</p>
+                    <p>I also maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the job needed.</p>
+                    <p>With Astro 7, the Cloudflare dependency changed and the upgrade meant leaving Pages for Workers. Workers wasn't a direction I wanted, so I chose a Shibumi rebuild on my own VPS.</p>
+                    <p>shibumi-server will handle the deploys. An early build exposed the VPS's limits and led directly to memory and disk preflight, build cancellation, and service ceilings. The migration is now a real test of the stack.</p>
                     <a class="text-link" href="https://mcpvault.org">Visit MCPVault →</a>
                 </div>
             </section>
