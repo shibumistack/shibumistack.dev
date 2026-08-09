@@ -22,7 +22,7 @@
             <section class="server-intro" aria-labelledby="small-title">
                 <p class="eyebrow">Small on purpose</p>
                 <h2 id="small-title">No dashboard.<br>No hidden deploy platform.</h2>
-                <p>shibumi-server verifies GitHub's HMAC over the raw request body, rejects replayed delivery IDs, fetches the exact signed commit, and runs configured build and test commands as argument arrays. Caddy remains the public edge. Podman remains rootless. The files remain yours.</p>
+                <p>shibumi-server deploys the exact commit from a signed GitHub push, using rootless Podman behind Caddy. You keep every file.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">

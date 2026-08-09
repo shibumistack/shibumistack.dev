@@ -1,8 +1,8 @@
 # shibumi-server
 
-`shibumi-server` is a small, experimental Bun service that turns a signed GitHub push into a tested container on your own VPS.
+`shibumi-server` deploys the exact commit from a signed GitHub push, using rootless Podman behind Caddy. You keep every file.
 
-No dashboard. No hidden deploy platform. Caddy remains the public edge, Podman remains rootless, and the files remain yours.
+No dashboard or hidden deploy platform.
 
 ## A deployment
 
