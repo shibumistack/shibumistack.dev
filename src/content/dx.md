@@ -360,36 +360,36 @@ npm publish
 # users install with: bun run shibumi add comments
 ```
 
-## shibumi-server
+## [shibumi-server](/server.md)
 
 Experimental self-hosted deploy service. One pinned Bun process behind the host's existing Caddy service; no dashboard and no privileged container socket.
 
 Public source defines behavior and templates. Machine-local config maps an app ID to its repository, branch, checkout, Compose service, and loopback port. It references a webhook-secret environment variable but never stores the secret itself.
 
 The first GitHub flow:
-1. Verify `X-Hub-Signature-256`, repository, branch, and full commit SHA
-2. Reject a second request for an active app with `409`; do not queue it
+1. Verify `X-Hub-Signature-256`, repository, branch, full commit SHA, and reject replayed delivery IDs
+2. Reject a different request for an active app with `409`; do not queue it
 3. Check configured free-memory and free-disk floors before changing the checkout
 4. Fetch the exact commit into a clean deployment checkout
 5. Build under a deadline and systemd resource ceilings, then test with rootless Podman while the current container keeps running
 6. Start the replacement and check its loopback health endpoint
 7. Let Caddy route the public domain to the app's explicit localhost port
 
-Planned installation UX:
+The v0.1 installation UX is implemented and awaiting package publication:
 ```
-bunx shibumi-server init
-bunx shibumi-server add myapp.com
+bunx shibumi-server@0.1.0 init
+bunx shibumi-server@0.1.0 add myapp.com --repository owner/repo --checkout /srv/apps/myapp --port 9100 -- bun test
 ```
 
-The installer writes a pinned systemd service. It does not run an unpinned package download at every restart. `create-shibumi` can later wire up the webhook when the user picks Self-hosted.
+The installer writes a pinned systemd user service, mode-restricted machine config, and a unique per-app secret. It does not run an unpinned package download at restart or modify Caddy/GitHub. `create-shibumi` can later wire up the explicit steps when the user picks Self-hosted.
 
 GitHub is the first supported webhook format. Other git hosts, Caddy API changes, automatic port allocation, and health-check rollback follow after dogfooding.
 
-Package: `shibumi-server`. Implementation is public at `github.com/bitbonsai/shibumi-server`.
+Package: [`shibumi-server`](https://github.com/bitbonsai/shibumi-server).
 
 ## Resolved Decisions
 
-- **GitHub Actions**: optional, not default. Default self-hosted deploy uses shibumi-server webhook
+- **GitHub Actions**: optional, not default. Default self-hosted deploy uses the [shibumi-server webhook](/server.md)
 - **Blog template**: Markdown with frontmatter, no MDX. Parsed at build time.
 - **base.css**: ships with every template. Delete if you don't want it.
 - **Extension registry**: npm-only. `@shibumi/*` for official, `shibumi-ext-*` for community. Listing page on shibumistack.dev.

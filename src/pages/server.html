@@ -1,91 +1,68 @@
             <section class="hero server-hero">
-                <div>
+                <div class="server-hero-copy">
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push.<br><span class="accent-word">Build here.</span></h1>
+                    <p class="dek">A small Bun service that turns one signed GitHub push into one tested container on your own VPS.</p>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1 implemented</span></div>
                 </div>
-                <div class="hero-copy">
-                    <p class="dek">shibumi-server is a small, experimental Bun service for one job: turn a signed push into a tested container on your own VPS.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · dogfooding now</span></div>
+
+                <div class="deploy-cli" data-server-cli aria-label="Simulated shibumi-server deployment">
+                    <div class="deploy-command"><span class="prompt-mark">›</span><code><span data-server-typed></span><span class="typing-cursor" data-server-cursor aria-hidden="true"></span></code></div>
+                    <div class="deploy-output" aria-live="polite">
+                        <div class="deploy-step"><span class="deploy-label">received</span><span>GitHub push · delivery new</span></div>
+                        <div class="deploy-step"><span class="deploy-label">verified</span><span>HMAC · repository · branch · SHA</span></div>
+                        <div class="deploy-step"><span class="deploy-label">ready</span><span>memory + disk preflight passed</span></div>
+                        <div class="deploy-step"><span class="deploy-label">built</span><span>rootless Podman · bounded deadline</span></div>
+                        <div class="deploy-step"><span class="deploy-label">tested</span><span>bun test <span class="deploy-ok">✓</span></span></div>
+                        <div class="deploy-step"><span class="deploy-label">healthy</span><span>loopback app ready for Caddy</span></div>
+                    </div>
                 </div>
             </section>
 
-            <section class="terminal-section" aria-labelledby="install-title">
+            <section class="server-intro" aria-labelledby="small-title">
+                <p class="eyebrow">Small on purpose</p>
+                <h2 id="small-title">No dashboard.<br>No hidden deploy platform.</h2>
+                <p>shibumi-server verifies GitHub's HMAC over the raw request body, rejects replayed delivery IDs, fetches the exact signed commit, and runs configured build and test commands as argument arrays. Caddy remains the public edge. Podman remains rootless. The files remain yours.</p>
+            </section>
+
+            <section class="server-principles" aria-label="Deployment guarantees">
+                <article><span>01</span><h3>Signed only.</h3><p>Malformed hooks are rejected early. A valid secret, repository, branch, full commit SHA, and new delivery ID are all required.</p></article>
+                <article><span>02</span><h3>The host gets a vote.</h3><p>Memory and disk preflight, a build deadline, process cancellation, and systemd ceilings stop unsafe work before startup.</p></article>
+                <article><span>03</span><h3>One deploy at a time.</h3><p>Per-app locks return <code>409 Conflict</code> for concurrent work. Failed fetches, builds, and tests never run <code>compose up</code>.</p></article>
+            </section>
+
+            <section class="dogfood-section" aria-labelledby="dogfood-title">
                 <div>
-                    <p class="eyebrow">Planned install</p>
-                    <h2 id="install-title">Set it up once.</h2>
-                    <p>The installer will place a pinned copy on the host and create a systemd service. Caddy stays public; the receiver and every app port stay on loopback.</p>
+                    <p class="eyebrow">Dogfooding with MCPVault</p>
+                    <h2 id="dogfood-title">The test found the limit.</h2>
                 </div>
-                <pre class="server-terminal"><code><span class="prompt">$</span> bunx shibumi-server init
-<span class="muted">checking</span>   Caddy + rootless Podman
-<span class="muted">installing</span> pinned system service
-<span class="success">ready</span>      waiting for signed webhooks</code></pre>
-            </section>
-
-            <section class="flow-section" aria-labelledby="flow-title">
-                <div class="section-heading">
-                    <p class="eyebrow">A push, seven deliberate steps</p>
-                    <h2 id="flow-title">The VPS is the CI.</h2>
-                </div>
-                <ol class="deploy-flow">
-                    <li><span>01</span><div><h3>Verify</h3><p>Check the GitHub HMAC over the raw body, then match the configured repository and exact branch.</p></div></li>
-                    <li><span>02</span><div><h3>Lock</h3><p>One deployment per app. A second request receives <code>409 Conflict</code>; nothing waits in a hidden queue.</p></div></li>
-                    <li><span>03</span><div><h3>Preflight</h3><p>Require enough available memory and disk before changing the checkout. A constrained host refuses the build.</p></div></li>
-                    <li><span>04</span><div><h3>Fetch</h3><p>Fetch the branch and require its commit to match the signed webhook SHA. No ambiguous <code>git pull</code>.</p></div></li>
-                    <li><span>05</span><div><h3>Build</h3><p>Build with rootless Podman under a deadline and systemd ceilings while the current container keeps serving traffic.</p></div></li>
-                    <li><span>06</span><div><h3>Test</h3><p>Run the app's configured checks inside the new image. A failure stops before replacement.</p></div></li>
-                    <li><span>07</span><div><h3>Start</h3><p>Start the replacement on its explicit localhost port and poll its health endpoint.</p></div></li>
-                </ol>
-            </section>
-
-            <section class="boundary-section" aria-labelledby="boundary-title">
-                <div class="section-heading">
-                    <p class="eyebrow">Clear boundary</p>
-                    <h2 id="boundary-title">Public code. Private machine.</h2>
-                </div>
-                <div class="boundary-grid">
-                    <article>
-                        <span class="label">In Git</span>
-                        <h3>Everything reusable.</h3>
-                        <ul>
-                            <li>Server and CLI source</li>
-                            <li>Container and Compose templates</li>
-                            <li>Configuration schema</li>
-                            <li>Caddy and systemd examples</li>
-                            <li>Tests and security model</li>
-                        </ul>
-                    </article>
-                    <article>
-                        <span class="label">On the VPS</span>
-                        <h3>Everything specific.</h3>
-                        <ul>
-                            <li>Webhook HMAC secrets</li>
-                            <li>Repository credentials</li>
-                            <li>App paths and assigned ports</li>
-                            <li>Environment files and data</li>
-                            <li>Deployment state and logs</li>
-                        </ul>
-                    </article>
+                <div class="section-copy">
+                    <p>We connected an isolated test branch from <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian, to the real webhook path. Signature verification, exact repository and branch checks, commit matching, and deterministic checkout all passed. The build started from the signed commit.</p>
+                    <p>Then the existing framework-heavy website build proved too large for a small production VPS. That was useful failure, not a launch: we stopped, cleaned up the test, and added memory and disk preflight, build cancellation, and hard service limits before trying again.</p>
+                    <p>The next live dogfood uses the tiny Bun fixture or MCPVault's future lightweight Shibumi app—not the current heavy build. Production apps keep serving while these isolated deploy tests continue.</p>
+                    <a class="text-link" href="https://mcpvault.org">Visit MCPVault →</a>
                 </div>
             </section>
 
-            <section class="config-section" aria-labelledby="ports-title">
+            <section class="install-section" aria-labelledby="install-title">
                 <div>
-                    <p class="eyebrow">Multiple apps</p>
-                    <h2 id="ports-title">Caddy knows the port because you tell it.</h2>
-                    <p>Each app receives an explicit localhost port in machine-local config. Caddy maps the public domain to that port. Databases and workers remain private inside the Compose network.</p>
+                    <p class="eyebrow">Pinned installer</p>
+                    <h2 id="install-title">Installed once.<br>Downloaded never.</h2>
                 </div>
-                <pre class="server-terminal config-terminal"><code><span class="domain">myapp.com</span> {
-  reverse_proxy <span class="value">127.0.0.1:9100</span>
-}
-
-<span class="domain">another.app</span> {
-  reverse_proxy <span class="value">127.0.0.1:9101</span>
-}</code></pre>
+                <div class="section-copy">
+                    <p>The v0.1 installer is implemented and awaiting package publication. <code>init</code> copies an exact version to the host and writes mode-restricted config, secrets, and a resource-limited systemd user service. Restarts execute that local copy—never an unpinned download.</p>
+                    <pre class="install-terminal"><code><span class="prompt-mark">›</span> bunx shibumi-server@0.1.0 init
+<span class="prompt-mark">›</span> bunx shibumi-server@0.1.0 add example.com \
+    --repository owner/repository \
+    --checkout /srv/shibumi/apps/example-com \
+    --port 9100 -- bun test</code></pre>
+                    <p>Caddy routes and GitHub webhook settings remain explicit operator steps. Secrets and machine inventory never enter the public repository.</p>
+                </div>
             </section>
 
             <section class="server-cta" aria-labelledby="source-title">
-                <p class="eyebrow">Experimental</p>
-                <h2 id="source-title">Read the whole thing.</h2>
-                <p>The implementation, tests, examples, security decisions, and resource guards are public. Installation automation and rollback come after the first real deployments prove the smaller core.</p>
+                <p class="eyebrow">Read the source</p>
+                <h2 id="source-title">The whole deploy path is public.</h2>
+                <p>Receiver, installer, tests, generic configuration, security model, and resource guards. Package publication, durable delivery state across restarts, and health-check rollback come next.</p>
                 <a class="btn btn-primary" href="https://github.com/bitbonsai/shibumi-server">View shibumi-server on GitHub →</a>
             </section>

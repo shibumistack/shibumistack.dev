@@ -116,9 +116,12 @@ describe("routes", () => {
     const htmlBody = await htmlRes.text();
 
     expect(htmlRes.status).toBe(200);
-    expect(htmlBody).toContain("The VPS is the CI");
+    expect(htmlBody).toContain("No hidden deploy platform");
     expect(htmlBody).toContain("409 Conflict");
     expect(htmlBody).toContain("rootless Podman");
+    expect(htmlBody).toContain("Dogfooding with MCPVault");
+    expect(htmlBody).toContain('href="/server" aria-current="page"');
+    expect(htmlBody).toContain("data-page-script");
 
     const markdownRes = await app.request("/server", {
       headers: { accept: "text/markdown" },

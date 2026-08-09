@@ -182,11 +182,11 @@
         <h2 id="deploy-title">Deploy anywhere</h2>
         <div class="feature-copy">
             <p>Cloudflare, Vercel, Railway, Fly.io, a static CDN, or your own VPS. Shibumi generates the config for the path you choose.</p>
-            <p>For self-hosted deploys, <span class="accent-word">shibumi-server</span> is now in active development. The planned setup is:</p>
-            <pre><code>  <span class="wrote">$</span> bunx shibumi-server init
+            <p>For self-hosted deploys, <a href="/server"><span class="accent-word">shibumi-server</span></a> now has a signed receiver, resource guards, and a pinned v0.1 installer ready for package publication:</p>
+            <pre><code>  <span class="wrote">$</span> bunx shibumi-server@0.1.0 init
   <span class="created">installed</span>  pinned system service
-  <span class="created">connected</span>  Caddy + rootless Podman
-  <span class="success">✓</span> waiting for signed webhooks</code></pre>
+  <span class="created">protected</span>  bounded build resources
+  <span class="success">next</span>       configure Caddy + GitHub</code></pre>
             <p>Once configured, deployment starts with a normal push:</p>
             <pre><code>  <span class="wrote">$</span> git push
   <span class="created">received</span>  signed GitHub webhook

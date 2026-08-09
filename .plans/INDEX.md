@@ -2,15 +2,16 @@
 
 ## Active
 
-- [ ] Design pinned `bunx shibumi-server init` installation and app registration.
+- [ ] Publish `shibumi-server` 0.1.0 after final package review.
+- [ ] Run the next live dogfood only with the tiny Bun fixture or MCPVault's future lightweight Shibumi app.
 
 ## Planned
 
-- [ ] Add durable delivery state and health-check rollback.
-- [ ] Test only with the tiny Bun fixture or MCPVault's future lightweight Shibumi app; never build the current Astro app on a small production VPS.
+- [ ] Add durable delivery state across restarts and health-check rollback.
 
 ## Recently shipped
 
-- [x] Publish the `/server` page, Markdown alternate, navigation, metadata, and synchronized deploy copy (`488e8fc`).
-- [x] Add memory/disk preflight, build cancellation, and resource limits to `shibumi-server` (`cb74f45`).
-- [x] Implement signed GitHub webhook deployment core in `shibumi-server` (`751260b`).
+- [x] Add bounded webhook replay protection and cheap malformed-header rejection (`2f3197c`).
+- [x] Implement pinned `init` and idempotent app registration (`b230c20`).
+- [x] Publish the `/server` route, Markdown alternate, and navigation (`488e8fc`).
+- [x] Add memory/disk preflight, build cancellation, and resource limits (`cb74f45`).

@@ -1,63 +1,56 @@
 # shibumi-server
 
-`shibumi-server` is an experimental, open-source Bun service for signed webhook deployments to a VPS running rootless Podman behind Caddy.
+`shibumi-server` is a small, experimental Bun service that turns a signed GitHub push into a tested container on your own VPS.
 
-## Planned installation
+No dashboard. No hidden deploy platform. Caddy remains the public edge, Podman remains rootless, and the files remain yours.
+
+## A deployment
+
+```text
+git push origin main
+  received  GitHub push; delivery ID is new
+  verified  HMAC, repository, branch, and full commit SHA
+  ready     memory and disk preflight passed
+  built     rootless Podman under a bounded deadline
+  tested    configured test command passed
+  healthy   loopback app is ready for Caddy
+```
+
+The receiver rejects malformed headers before reading the body, verifies GitHub's `X-Hub-Signature-256` over the raw body, and suppresses replayed `X-GitHub-Delivery` IDs. It fetches the exact signed commit rather than using ambiguous `git pull` behavior.
+
+One deployment runs per app. A different concurrent delivery receives `409 Conflict` and is not queued. Failed preflight, fetch, build, or test stages never run `compose up`.
+
+## The host gets a vote
+
+The default preflight requires 2 GiB of available memory and 4 GiB of free space on the checkout filesystem. Builds have a deadline and process-group cancellation. The systemd service limits memory, swap, CPU, and task count; application services define their own Compose limits.
+
+HMAC authentication prevents a forged hook from authorizing a deployment. Caddy, the firewall, or an upstream provider must still handle rate limiting and volumetric abuse before traffic reaches Bun.
+
+## Dogfooding with MCPVault
+
+We connected an isolated test branch from [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian, to the real webhook path. Signature verification, exact repository and branch checks, commit matching, and deterministic checkout passed. The build started from the signed commit.
+
+The existing framework-heavy website build then proved too large for a small production VPS. We stopped, cleaned up the isolated test, and added memory and disk preflight, build cancellation, and hard service limits before trying again.
+
+The next live dogfood uses the tiny Bun integration fixture or MCPVault's future lightweight Shibumi app—not the current heavy build. Production apps stay out of these experiments.
+
+## Pinned installation
+
+The v0.1 installer and app registration are implemented. Release `0.1.0` is awaiting package publication. The explicit-version flow will be:
 
 ```sh
-bunx shibumi-server init
-bunx shibumi-server add myapp.com
+bunx shibumi-server@0.1.0 init
+bunx shibumi-server@0.1.0 add example.com \
+  --repository owner/repository \
+  --checkout /srv/shibumi/apps/example-com \
+  --port 9100 \
+  -- bun test
 ```
 
-The installer will place a pinned copy on the host and create a systemd service. Caddy remains the only public HTTP server. The webhook receiver and application ports listen on loopback.
-
-## Deployment flow
-
-1. **Verify:** Check GitHub's `X-Hub-Signature-256` HMAC over the raw body, then match the configured repository and exact branch.
-2. **Lock:** Allow one deployment per app. A second request receives `409 Conflict` and is not queued.
-3. **Preflight:** Require configured free-memory and free-disk floors before changing the checkout.
-4. **Fetch:** Fetch the configured branch and require its commit to match the signed webhook SHA. Do not use ambiguous `git pull` behavior.
-5. **Build:** Build locally with rootless Podman while the existing container keeps serving.
-6. **Test:** Run configured tests inside the new image. A failure stops before replacement.
-7. **Start:** Start the replacement on its explicit localhost port and poll its health endpoint.
-
-## Resource safety
-
-The default preflight requires 2 GiB of available memory and 4 GiB of free space on the checkout filesystem. A Compose build is killed with its process group after 10 minutes by default. The example systemd unit also limits memory, swap, CPU, and task count so a failed build is less likely to take the host with it. Application services define their own Compose resource limits.
-
-These values are configurable, but a small production VPS should always reserve capacity for the operating system, SSH, Caddy, and existing apps. Framework-heavy builds still belong on a larger builder or in CI when they cannot fit safely.
-
-## Ports and Caddy
-
-The machine-local configuration assigns each web app a unique host port. Compose binds it only to loopback:
-
-```yaml
-ports:
-  - "127.0.0.1:${SHIBUMI_PORT}:3000"
-```
-
-Caddy maps public domains to those ports:
-
-```caddy
-myapp.com {
-  reverse_proxy 127.0.0.1:9100
-}
-
-another.app {
-  reverse_proxy 127.0.0.1:9101
-}
-```
-
-Databases and workers remain private inside each Compose network.
-
-## Public code, private machine
-
-The public repository contains the server, CLI, tests, configuration schema, container templates, and generic Caddy/systemd examples.
-
-The VPS stores webhook secrets, repository credentials, actual paths and ports, environment files, application data, deployment state, and logs. Public configuration examples reference secret environment-variable names but never secret values.
+`init` copies that exact release to the host and writes mode-restricted config, secrets, and a resource-limited systemd user service. Restarts execute the pinned local copy, never an unpinned download. `add` validates the complete app config and creates a unique per-app HMAC secret without editing Caddy or GitHub.
 
 ## Status
 
-The signed GitHub webhook, resource preflight and build deadline, exact-commit checkout, per-app lock, Podman build/test/start pipeline, health check, and disposable integration test exist now. Installation automation, Caddy API changes, port allocation, durable delivery state, and health-check rollback come after dogfooding.
+The receiver, replay protection, pinned installer, app registration, resource guards, Podman pipeline, health check, unit suite, and disposable real-Podman fixture exist now. Package publication, durable delivery state across restarts, and health-check rollback come next.
 
 Source: <https://github.com/bitbonsai/shibumi-server>

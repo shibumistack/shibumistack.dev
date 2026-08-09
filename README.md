@@ -59,7 +59,7 @@ bun check   # TypeScript check
 
 ## Related projects
 
-- [`shibumi-server`](https://github.com/bitbonsai/shibumi-server) is the experimental, open-source webhook deploy service for rootless Podman behind Caddy. It refuses builds without configured memory/disk headroom and bounds build time and resources. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
+- [`shibumi-server`](https://shibumistack.dev/server) is the experimental, open-source webhook deploy service for rootless Podman behind Caddy. It refuses builds without configured memory/disk headroom and bounds build time and resources. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
 
 ## Status
 

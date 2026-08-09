@@ -33,10 +33,10 @@ Extensions add their own fragments. Install auth, and the agent learns the sessi
 
 ## Self-hosted deploys
 
-`shibumi-server` is now in active development. The planned setup installs a pinned system service behind Caddy:
+[shibumi-server](/server.md) now has a signed receiver, replay protection, resource guards, and a pinned v0.1 installer ready for package publication:
 
 ```sh
-bunx shibumi-server init
+bunx shibumi-server@0.1.0 init
 ```
 
 Once configured, a normal `git push` sends a signed GitHub webhook. The service verifies the push, checks host capacity, fetches the exact commit, then builds and tests with rootless Podman under a deadline and resource limits before starting the healthy app. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
