@@ -21,13 +21,14 @@ done
 
 echo "Deploying to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}"
 
-# Build SSH command
-SSH_ARGS="-o StrictHostKeyChecking=no"
+# Require a previously verified host key. Connect once with SSH and confirm the
+# fingerprint out of band before using this script.
+SSH_ARGS=(-o StrictHostKeyChecking=yes)
 
 # Add key if specified and exists
 if [[ -n "${DEPLOY_SSH_KEY:-}" ]]; then
   if [[ -f "${DEPLOY_SSH_KEY}" ]]; then
-    SSH_ARGS="-i ${DEPLOY_SSH_KEY} ${SSH_ARGS}"
+    SSH_ARGS+=(-i "${DEPLOY_SSH_KEY}")
   else
     echo "Warning: SSH key ${DEPLOY_SSH_KEY} not found, using default"
   fi
@@ -35,7 +36,7 @@ fi
 
 # Wrapper: ensures ~/.local/bin is in PATH for non-interactive SSH sessions
 remote() {
-  ssh ${SSH_ARGS} "${DEPLOY_USER}@${DEPLOY_HOST}" "export PATH=\"\$HOME/.local/bin:\$PATH\" && $*"
+  ssh "${SSH_ARGS[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" "export PATH=\"\$HOME/.local/bin:\$PATH\" && $*"
 }
 
 # Deploy
