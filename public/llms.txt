@@ -12,7 +12,7 @@
 
 ## In development
 
-- [`shibumi-server`](/server.md): an open-source Bun service for signed GitHub webhook deploys to rootless Podman behind Caddy, with host preflight, bounded builds, health checks, and two retained rollback images. Public templates contain no machine credentials; real configuration and secrets stay on the VPS.
+- [`shibumi-server`](/server.md): an open-source Bun service for signed GitHub webhook deploys to rootless Podman behind Caddy, with host preflight, bounded builds, health checks, two retained rollback images, and safe uninstall behavior that preserves machine config by default. Public templates contain no machine credentials; real configuration and secrets stay on the VPS.
 
 ## Docs
 

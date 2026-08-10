@@ -2,8 +2,8 @@
                 <div class="server-hero-copy">
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
-                    <p class="dek">A small Bun service that deploys your app from GitHub to your VPS or homelab server.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1</span></div>
+                    <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.2</span></div>
                     <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
                 </div>
 
@@ -84,6 +84,7 @@
                         </div>
                     </div>
                     <p>The installed service keeps using that exact release until you upgrade it. <code>latest</code> is only checked when you run the installer again.</p>
+                    <p><code>shibumi-server uninstall</code> removes the service and installed code while preserving config and secrets. Add <code>--purge</code> to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.</p>
                 </div>
             </section>
 
@@ -105,6 +106,7 @@
                         </div>
                     </div>
                     <p>Setup prints the Caddy route and GitHub webhook details. You add both yourself; shibumi-server does not change Caddy or GitHub. Repeat the command for every app or domain.</p>
+                    <p>Automation can pass the repository as <code>github:owner/repo</code>, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.</p>
                 </div>
             </section>
 

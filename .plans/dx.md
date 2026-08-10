@@ -384,7 +384,7 @@ npm publish
 
 Experimental self-hosted deploy service. One pinned Bun process behind the host's existing Caddy service; no dashboard and no privileged container socket.
 
-Public source defines behavior and templates. Machine-local config maps an app ID to its repository, branch, checkout, Compose service, and loopback port. It references a webhook-secret environment variable but never stores the secret itself.
+Public source defines behavior and templates. Machine-local config maps a domain-derived app ID to its repository, branch, checkout, Compose service, and loopback port. Literal hyphens are escaped before dots become separators, preventing dashed domains from colliding. Config references a webhook-secret environment variable but never stores the secret itself.
 
 The first GitHub flow:
 1. Verify `X-Hub-Signature-256`, repository, branch, full commit SHA, and reject replayed delivery IDs
@@ -401,9 +401,9 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 shibumi-server add example.com
 ```
 
-Installation checks the host, pins the resolved release, writes the systemd user service, and adds a local command. App setup asks for the repository and deployment directory, then assigns an available local port. Mode-restricted machine config and a unique per-app secret stay local. Restarts and app registration never download a package, and setup does not modify Caddy or GitHub. App-owned tests are optional through explicit config or `add` arguments. Complete `init` and `add` flags remain available for automation. `create-shibumi` can later wire up the operator steps when the user picks Self-hosted.
+Installation checks the host, pins the resolved release, writes the systemd user service, and adds a local command that uses the resolved Bun executable directly. App setup accepts `github:owner/repo`, asks for the deployment directory, then assigns an available local port. Mode-restricted machine config and a unique per-app secret stay local. Restarts and app registration never download a package, and setup does not modify Caddy or GitHub. App-owned tests are optional through explicit config or `add` arguments. Complete `init` and `add` flags remain available for automation. Uninstall removes the service and installed releases while preserving config and secrets unless the operator confirms `--purge`. `create-shibumi` can later wire up the operator steps when the user picks Self-hosted.
 
-GitHub is the first supported webhook format. Other git hosts, Caddy API changes, automatic port allocation, and health-check rollback follow after dogfooding.
+GitHub is the first supported webhook format. Other git hosts, Caddy API changes, and automatic health-check rollback follow after dogfooding.
 
 Package: [`shibumi-server`](https://github.com/bitbonsai/shibumi-server).
 

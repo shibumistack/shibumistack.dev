@@ -75,7 +75,7 @@ const pageMeta: Record<string, PageMeta> = {
   },
   server: {
     title: "shibumi-server — deploy your app to your own server",
-    description: "A small Bun service that validates, builds, and deploys your app from GitHub with rootless Podman behind Caddy.",
+    description: "A small Bun service that validates, builds, and deploys your app to your own server with rootless Podman behind Caddy.",
     path: "/server",
   },
   building: {
@@ -554,7 +554,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   return layout;
 }
 
-app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.0/install.sh", 302));
+app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.2/install.sh", 302));
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {

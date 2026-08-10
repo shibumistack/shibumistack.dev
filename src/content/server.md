@@ -1,6 +1,6 @@
 # shibumi-server
 
-`shibumi-server` is a small Bun service that deploys your app from GitHub to your VPS or homelab server.
+`shibumi-server` is a small Bun service that deploys your app to your VPS or homelab server.
 
 No dashboard or cloud deploy service.
 
@@ -60,6 +60,8 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 
 It installs the resolved release locally and adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. `latest` is only checked when you run the installer again.
 
+`shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
+
 ## Adding apps is a breeze
 
 Use the installed command with a domain:
@@ -70,7 +72,7 @@ shibumi-server add sub.example.com
 
 It asks for the repository and deployment directory, assigns an available local port, then registers the app and starts the service. Setup prints the Caddy route and GitHub webhook details; it does not change Caddy or GitHub. Repeat the command for every app or domain.
 
-Automation can pass the repository, checkout, and port as flags to skip the prompts.
+Automation can pass the repository as `github:owner/repo`, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.
 
 ## Install on your server
 

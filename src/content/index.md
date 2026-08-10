@@ -33,7 +33,7 @@ Extensions add their own fragments. Install auth, and the agent learns the sessi
 
 ## Self-hosted deploys
 
-[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v0.1 installer:
+[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v0.1.2 installer:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
