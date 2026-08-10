@@ -371,17 +371,17 @@ The first GitHub flow:
 2. Reject a different request for an active app with `409`; do not queue it
 3. Check configured free-memory and free-disk floors before changing the checkout
 4. Fetch the exact commit into a clean deployment checkout
-5. Build under a deadline and systemd resource ceilings, then test with rootless Podman while the current container keeps running
-6. Start the replacement and check its loopback health endpoint
+5. Validate the Compose config and build with rootless Podman under a deadline and systemd resource ceilings; optionally run app-owned tests while the current container keeps running
+6. Replace the old container, check the new one's loopback health endpoint, retain the previous two successful images for rollbacks, and remove older images
 7. Let Caddy route the public domain to the app's explicit localhost port
 
-The v0.1 installation UX is implemented and awaiting package publication:
+The v0.1 setup has separate install and app steps:
 ```
-bunx shibumi-server@0.1.0 init
-bunx shibumi-server@0.1.0 add myapp.com --repository owner/repo --checkout /srv/apps/myapp --port 9100 -- bun test
+curl -fsSL https://shibumistack.dev/install/server | bash
+shibumi-server add example.com
 ```
 
-The installer writes a pinned systemd user service, mode-restricted machine config, and a unique per-app secret. It does not run an unpinned package download at restart or modify Caddy/GitHub. `create-shibumi` can later wire up the explicit steps when the user picks Self-hosted.
+Installation checks the host, pins the resolved release, writes the systemd user service, and adds a local command. App setup asks for the repository and deployment directory, then assigns an available local port. Mode-restricted machine config and a unique per-app secret stay local. Restarts and app registration never download a package, and setup does not modify Caddy or GitHub. App-owned tests are optional through explicit config or `add` arguments. Complete `init` and `add` flags remain available for automation. `create-shibumi` can later wire up the operator steps when the user picks Self-hosted.
 
 GitHub is the first supported webhook format. Other git hosts, Caddy API changes, automatic port allocation, and health-check rollback follow after dogfooding.
 

@@ -1,56 +1,85 @@
 # shibumi-server
 
-`shibumi-server` deploys the exact commit from a signed GitHub push, using rootless Podman behind Caddy. You keep every file.
+`shibumi-server` is a small Bun service that deploys your app from GitHub to your VPS or homelab server.
 
-No dashboard or hidden deploy platform.
+No dashboard or cloud deploy service.
 
 ## A deployment
 
 ```text
 git push origin main
-  received  GitHub push; delivery ID is new
-  verified  HMAC, repository, branch, and full commit SHA
-  ready     memory and disk preflight passed
-  built     rootless Podman under a bounded deadline
-  tested    configured test command passed
-  healthy   loopback app is ready for Caddy
+  received  GitHub push
+  verified  webhook, repo, branch, and commit
+  checked   memory and disk
+  config    Compose validated
+  built     rootless Podman
+  replaced  old container
+  healthy   ready behind Caddy
+  cleaned   old images (keeping last 2 for rollbacks)
+  shipped   Deployment complete
+            https://example.com
 ```
 
-The receiver rejects malformed headers before reading the body, verifies GitHub's `X-Hub-Signature-256` over the raw body, and suppresses replayed `X-GitHub-Delivery` IDs. It fetches the exact signed commit rather than using ambiguous `git pull` behavior.
+GitHub sends a signed webhook when you push. Your current app keeps running while `shibumi-server` verifies the push, checks the host, validates the setup, and builds the new image. If those steps pass, it replaces the old container, checks the new one's health behind Caddy, keeps the previous two images for quick rollbacks, and removes older ones.
 
-One deployment runs per app. A different concurrent delivery receives `409 Conflict` and is not queued. Failed preflight, fetch, build, or test stages never run `compose up`.
+The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
 
-## The host gets a vote
+### What these checks mean
 
-The default preflight requires 2 GiB of available memory and 4 GiB of free space on the checkout filesystem. Builds have a deadline and process-group cancellation. The systemd service limits memory, swap, CPU, and task count; application services define their own Compose limits.
+Every deploy runs the same checks. You do not need to write tests for them.
 
-HMAC authentication prevents a forged hook from authorizing a deployment. Caddy, the firewall, or an upstream provider must still handle rate limiting and volumetric abuse before traffic reaches Bun.
+1. Verify the webhook, repository, branch, and commit.
+2. Check free memory and disk space.
+3. Validate the Compose configuration.
+4. Build the image and run any optional app tests in a temporary container.
+5. Replace the old container, check the new one's local health endpoint, keep the previous two successful images for rollbacks, and remove older images.
+
+App tests are optional. Add a command such as `bun test` only when the project has its own test suite.
+
+## Built for small servers
+
+Before building, `shibumi-server` checks free memory and disk space. A build that runs too long is stopped. The defaults require 2 GiB of available memory and 4 GiB of free space.
+
+Caddy or the host firewall handles rate limits before requests reach `shibumi-server`.
 
 ## Dogfooding with MCPVault
 
-I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the job needed.
+I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed.
 
-With Astro 7, the Cloudflare dependency changed and the upgrade meant leaving Pages for Workers. Workers wasn't a direction I wanted, so I chose a Shibumi rebuild on my own VPS.
+After upgrading to Astro 7, deploying to Cloudflare meant moving from Pages to Workers, adding a new adapter, and taking on more platform-specific complexity for a simple website. I didn't want that, so I'm rebuilding the site with Shibumi and deploying it to my own tiny VPS.
 
-`shibumi-server` will handle the deploys. An early build exposed the VPS's limits and led directly to memory and disk preflight, build cancellation, and service ceilings. The migration is now a real test of the stack.
+The first Astro build exhausted the tiny VPS's memory, which was a pretty good example of the build-time bloat Shibumi is meant to avoid. I added memory and disk checks before every build, along with a timeout for anything that runs too long. Those safeguards came directly from running a real app on the kind of server Shibumi is designed for.
 
-## Pinned installation
+## Install once on your server
 
-The v0.1 installer and app registration are implemented. Release `0.1.0` is awaiting package publication. Once published, run the explicit-version flow on the VPS:
+Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Caddy, and systemd, checking the host before it changes server configuration:
 
 ```sh
-bunx shibumi-server@0.1.0 init
-bunx shibumi-server@0.1.0 add example.com \
-  --repository owner/repository \
-  --checkout /srv/shibumi/apps/example-com \
-  --port 9100 \
-  -- bun test
+curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-`init` copies that exact release to the host and writes mode-restricted config, secrets, and a resource-limited systemd user service. Restarts execute the pinned local copy, never an unpinned download. `add` validates the complete app config and creates a unique per-app HMAC secret without editing Caddy or GitHub.
+It installs the resolved release locally and adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. `latest` is only checked when you run the installer again.
 
-## Status
+## Adding apps is a breeze
 
-The receiver, replay protection, pinned installer, app registration, resource guards, Podman pipeline, health check, unit suite, and disposable real-Podman fixture exist now. Package publication, durable delivery state across restarts, and health-check rollback come next.
+Use the installed command with a domain:
+
+```sh
+shibumi-server add sub.example.com
+```
+
+It asks for the repository and deployment directory, assigns an available local port, then registers the app and starts the service. Setup prints the Caddy route and GitHub webhook details; it does not change Caddy or GitHub. Repeat the command for every app or domain.
+
+Automation can pass the repository, checkout, and port as flags to skip the prompts.
+
+## Install on your server
+
+`shibumi-server` requires Linux with Bun, Git, rootless Podman, Caddy, and systemd. If you're using macOS or Windows, SSH into your Linux VPS or homelab server first, then run this command there:
+
+```sh
+curl -fsSL https://shibumistack.dev/install/server | bash
+```
+
+The website only copies the command. It never connects to your server or asks for SSH credentials.
 
 Source: <https://github.com/bitbonsai/shibumi-server>

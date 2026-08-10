@@ -22,10 +22,10 @@ webhook/CI → ssh → git pull
 Build on the VPS itself. No registry, no external CI dependency. Works with any
 git host (GitHub, Codeberg, Gitea, self-hosted).
 ```
-signed webhook → fetch exact commit → build + test → podman compose up -d
+signed webhook → fetch exact commit → validate + build → optional app tests → replace + health check → retain 2 rollback images
 ```
 This is the default. The VPS is the CI. The existing container stays up while
-the replacement builds and tests. Save GitHub Actions/Woodpecker as the upgrade
+the replacement validates and builds. App-owned tests are optional. Save GitHub Actions/Woodpecker as the upgrade
 path for teams that want centrally managed build/test gates before deploy.
 
 ## Outline
@@ -77,8 +77,10 @@ POST /hooks/github/myapp
   → match configured repository and branch
   → check free memory and disk
   → fetch the exact commit
-  → build under a deadline and resource limits, then test with rootless Podman
-  → start and health-check the replacement
+  → validate and build under a deadline and resource limits with rootless Podman
+  → optionally run app-owned tests in a temporary container
+  → replace the old container and health-check the new one
+  → retain the previous two successful images for rollbacks and remove older images
 ```
 The webhook secret lives in a mode-0600 environment file or systemd credential,
 not in a URL or public JSON config. Commands use argument arrays rather than

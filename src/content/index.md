@@ -33,13 +33,14 @@ Extensions add their own fragments. Install auth, and the agent learns the sessi
 
 ## Self-hosted deploys
 
-[shibumi-server](/server.md) now has a signed receiver, replay protection, resource guards, and a pinned v0.1 installer ready for package publication:
+[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v0.1 installer:
 
 ```sh
-bunx shibumi-server@0.1.0 init
+curl -fsSL https://shibumistack.dev/install/server | bash
+shibumi-server add example.com
 ```
 
-Once configured, a normal `git push` sends a signed GitHub webhook. The service verifies the push, checks host capacity, fetches the exact commit, then builds and tests with rootless Podman under a deadline and resource limits before starting the healthy app. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
+Once configured, a normal `git push` sends a signed GitHub webhook. The service verifies the push and keeps the current app running while the next version is checked and built. Once ready, it replaces the old container, confirms the new one is healthy, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
 
 ## Start
 

@@ -52,4 +52,4 @@ Each extension can append an `agents.md` fragment so coding agents know the loca
 
 ### [shibumi-server](/server.md)
 
-An experimental VPS deploy service: verify a signed webhook, check host capacity, fetch the exact commit, build and test with rootless Podman under resource guards, and run the app behind Caddy. Public code and templates stay in Git; secrets and machine inventory stay on the server.
+A VPS deploy service that verifies signed GitHub pushes, checks host capacity, validates the deployment config, builds with rootless Podman, replaces the old container, checks the new one's health, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Public code and templates stay in Git; secrets and machine inventory stay on the server.

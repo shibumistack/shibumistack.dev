@@ -123,6 +123,22 @@ page-local `<style data-page>` blocks by the renderer.
 Keep JavaScript small and framework-free unless the project direction changes.
 The product roadmap mentions Alpine, but this site currently does not use it.
 
+### Terminal simulation system
+
+The animated terminals on the homepage and `/server` share one visual and motion
+language. Common styles belong in `public/shared.css`; page CSS should only own
+terminal layout that is specific to that page.
+
+- Use `.terminal-label` for neutral stages: quiet brown background with orange text.
+- Use exactly one solid green `.terminal-label-success` per terminal simulation, reserved for its final outcome such as `done` or `shipped`. An intermediate confirmation may use `.terminal-label-confirmed` for green text on the quiet brown background. Inline checks may use `.terminal-ok`; neither adds another solid green label.
+- Use `.terminal-label-action` for the next command and `.terminal-label-info` for informational links.
+- Use `.terminal-ok` for green checks and successful output. Keep red reserved for a real failure.
+- Type commands at a randomized 40 to 70 ms per character, averaging 55 ms. Reveal output rows every 500 ms. A staged check appears 300 ms after its row, with the next row 200 ms later.
+- Start an above-the-fold terminal after 600 ms. Start below-the-fold terminals with `IntersectionObserver`.
+- Every animated terminal gets a `refresh-cw` replay button in its top-right corner. Hide it while motion runs, reveal it when the terminal finishes, and hide it again immediately when replay starts.
+- A replay must invalidate outstanding timers before resetting text and row classes. The current scripts use a generation counter for this.
+- Under `prefers-reduced-motion`, show the complete terminal immediately and hide the replay control.
+
 ## Design Intent
 
 The brand direction is restrained and editorial:
@@ -170,6 +186,8 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 ## Gotchas
 
 - Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
+- Native `<details>` close jumps because the browser hides content before CSS can collapse it. Keep the explicit height animation in `src/pages/server.js`.
+- `shibumi-server` installation requires Linux, Bun, Git, rootless Podman, Caddy, and systemd. The Bash bootstrap installs Bun when missing, then starts interactive setup. macOS and Windows visitors must copy the command to a Linux server over SSH; never imply local installation, browser-driven remote installation, or SSH credential collection.
 
 ## Implementation Caveats
 

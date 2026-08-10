@@ -35,6 +35,6 @@
                     <div class="step"><span class="pill">core</span><p><strong>CSRF included.</strong> Security defaults should not be an optional extension.</p></div>
                     <div class="step"><span class="pill">extensions</span><p><strong>Copy code, not dependencies.</strong> Auth, Resend email, uploads, payments, and admin are added explicitly and owned by the app.</p></div>
                     <div class="step"><span class="pill">agents</span><p><strong>agents.md fragments.</strong> Each extension can append local instructions so coding agents know the conventions.</p></div>
-                    <div class="step"><span class="pill">server</span><p><strong><a href="/server">shibumi-server.</a></strong> An experimental VPS deploy service: verify a signed webhook, check host capacity, fetch the exact commit, build and test with rootless Podman under resource guards, and run the app behind Caddy. Secrets and machine inventory stay on the server.</p></div>
+                    <div class="step"><span class="pill">server</span><p><strong><a href="/server">shibumi-server.</a></strong> A VPS deploy service that verifies signed GitHub pushes, checks host capacity, validates the deployment config, builds with rootless Podman, replaces the old container, checks the new one's health, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Secrets and machine inventory stay on the server.</p></div>
                 </div>
             </section>
