@@ -20,6 +20,7 @@
                 ><span id="typed"></span
                 ><span class="typing-cursor" id="cursor"></span
             ></code>
+            <button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button>
         </div>
 
         <div class="cli-output">
@@ -30,7 +31,7 @@
             </div>
 
             <div class="cli-step cli-row">
-                <span class="cli-label">dir</span>
+                <span class="cli-label terminal-label">dir</span>
                 <div>
                     <div class="cli-question">
                         Where should we create your project?
@@ -40,7 +41,7 @@
             </div>
 
             <div class="cli-step cli-row">
-                <span class="cli-label">theme</span>
+                <span class="cli-label terminal-label">theme</span>
                 <div>
                     <div class="cli-question">Choose a theme</div>
                     <div class="cli-muted cli-option">
@@ -57,17 +58,17 @@
             </div>
 
             <div class="cli-step cli-row">
-                <span class="cli-label">done</span>
-                <div><span class="cli-ok">✓ Project ready</span></div>
+                <span class="cli-label terminal-label terminal-label-success">done</span>
+                <div><span class="cli-ok terminal-ok">✓ Project ready</span></div>
             </div>
 
             <div class="cli-step cli-row">
-                <span class="cli-label next">next</span>
+                <span class="cli-label terminal-label terminal-label-action">next</span>
                 <div class="cli-next">cd quiet-bamboo && bun dev</div>
             </div>
 
             <div class="cli-step cli-row">
-                <span class="cli-label docs">docs</span>
+                <span class="cli-label terminal-label terminal-label-info">docs</span>
                 <div class="cli-muted">https://shibumistack.dev/docs</div>
             </div>
         </div>
@@ -164,14 +165,14 @@
     <div class="feature-grid">
         <h2 id="extensions-title">Extensions</h2>
         <div class="feature-copy">
-            <p>Auth, email, uploads, payments, admin — not dependencies, but source files copied into your project. You own them from the moment they land.</p>
+            <p>Auth, email, uploads, payments, and admin arrive as source files copied into your project instead of dependencies. You own them from the moment they land.</p>
             <p>Run <code>shi add auth</code> and watch the terminal:</p>
             <pre><code>  <span class="created">created</span>  <span class="path">src/auth/index.ts</span>
   <span class="created">created</span>  <span class="path">src/auth/session.ts</span>
   <span class="created">created</span>  <span class="path">src/auth/agents.md</span>
 
   <span class="success">✓</span> 3 files written to ./my-app/src/auth/</code></pre>
-            <p>Every extension includes an <span class="accent-word">agents.md</span> fragment. Your coding agent reads it and knows how the code works — no guessing, no hidden behavior.</p>
+            <p>Every extension includes an <span class="accent-word">agents.md</span> fragment. Your coding agent reads it and understands how the code works without guessing or hidden behavior.</p>
             <p>Extensions are plain TypeScript. Read them, change them, or delete them. They're yours now.</p>
         </div>
     </div>
@@ -182,18 +183,19 @@
         <h2 id="deploy-title">Deploy anywhere</h2>
         <div class="feature-copy">
             <p>Cloudflare, Vercel, Railway, Fly.io, a static CDN, or your own VPS. Shibumi generates the config for the path you choose.</p>
-            <p>For self-hosted deploys, <a href="/server"><span class="accent-word">shibumi-server</span></a> now has a signed receiver, resource guards, and a pinned v0.1 installer ready for package publication:</p>
-            <pre><code>  <span class="wrote">$</span> bunx shibumi-server@0.1.0 init
+            <p>For self-hosted deploys, <a href="/server"><span class="accent-word">shibumi-server</span></a> has a signed receiver, resource guards, and a pinned v0.1 installer:</p>
+            <pre><code>  <span class="wrote">$</span> curl -fsSL https://shibumistack.dev/install/server | bash
   <span class="created">installed</span>  pinned system service
-  <span class="created">protected</span>  bounded build resources
-  <span class="success">next</span>       configure Caddy + GitHub</code></pre>
+  <span class="created">command</span>    shibumi-server
+  <span class="success">next</span>       add your first app</code></pre>
             <p>Once configured, deployment starts with a normal push:</p>
             <pre><code>  <span class="wrote">$</span> git push
   <span class="created">received</span>  signed GitHub webhook
-  <span class="wrote">tested</span>    app inside Podman
+  <span class="wrote">validated</span> Compose config
+  <span class="wrote">built</span>     rootless Podman
   <span class="created">deployed</span>  https://myapp.com
   <span class="success">✓</span> healthy</code></pre>
-            <p>The experimental service verifies the push, checks host capacity, fetches the exact commit, then builds and tests under resource guards before starting the app behind Caddy. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
+            <p>The service verifies the push and keeps the current app running while the next version is checked and built. Once ready, it replaces the old container, confirms the new one is healthy, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
         </div>
     </div>
 </section>

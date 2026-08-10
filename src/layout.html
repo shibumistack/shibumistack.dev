@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <meta name="description" content="{{description}}">
-    <meta name="theme-color" data-theme-color="light" content="#f7f3e8" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" data-theme-color="dark" content="#1e1510" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f7f3e8">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f3e8">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e1510">
     <meta name="color-scheme" content="light dark">
     <script>
         (() => {
@@ -16,9 +17,6 @@
                 ? stored
                 : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
             document.documentElement.setAttribute("data-theme", theme);
-            for (const meta of document.querySelectorAll("meta[data-theme-color]")) {
-                meta.media = meta.dataset.themeColor === theme ? "all" : "not all";
-            }
         })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png">

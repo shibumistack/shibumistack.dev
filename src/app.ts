@@ -74,8 +74,8 @@ const pageMeta: Record<string, PageMeta> = {
     path: "/docs",
   },
   server: {
-    title: "shibumi-server — signed webhook deploys for your VPS",
-    description: "An experimental Bun service that verifies GitHub pushes, builds and tests with rootless Podman, and runs apps behind Caddy.",
+    title: "shibumi-server — deploy your app to your own server",
+    description: "A small Bun service that validates, builds, and deploys your app from GitHub with rootless Podman behind Caddy.",
     path: "/server",
   },
   building: {
@@ -354,6 +354,7 @@ async function pageScript(path?: string): Promise<string> {
 
 async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Promise<string> {
   const page = files.pagePath ? await renderTokens(`page ${files.key}`, await read(files.pagePath)) : "";
+  const pageDialog = files.key === "server" ? await part("server-install-dialog") : "";
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: meta?.title ?? "Shibumi Stack",
     description: meta?.description ?? "A lean, opinionated web stack for building calm, durable apps.",
@@ -366,7 +367,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
   layout = insert(layout, "meta", await metaTags(meta));
   layout = insert(layout, "page-style", await pageStyle(files.stylePath));
   layout = insert(layout, "nav", await nav(active));
-  layout = insert(layout, "page", page);
+  layout = insert(layout, "page", page + pageDialog);
   layout = insert(layout, "footer", footer + installDialog);
   layout = insert(layout, "page-script", await pageScript(files.scriptPath));
 
@@ -552,6 +553,8 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   assertNoInserts(layout);
   return layout;
 }
+
+app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/main/install.sh", 302));
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {

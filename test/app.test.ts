@@ -10,8 +10,12 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Simple.");
     expect(body).toContain("Yours");
-    expect(body).toContain('data-theme-color="light" content="#f7f3e8"');
-    expect(body).toContain('data-theme-color="dark" content="#1e1510"');
+    expect(body).toContain('<meta name="theme-color" content="#f7f3e8">');
+    expect(body).toContain('<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f3e8">');
+    expect(body).toContain('<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e1510">');
+    expect(body).toContain('<meta name="color-scheme" content="light dark">');
+    expect(body).toContain('aria-label="Replay terminal animation"');
+    expect(body).toContain("terminal-label-success");
   });
 
   test("negotiates Markdown only when preferred", async () => {
@@ -118,11 +122,20 @@ describe("routes", () => {
     const htmlBody = await htmlRes.text();
 
     expect(htmlRes.status).toBe(200);
-    expect(htmlBody).toContain("No hidden deploy platform");
-    expect(htmlBody).toContain("409 Conflict");
+    expect(htmlBody).toContain("No cloud deploy service");
+    expect(htmlBody).toContain("Bad builds don't go live");
     expect(htmlBody).toContain("rootless Podman");
+    expect(htmlBody).toContain("What do these checks mean?");
+    expect(htmlBody.match(/class="deploy-check\b/g)?.length).toBe(9);
     expect(htmlBody).toContain("Dogfooding with MCPVault");
+    expect(htmlBody).toContain("Ready to add apps");
+    expect(htmlBody).toContain("Adding apps");
+    expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/server | bash"');
+    expect(htmlBody).toContain('"shibumi-server add sub.example.com"');
+    expect(htmlBody.match(/aria-label="Replay terminal animation"/g)?.length).toBe(3);
+    expect(htmlBody).toContain("terminal-label-success");
     expect(htmlBody).toContain('href="/server" aria-current="page"');
+    expect(htmlBody).toContain('data-dialog="server-install-dialog"');
     expect(htmlBody).toContain("data-page-script");
 
     const markdownRes = await app.request("/server", {
@@ -130,6 +143,13 @@ describe("routes", () => {
     });
     expect(markdownRes.status).toBe(200);
     expect(await markdownRes.text()).toContain("# shibumi-server");
+  });
+
+  test("redirects the server installer to its source", async () => {
+    const res = await app.request("/install/server");
+
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/main/install.sh");
   });
 
   test("serves extensions page", async () => {

@@ -5,9 +5,6 @@
 
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
-    for (const meta of document.querySelectorAll("meta[data-theme-color]")) {
-      meta.media = meta.dataset.themeColor === theme ? "all" : "not all";
-    }
   }
 
   function initTheme() {
@@ -173,9 +170,9 @@
       return;
     }
 
-    const installBtn = event.target.closest(".nav-install");
-    if (installBtn) {
-      const dialog = document.getElementById("install-dialog");
+    const dialogTrigger = event.target.closest("[data-dialog]");
+    if (dialogTrigger) {
+      const dialog = document.getElementById(dialogTrigger.getAttribute("data-dialog"));
       if (dialog) dialog.showModal();
       return;
     }
@@ -203,8 +200,8 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      const dialog = document.getElementById("install-dialog");
-      if (dialog && dialog.open) {
+      const dialog = document.querySelector(".install-dialog[open]");
+      if (dialog) {
         dialog.close();
         return;
       }

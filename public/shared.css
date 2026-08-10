@@ -10,6 +10,9 @@
     --accent: light-dark(#ff6600, #ff8833);
     --accent-soft: light-dark(rgba(255, 102, 0, 0.1), rgba(255, 136, 51, 0.15));
     --accent-hover: light-dark(#e55a00, #ffa055);
+    --success: #64b464;
+    --success-text: light-dark(#397a43, #74c77a);
+    --success-ink: #17331f;
     --max: 1120px;
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-serif: ui-serif, Georgia, "Iowan Old Style", "Apple Garamond", Cambria, "Times New Roman", serif;
@@ -251,6 +254,93 @@ nav a[aria-current="page"] {
     letter-spacing: -0.065em;
     font-weight: 400;
 }
+
+/* ---- terminal simulations ---- */
+
+.prompt-mark {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.15em;
+    margin-left: 1px;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: terminal-blink 600ms step-end infinite;
+}
+
+.typing-cursor.done { display: none; }
+
+.terminal-label {
+    padding: 0.1rem 0.42rem 0.14rem;
+    background: var(--quiet);
+    color: var(--accent);
+    font-weight: 800;
+    text-align: center;
+}
+
+.terminal-label-success {
+    background: var(--success);
+    color: var(--success-ink);
+}
+
+.terminal-label-confirmed {
+    background: var(--quiet);
+    color: var(--success-text);
+}
+
+.terminal-label-action {
+    background: var(--accent);
+    color: var(--bg);
+}
+
+.terminal-label-info {
+    background: var(--quiet);
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.terminal-ok { color: var(--success); font-weight: 800; }
+
+.terminal-replay {
+    appearance: none;
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    margin-left: auto;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 0.35rem;
+    background: transparent;
+    color: var(--muted);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-0.15rem);
+    cursor: pointer;
+    transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+}
+
+.terminal-replay.is-ready {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: 0s;
+}
+
+.terminal-replay svg { width: 1rem; height: 1rem; }
+.terminal-replay:hover { border-color: var(--line); background: var(--quiet); color: var(--accent-hover); }
+.terminal-replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.terminal-replay.is-spinning svg { animation: terminal-spin 420ms ease; }
+
+@keyframes terminal-blink { 50% { opacity: 0; } }
+@keyframes terminal-spin { to { transform: rotate(360deg); } }
 
 /* ---- buttons ---- */
 
@@ -625,6 +715,7 @@ body:has(header.menu-open) { overflow: hidden; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .terminal-replay { display: none; }
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;

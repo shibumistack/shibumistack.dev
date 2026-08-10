@@ -1,36 +1,193 @@
 (() => {
-  const terminal = document.querySelector("[data-server-cli]");
-  const typed = terminal?.querySelector("[data-server-typed]");
-  const cursor = terminal?.querySelector("[data-server-cursor]");
-  const steps = terminal?.querySelectorAll(".deploy-step");
-  if (!terminal || !typed || !cursor || !steps) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const details = document.querySelector(".deploy-details");
+  const detailsSummary = details?.querySelector("summary");
 
-  const command = "git push origin main";
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    typed.textContent = command;
-    cursor.classList.add("done");
-    return;
+  if (details && detailsSummary && !reducedMotion) {
+    let animation = null;
+    let targetOpen = details.open;
+
+    detailsSummary.addEventListener("click", (event) => {
+      event.preventDefault();
+      targetOpen = !targetOpen;
+
+      const startHeight = details.getBoundingClientRect().height;
+      if (animation) {
+        animation.onfinish = null;
+        animation.cancel();
+      }
+      details.style.height = "";
+
+      let endHeight;
+      if (targetOpen) {
+        details.open = true;
+        endHeight = details.getBoundingClientRect().height;
+      } else {
+        details.open = false;
+        endHeight = details.getBoundingClientRect().height;
+        details.open = true;
+      }
+
+      details.style.height = `${startHeight}px`;
+      details.style.overflow = "hidden";
+      animation = details.animate(
+        { height: [`${startHeight}px`, `${endHeight}px`] },
+        { duration: 320, easing: "cubic-bezier(.4, 0, .2, 1)" },
+      );
+      animation.onfinish = () => {
+        details.open = targetOpen;
+        details.style.height = "";
+        details.style.overflow = "";
+        animation = null;
+      };
+    });
   }
 
-  terminal.classList.add("is-animated");
-  let character = 0;
-
-  function reveal(step) {
-    if (step >= steps.length) return;
-    steps[step].classList.add("visible");
-    setTimeout(() => reveal(step + 1), 420);
+  function typingDelay() {
+    return 55 + (Math.random() * 30 - 15);
   }
 
-  function type() {
-    if (character < command.length) {
-      typed.textContent += command[character];
-      character += 1;
-      setTimeout(type, 48);
-      return;
+  function spin(button) {
+    button.classList.remove("is-spinning");
+    void button.offsetWidth;
+    button.classList.add("is-spinning");
+    button.addEventListener("animationend", () => button.classList.remove("is-spinning"), { once: true });
+  }
+
+  function animateDeploy() {
+    const terminal = document.querySelector("[data-server-cli]");
+    const typed = terminal?.querySelector("[data-server-typed]");
+    const cursor = terminal?.querySelector("[data-server-cursor]");
+    const steps = terminal?.querySelectorAll(".deploy-step");
+    const replay = terminal?.querySelector(".terminal-replay");
+    if (!terminal || !typed || !cursor || !steps) return;
+
+    const command = "git push origin main";
+    let generation = 0;
+
+    function run(delay = 0) {
+      const current = ++generation;
+      typed.textContent = "";
+      cursor.classList.remove("done");
+      replay?.classList.remove("is-ready");
+      steps.forEach((step) => step.classList.remove("visible", "complete"));
+
+      if (reducedMotion) {
+        typed.textContent = command;
+        cursor.classList.add("done");
+        steps.forEach((step) => step.classList.add("visible", "complete"));
+        replay?.classList.add("is-ready");
+        return;
+      }
+
+      terminal.classList.add("is-animated");
+
+      function reveal(step) {
+        if (current !== generation || step >= steps.length) return;
+        const row = steps[step];
+        row.classList.add("visible");
+        setTimeout(() => {
+          if (current !== generation) return;
+          row.classList.add("complete");
+          if (step === steps.length - 1) replay?.classList.add("is-ready");
+          else setTimeout(() => reveal(step + 1), 200);
+        }, 300);
+      }
+
+      function type(character) {
+        if (current !== generation) return;
+        if (character < command.length) {
+          typed.textContent += command[character];
+          setTimeout(() => type(character + 1), typingDelay());
+          return;
+        }
+        cursor.classList.add("done");
+        setTimeout(() => reveal(0), 350);
+      }
+
+      setTimeout(() => type(0), delay);
     }
-    cursor.classList.add("done");
-    setTimeout(() => reveal(0), 280);
+
+    replay?.addEventListener("click", () => {
+      spin(replay);
+      run(80);
+    });
+    run(600);
   }
 
-  setTimeout(type, 400);
+  function animatePromptTerminal(terminal, command) {
+    const typed = terminal?.querySelector("[data-setup-typed]");
+    const cursor = terminal?.querySelector("[data-setup-cursor]");
+    const steps = terminal?.querySelectorAll(".setup-step");
+    const replay = terminal?.querySelector(".terminal-replay");
+    if (!terminal || !typed || !cursor || !steps) return;
+
+    let generation = 0;
+    let observer = null;
+    if (!reducedMotion) terminal.classList.add("is-animated");
+
+    function run(delay = 0) {
+      const current = ++generation;
+      typed.textContent = "";
+      cursor.classList.remove("done");
+      replay?.classList.remove("is-ready");
+      steps.forEach((step) => step.classList.remove("visible"));
+
+      if (reducedMotion) {
+        typed.textContent = command;
+        cursor.classList.add("done");
+        steps.forEach((step) => step.classList.add("visible"));
+        replay?.classList.add("is-ready");
+        return;
+      }
+
+      terminal.classList.add("is-animated");
+
+      function reveal(step) {
+        if (current !== generation) return;
+        if (step >= steps.length) {
+          replay?.classList.add("is-ready");
+          return;
+        }
+        steps[step].classList.add("visible");
+        setTimeout(() => reveal(step + 1), 500);
+      }
+
+      function type(character) {
+        if (current !== generation) return;
+        if (character < command.length) {
+          typed.textContent += command[character];
+          setTimeout(() => type(character + 1), typingDelay());
+          return;
+        }
+        cursor.classList.add("done");
+        setTimeout(() => reveal(0), 350);
+      }
+
+      setTimeout(() => type(0), delay);
+    }
+
+    replay?.addEventListener("click", () => {
+      observer?.disconnect();
+      spin(replay);
+      run(80);
+    });
+
+    if (reducedMotion) {
+      run();
+    } else if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        run();
+      }, { threshold: 0.25 });
+      observer.observe(terminal);
+    } else {
+      run();
+    }
+  }
+
+  animateDeploy();
+  animatePromptTerminal(document.querySelector("[data-setup-cli]"), "curl -fsSL https://shibumistack.dev/install/server | bash");
+  animatePromptTerminal(document.querySelector("[data-app-cli]"), "shibumi-server add sub.example.com");
 })();
