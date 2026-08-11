@@ -140,7 +140,7 @@ describe("hooks", () => {
 
     const app = readFileSync(join(tempDir, "src", "app.ts"), "utf-8");
     const importCount = (app.match(/imageMiddleware/g) || []).length;
-    expect(importCount).toBe(2); // once in import, once in usage — not duplicated
+    expect(importCount).toBe(2); // once in import, once in usage: not duplicated
   });
 
   it("skips hook if target file missing", () => {
