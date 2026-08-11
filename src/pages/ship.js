@@ -2,6 +2,7 @@
   const details = document.querySelector("[data-ship-source]");
   const summary = details?.querySelector("summary");
   const code = details?.querySelector("[data-ship-code]");
+  const lines = details?.querySelector("[data-ship-lines]");
   if (!details || !summary || !code) return;
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -35,9 +36,11 @@
   async function loadSource() {
     if (loaded) return;
     try {
-      const response = await fetch("/ship/v1.ts");
+      const response = await fetch("/ship/v2.ts");
       if (!response.ok) throw new Error(String(response.status));
-      highlight(await response.text());
+      const source = await response.text();
+      highlight(source);
+      if (lines) lines.textContent = `${source.trimEnd().split("\n").length} lines`;
       loaded = true;
     } catch {
       code.textContent = "Source failed to load. Download it with the command above.";

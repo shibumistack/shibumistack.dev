@@ -156,18 +156,22 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).not.toContain('href="/ship/v1.ts"');
+    expect(body).toContain('fetch("/ship/v2.ts")');
+    expect(body).not.toContain('href="/ship/v2.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
 
     const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v1.ts");
+    const source = await app.request("/ship/v2.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
-    expect(await source.text()).toContain("export function runShipCli");
+    const sourceBody = await source.text();
+    expect(sourceBody).toContain("Project-owned client for shibumi-server");
+    expect(sourceBody).toContain("export function runShipCli");
+    expect((await app.request("/ship/v1.ts")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {

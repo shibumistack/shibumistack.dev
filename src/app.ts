@@ -560,11 +560,13 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.22/install.sh", 302));
-app.get("/ship/v1.ts", async (c) => c.body(await read("public/ship/v1.ts"), 200, {
-  "Cache-Control": "public, max-age=31536000, immutable",
-  "Content-Disposition": 'inline; filename="ship.ts"',
-  "Content-Type": "text/plain; charset=utf-8",
-}));
+for (const version of ["v1", "v2"]) {
+  app.get(`/ship/${version}.ts`, async (c) => c.body(await read(`public/ship/${version}.ts`), 200, {
+    "Cache-Control": "public, max-age=31536000, immutable",
+    "Content-Disposition": 'inline; filename="ship.ts"',
+    "Content-Type": "text/plain; charset=utf-8",
+  }));
+}
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {
