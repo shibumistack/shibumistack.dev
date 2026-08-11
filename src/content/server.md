@@ -56,7 +56,7 @@ Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, 
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-It installs the resolved release locally and adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest `shibumi-server update`. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.
+It stages the resolved release with lockfile-pinned production dependencies, then adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest `shibumi-server update`. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.
 
 `shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
 

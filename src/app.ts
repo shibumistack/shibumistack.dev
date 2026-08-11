@@ -554,7 +554,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   return layout;
 }
 
-app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.8/install.sh", 302));
+app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.11/install.sh", 302));
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {
