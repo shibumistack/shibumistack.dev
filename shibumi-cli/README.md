@@ -36,7 +36,7 @@ Extensions are copy-paste, not dependencies. You get the files, you own them.
 
 #### Hooks
 
-Extensions can wire themselves into your code. The `images` extension demonstrates this — it adds the middleware import and usage to your `app.ts` automatically:
+Extensions can wire themselves into your code. The `images` extension demonstrates this: it adds the middleware import and usage to your `app.ts` automatically:
 
 ```sh
 bun run shibumi add images
@@ -78,7 +78,7 @@ The user runs one command. No manual wiring.
 | `after` | String to locate for the `add` step |
 | `add` | Text to append after the `after` match |
 
-Hooks are idempotent — running `shibumi add images` twice won't duplicate code.
+Hooks are idempotent: running `shibumi add images` twice won't duplicate code.
 
 ## Usage
 
@@ -112,11 +112,11 @@ bun run shibumi add email
 
 ## Stack
 
-- **Bun** — runtime, package manager, test runner
-- **Hono** — route layer
-- **Drizzle** — schema, queries, migrations (SSR template)
-- **Alpine** — client-side interactivity (SSR template)
-- **Zod** — validation (SSR template)
+- **Bun**: runtime, package manager, test runner
+- **Hono**: route layer
+- **Drizzle**: schema, queries, migrations (SSR template)
+- **Alpine**: client-side interactivity (SSR template)
+- **Zod**: validation (SSR template)
 
 ## Writing Extensions
 

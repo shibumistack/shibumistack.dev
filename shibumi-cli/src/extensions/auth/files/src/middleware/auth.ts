@@ -14,7 +14,7 @@ import { getCookie } from "hono/cookie";
 import { validateSession, getUserById } from "../lib/session";
 
 /**
- * Required auth — redirects to login if not authenticated.
+ * Required auth: redirects to login if not authenticated.
  */
 export async function authMiddleware(c: Context, next: Next) {
   const token = getCookie(c, "session");
@@ -37,7 +37,7 @@ export async function authMiddleware(c: Context, next: Next) {
 }
 
 /**
- * Optional auth — attaches user if valid session exists, but doesn't block.
+ * Optional auth: attaches user if valid session exists, but doesn't block.
  */
 export async function optionalAuth(c: Context, next: Next) {
   const token = getCookie(c, "session");

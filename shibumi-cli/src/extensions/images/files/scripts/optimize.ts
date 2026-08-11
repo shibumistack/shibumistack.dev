@@ -72,7 +72,7 @@ function step2_rewriteHtml() {
         }
 
         // Skip if already a <picture>
-        // (this is a simple heuristic — if the img is inside a picture, skip)
+        // (this is a simple heuristic: if the img is inside a picture, skip)
         if (match.includes("type=\"image/webp\"")) {
           return match;
         }

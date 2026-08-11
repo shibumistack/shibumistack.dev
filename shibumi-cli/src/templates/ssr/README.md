@@ -1,6 +1,6 @@
 # my-shibumi-app
 
-Built with [Shibumi Stack](https://shibumistack.dev) — Bun, Hono, Drizzle, Alpine, Zod.
+Built with [Shibumi Stack](https://shibumistack.dev): Bun, Hono, Drizzle, Alpine, Zod.
 
 ## Getting started
 
@@ -12,11 +12,11 @@ bun dev
 
 ## Stack
 
-- **Bun** — runtime, package manager, test runner
-- **Hono** — route layer
-- **Drizzle** — schema, queries, migrations
-- **Alpine** — client-side interactivity
-- **Zod** — validation
+- **Bun**: runtime, package manager, test runner
+- **Hono**: route layer
+- **Drizzle**: schema, queries, migrations
+- **Alpine**: client-side interactivity
+- **Zod**: validation
 
 ## Commands
 

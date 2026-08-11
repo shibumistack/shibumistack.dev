@@ -3,7 +3,7 @@
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
                     <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.2</span></div>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.4</span></div>
                     <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
                 </div>
 
@@ -59,9 +59,8 @@
                     <h2 id="dogfood-title">Testing for real.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>I also maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed.</p>
-                    <p>After upgrading to Astro 7, deploying to Cloudflare meant moving from Pages to Workers, adding a new adapter, and taking on more platform-specific complexity for a simple website. I didn't want that, so I'm rebuilding the site with Shibumi and deploying it to my own tiny VPS.</p>
-                    <p>The first Astro build exhausted the tiny VPS's memory, which was a pretty good example of the build-time bloat Shibumi is meant to avoid. I added memory and disk checks before every build, along with a timeout for anything that runs too long. Those safeguards came directly from running a real app on the kind of server Shibumi is designed for.</p>
+                    <p>I also maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.</p>
+                    <p>The first build exhausted the server's memory. That failure led directly to pre-build memory and disk checks, plus a timeout for builds that run too long.</p>
                     <a class="text-link" href="https://mcpvault.org">Visit MCPVault →</a>
                 </div>
             </section>
@@ -83,7 +82,7 @@
                             <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-success">done</span><div class="setup-ready terminal-ok">✓ Ready to add apps</div></div>
                         </div>
                     </div>
-                    <p>The installed service keeps using that exact release until you upgrade it. <code>latest</code> is only checked when you run the installer again.</p>
+                    <p>The installed service keeps using that exact release until you upgrade it. User-run commands check for a newer release and print the installer command when one is available. Registry problems never block local work.</p>
                     <p><code>shibumi-server uninstall</code> removes the service and installed code while preserving config and secrets. Add <code>--purge</code> to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.</p>
                 </div>
             </section>
@@ -105,6 +104,7 @@
                             <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-success">done</span><div><span class="setup-ready terminal-ok">✓ App added</span><span class="setup-answer">https://sub.example.com</span></div></div>
                         </div>
                     </div>
+                    <p>Want to check it first? Run <code>shibumi-server add sub.example.com --dry-run</code>. It uses the same prompts, port selection, and validation, then prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets or changing systemd.</p>
                     <p>Setup prints the Caddy route and GitHub webhook details. You add both yourself; shibumi-server does not change Caddy or GitHub. Repeat the command for every app or domain.</p>
                     <p>Automation can pass the repository as <code>github:owner/repo</code>, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.</p>
                 </div>

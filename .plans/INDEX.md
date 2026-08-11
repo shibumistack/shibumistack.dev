@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] Complete the first `shibumi-server` 0.1.2 install and app registration on Alpha.
+- [ ] Publish `shibumi-server` 0.1.4, upgrade Alpha, and preview its first app with `add --dry-run`.
 - [ ] Run the next live dogfood only with the tiny Bun fixture or MCPVault's future lightweight Shibumi app.
 
 ## Planned
@@ -12,6 +12,7 @@
 
 ## Recently shipped
 
+- [x] Add no-write app previews and non-blocking update warnings for `shibumi-server` 0.1.4 (`6a3d266`).
 - [x] Publish `shibumi-server` 0.1.2 with corrected systemd output, absolute-Bun launcher, safe uninstall, canonical repository input, and collision-free dashed domain IDs (`03e078a`).
 - [x] Ship the `/server` install dialog, shared terminal simulations, and public bootstrap route (`fba6634`, `a779180`).
 - [x] Auto-assign an available local port during interactive app setup (`f24b4f0`).

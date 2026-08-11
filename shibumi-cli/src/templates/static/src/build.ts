@@ -54,7 +54,7 @@ const indexHtml = layout(
   "Site",
   `<h1>Site</h1>
 <ul>
-${posts.map((p) => `  <li><a href="/${p.slug}.html">${escape(p.meta.title)}</a> — ${p.meta.date}</li>`).join("\n")}
+${posts.map((p) => `  <li><a href="/${p.slug}.html">${escape(p.meta.title)}</a> · ${p.meta.date}</li>`).join("\n")}
 </ul>`
 );
 

@@ -188,6 +188,7 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 - Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
 - Native `<details>` close jumps because the browser hides content before CSS can collapse it. Keep the explicit height animation in `src/pages/server.js`.
 - `shibumi-server` installation requires Linux, Bun, Git, rootless Podman, Caddy, and systemd. The Bash bootstrap installs Bun when missing, then starts interactive setup. Its public endpoint stays pinned to a reviewed release script, while that script resolves the latest npm package. macOS and Windows visitors must copy the command to a Linux server over SSH; never imply local installation, browser-driven remote installation, or SSH credential collection.
+- `shibumi-server add <domain> --dry-run` follows the real add prompts, port selection, and validation but writes no config or secrets and leaves systemd unchanged. User-run commands check npm for newer releases; registry failures must never block local work. The `serve` process skips this network check.
 - `shibumi-server uninstall` preserves config, secrets, app checkouts, containers, Caddy, and GitHub settings. Only `--purge` removes config and secrets, after confirmation; automation must pass `--purge --yes` explicitly.
 
 ## Implementation Caveats

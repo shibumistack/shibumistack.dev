@@ -2,7 +2,7 @@
  * Image optimization using Bun's built-in Image API.
  *
  * Scans a directory for images, optimizes them, and outputs WebP versions.
- * Zero dependencies — just Bun.
+ * Zero dependencies: just Bun.
  *
  * Usage:
  *   bun run src/lib/optimize-images.ts [input-dir] [output-dir]

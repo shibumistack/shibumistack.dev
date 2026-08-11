@@ -1,6 +1,6 @@
 # my-shibumi-blog
 
-Built with [Shibumi Stack](https://shibumistack.dev) — Bun, Hono, Marked.
+Built with [Shibumi Stack](https://shibumistack.dev): Bun, Hono, Marked.
 
 ## Getting started
 
@@ -13,7 +13,7 @@ Write posts in `content/` as markdown files with frontmatter. The blog discovers
 
 ## Stack
 
-- **Bun** — runtime, package manager, test runner
-- **Hono** — route layer
-- **Marked** — markdown to HTML
-- **gray-matter** — frontmatter parsing
+- **Bun**: runtime, package manager, test runner
+- **Hono**: route layer
+- **Marked**: markdown to HTML
+- **gray-matter**: frontmatter parsing

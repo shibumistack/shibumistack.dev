@@ -1,4 +1,4 @@
-# Design.md — Shibumi Stack
+# Design.md: Shibumi Stack
 
 The design has to embody the name. Anything visually loud or trend-chasing fights the brand. The page itself should be the first proof that the philosophy works.
 
@@ -91,7 +91,7 @@ If something moves, it should be because the user moved it (a link hover, a butt
 **Minimum viable component set:**
 
 - Body text (the serif)
-- Headings (h1, h2, h3 — and that's enough)
+- Headings (h1, h2, h3, and that's enough)
 - Links (persimmon, no underline by default, underline on hover)
 - Inline code (mono, slight background tint)
 - Code block (mono, slightly darker background, no border)
@@ -129,12 +129,12 @@ If a visitor's first scroll feels too plain, the design is correct. The whole po
 
 ## Inspiration (look at these, not at typical dev tool sites)
 
-- **htmx.org** — for the "boring as a feature" tone
-- **bun.sh** — for warm minimalism with a cute mascot (optional element to consider)
-- **iA Writer's website** — for serif-driven typography
-- **A book of poetry** — for layout and pacing
-- **Kinfolk magazine** — for editorial calm
-- **Old MoMA exhibition catalogs** — for restrained typography with one accent color
+- **htmx.org**: for the "boring as a feature" tone
+- **bun.sh**: for warm minimalism with a cute mascot (optional element to consider)
+- **iA Writer's website**: for serif-driven typography
+- **A book of poetry**: for layout and pacing
+- **Kinfolk magazine**: for editorial calm
+- **Old MoMA exhibition catalogs**: for restrained typography with one accent color
 
 **Avoid looking at:** Vercel, Next.js, any AI startup landing page from the last two years, any site with "the modern way to build X" in the hero.
 
@@ -142,7 +142,7 @@ If a visitor's first scroll feels too plain, the design is correct. The whole po
 
 ## Implementation notes
 
-- Static HTML or Astro single page (yes, you removed Astro from the stack, but for a marketing page it's fine — eat your own cooking elsewhere)
+- Static HTML or Astro single page (yes, you removed Astro from the stack, but for a marketing page it's fine; eat your own cooking elsewhere)
 - Or build it in the stack itself: Bun + Hono serving static HTML with Alpine for the dark mode toggle. That's actually the strongest move: the landing page is built in the stack it's selling.
 - Lighthouse 100 across the board. The page itself should demonstrate the values: fast, small, no bloat, ages well.
 - View source should be readable. Inline the CSS. Single file if possible. Someone curious enough to inspect the page should find the same restraint there.

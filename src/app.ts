@@ -64,22 +64,22 @@ const pageMeta: Record<string, PageMeta> = {
     path: "/",
   },
   brand: {
-    title: "Brand — Shibumi Stack",
+    title: "Brand: Shibumi Stack",
     description: "Shibumi Stack brand assets, logos, colors, and usage guidance.",
     path: "/brand",
   },
   docs: {
-    title: "Docs — Shibumi Stack",
+    title: "Docs: Shibumi Stack",
     description: "Shibumi Stack's seven pieces: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.",
     path: "/docs",
   },
   server: {
-    title: "shibumi-server — deploy your app to your own server",
+    title: "shibumi-server: deploy your app to your own server",
     description: "A small Bun service that validates, builds, and deploys your app to your own server with rootless Podman behind Caddy.",
     path: "/server",
   },
   building: {
-    title: "Roadmap — Shibumi Stack",
+    title: "Roadmap: Shibumi Stack",
     description: "What ships first, what comes next, and where the design is still open.",
     path: "/building",
   },
@@ -489,7 +489,7 @@ async function renderBlogList(): Promise<string> {
   page = insert(page, "posts", items);
 
   let layout = await renderTokens("layout", await read("src/layout.html"), {
-    title: "Blog — Shibumi Stack",
+    title: "Blog: Shibumi Stack",
     description: "Notes on building calm, durable web apps.",
     canonical: "https://shibumistack.dev/blog",
     "asset-version": assetVersion,
@@ -497,7 +497,7 @@ async function renderBlogList(): Promise<string> {
   const footer = await part("footer", { year: String(new Date().getFullYear()) });
   const installDialog = await part("install-dialog");
 
-  layout = insert(layout, "meta", await metaTags({ title: "Blog — Shibumi Stack", description: "Notes on building calm, durable web apps.", path: "/blog" }));
+  layout = insert(layout, "meta", await metaTags({ title: "Blog: Shibumi Stack", description: "Notes on building calm, durable web apps.", path: "/blog" }));
   layout = insert(layout, "page-style", await pageStyle("src/pages/blog.css"));
   layout = insert(layout, "nav", await nav("blog"));
   layout = insert(layout, "page", page);
@@ -531,7 +531,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   page = insert(page, "body", postBody);
 
   let layout = await renderTokens("layout", await read("src/layout.html"), {
-    title: `${escapeHtml(title)} — Shibumi Stack`,
+    title: `${escapeHtml(title)}: Shibumi Stack`,
     description: "Notes on building calm, durable web apps.",
     canonical: `https://shibumistack.dev/blog/${slug}`,
     "asset-version": assetVersion,
@@ -542,7 +542,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   layout = insert(
     layout,
     "meta",
-    await metaTags({ title: `${title} — Shibumi Stack`, description: "Notes on building calm, durable web apps.", path: `/blog/${slug}` }),
+    await metaTags({ title: `${title}: Shibumi Stack`, description: "Notes on building calm, durable web apps.", path: `/blog/${slug}` }),
   );
   layout = insert(layout, "page-style", await pageStyle("src/pages/blog/post.css"));
   layout = insert(layout, "nav", await nav("blog"));
@@ -554,7 +554,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   return layout;
 }
 
-app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.2/install.sh", 302));
+app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.4/install.sh", 302));
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {
@@ -606,7 +606,7 @@ app.notFound(async (c) => {
     pagePath: "src/pages/404.html",
     stylePath: "src/pages/404.css",
   }, undefined, {
-    title: "404 — Shibumi Stack",
+    title: "404: Shibumi Stack",
     description: "Page not found.",
     path: "/404",
   }), 404);

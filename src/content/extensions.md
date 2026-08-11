@@ -1,6 +1,6 @@
 # Extensions
 
-Extensions add features to your Shibumi project. They copy source code into your app — not dependencies, not hidden abstractions. You own the files from the moment they land.
+Extensions add features to your Shibumi project. They copy source code into your app instead of adding dependencies or hidden abstractions. You own the files from the moment they land.
 
 ## Install an extension
 
@@ -21,16 +21,16 @@ bun run shibumi add auth
 ```
 
 What it copies:
-- `src/lib/session.ts` — session management with `bun:sqlite`
-- `src/middleware/auth.ts` — auth middleware
-- `src/routes/auth.ts` — login, register, magic link, logout
+- `src/lib/session.ts`: session management with `bun:sqlite`
+- `src/middleware/auth.ts`: auth middleware
+- `src/routes/auth.ts`: login, register, magic link, logout
 
 What it wires in:
 - Auth routes mounted at `/auth`
 - Auth middleware on `/protected/*`
 
 What it stores:
-- `data/auth.db` — SQLite database with users, sessions, magic links
+- `data/auth.db`: SQLite database with users, sessions, magic links
 
 Zero npm dependencies. Uses `Bun.password` for hashing and `bun:sqlite` for storage.
 
@@ -43,7 +43,7 @@ bun run shibumi add images
 ```
 
 What it copies:
-- `src/middleware/images.ts` — intercepts image requests, converts to WebP, caches
+- `src/middleware/images.ts`: intercepts image requests, converts to WebP, caches
 
 What it wires in:
 - Image middleware on `/images/*`
@@ -65,7 +65,7 @@ bun run shibumi add email
 ```
 
 What it copies:
-- `src/lib/email.ts` — send emails with `sendEmail({ to, subject, html })`
+- `src/lib/email.ts`: send emails with `sendEmail({ to, subject, html })`
 
 What it needs:
 - `RESEND_API_KEY` in your `.env`
@@ -102,7 +102,7 @@ Extensions can modify existing files when they install. The `hooks` field specif
 }
 ```
 
-Hooks are idempotent — running the same extension twice won't duplicate code.
+Hooks are idempotent: running the same extension twice won't duplicate code.
 
 ### Agents
 

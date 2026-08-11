@@ -149,7 +149,7 @@ describe("routes", () => {
     const res = await app.request("/install/server");
 
     expect(res.status).toBe(302);
-    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.2/install.sh");
+    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.4/install.sh");
   });
 
   test("serves extensions page", async () => {

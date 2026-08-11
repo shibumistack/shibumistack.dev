@@ -1,7 +1,7 @@
 {
   "name": "images",
   "title": "Images",
-  "description": "Automatic image optimization — serves WebP on the fly, keeps originals",
+  "description": "Automatic image optimization: serves WebP on the fly, keeps originals",
   "files": [
     { "from": "files/src/middleware/images.ts", "to": "src/middleware/images.ts" }
   ],

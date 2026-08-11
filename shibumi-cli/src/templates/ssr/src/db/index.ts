@@ -12,7 +12,7 @@ if (!existsSync(DB_DIR)) {
 
 const sqlite = new Database(DB_PATH);
 
-// Create tables on startup (dev convenience — use migrations for prod)
+// Create tables on startup (dev convenience: use migrations for prod)
 sqlite.exec(`
   CREATE TABLE IF NOT EXISTS items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -1,6 +1,6 @@
 # my-shibumi-site
 
-Built with [Shibumi Stack](https://shibumistack.dev) — static output.
+Built with [Shibumi Stack](https://shibumistack.dev): static output.
 
 ## Getting started
 
@@ -14,6 +14,6 @@ Write content in `content/` as markdown. Run `bun run build` and deploy the `dis
 
 ## Stack
 
-- **Bun** — runtime, build tool
-- **Marked** — markdown to HTML
-- **gray-matter** — frontmatter parsing
+- **Bun**: runtime, build tool
+- **Marked**: markdown to HTML
+- **gray-matter**: frontmatter parsing

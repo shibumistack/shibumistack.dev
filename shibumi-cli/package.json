@@ -1,7 +1,7 @@
 {
   "name": "create-shibumi",
   "version": "0.1.0",
-  "description": "Scaffold a new Shibumi Stack project — Bun, Hono, Drizzle, Alpine, Zod",
+  "description": "Scaffold a new Shibumi Stack project: Bun, Hono, Drizzle, Alpine, Zod",
   "type": "module",
   "bin": {
     "create-shibumi": "./src/index.ts"

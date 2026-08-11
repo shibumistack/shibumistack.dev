@@ -92,7 +92,7 @@ export function imageMiddleware(options: ImageOptions = {}) {
         },
       });
     } catch {
-      // Conversion failed — serve original
+      // Conversion failed: serve original
       return next();
     }
   };

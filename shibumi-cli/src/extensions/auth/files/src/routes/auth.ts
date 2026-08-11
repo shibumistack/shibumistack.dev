@@ -1,16 +1,16 @@
 /**
- * Auth routes — password login and magic link login.
+ * Auth routes: password login and magic link login.
  *
  * Password flow:
- *   POST /auth/register — create account
- *   POST /auth/login    — login with email/password
+ *   POST /auth/register: create account
+ *   POST /auth/login: login with email/password
  *
  * Magic link flow:
- *   POST /auth/magic-request — request a magic link (sends email)
- *   GET  /auth/magic-verify   — verify token from email link
+ *   POST /auth/magic-request: request a magic link (sends email)
+ *   GET  /auth/magic-verify: verify token from email link
  *
  * Both:
- *   POST /auth/logout — destroy session
+ *   POST /auth/logout: destroy session
  */
 
 import { Hono } from "hono";

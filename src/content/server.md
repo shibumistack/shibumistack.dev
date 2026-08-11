@@ -44,11 +44,9 @@ Caddy or the host firewall handles rate limits before requests reach `shibumi-se
 
 ## Dogfooding with MCPVault
 
-I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed.
+I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.
 
-After upgrading to Astro 7, deploying to Cloudflare meant moving from Pages to Workers, adding a new adapter, and taking on more platform-specific complexity for a simple website. I didn't want that, so I'm rebuilding the site with Shibumi and deploying it to my own tiny VPS.
-
-The first Astro build exhausted the tiny VPS's memory, which was a pretty good example of the build-time bloat Shibumi is meant to avoid. I added memory and disk checks before every build, along with a timeout for anything that runs too long. Those safeguards came directly from running a real app on the kind of server Shibumi is designed for.
+The first build exhausted the server's memory. That failure led directly to pre-build memory and disk checks, plus a timeout for builds that run too long.
 
 ## Install once on your server
 
@@ -58,7 +56,7 @@ Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, 
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-It installs the resolved release locally and adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. `latest` is only checked when you run the installer again.
+It installs the resolved release locally and adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. User-run commands check for a newer release and print the installer command when one is available. Registry problems never block local work.
 
 `shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
 
@@ -70,7 +68,15 @@ Use the installed command with a domain:
 shibumi-server add sub.example.com
 ```
 
-It asks for the repository and deployment directory, assigns an available local port, then registers the app and starts the service. Setup prints the Caddy route and GitHub webhook details; it does not change Caddy or GitHub. Repeat the command for every app or domain.
+It asks for the repository and deployment directory, assigns an available local port, then registers the app and starts the service.
+
+Preview the same prompts, port selection, and validation without changing the system:
+
+```sh
+shibumi-server add sub.example.com --dry-run
+```
+
+The preview prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets or changing systemd. A real add prints the Caddy route and GitHub webhook details; it does not change Caddy or GitHub. Repeat the command for every app or domain.
 
 Automation can pass the repository as `github:owner/repo`, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.
 

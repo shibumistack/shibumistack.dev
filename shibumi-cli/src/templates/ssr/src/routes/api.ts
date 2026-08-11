@@ -6,13 +6,13 @@ import { ItemSchema } from "../lib/validate";
 
 export const api = new Hono();
 
-// GET /api/items — list all items
+// GET /api/items: list all items
 api.get("/items", async (c) => {
   const all = db.select().from(items).all();
   return c.json(all);
 });
 
-// POST /api/items — create an item
+// POST /api/items: create an item
 api.post("/items", async (c) => {
   const body = await c.req.json();
   const parsed = ItemSchema.safeParse(body);
@@ -25,7 +25,7 @@ api.post("/items", async (c) => {
   return c.json(result, 201);
 });
 
-// DELETE /api/items/:id — delete an item
+// DELETE /api/items/:id: delete an item
 api.delete("/items/:id", async (c) => {
   const id = Number(c.req.param("id"));
   db.delete(items).where(eq(items.id, id)).run();

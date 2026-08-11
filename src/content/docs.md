@@ -88,7 +88,7 @@ bun run shibumi add images
 
 The user runs one command. The middleware intercepts image requests, converts to WebP on the fly, caches the result, and serves it. Originals stay untouched. No HTML changes needed.
 
-Hooks are idempotent — running the same extension twice won't duplicate code.
+Hooks are idempotent: running the same extension twice won't duplicate code.
 
 ```json
 {

@@ -63,4 +63,4 @@ bun check   # TypeScript check
 
 ## Status
 
-Coming soon — <https://shibumistack.dev>
+Coming soon: <https://shibumistack.dev>
