@@ -100,7 +100,7 @@ site contract for humans, agents, and direct source-shaped docs:
 - `src/content/brand.md`: brand guidance.
 - `src/content/dx.md`: long-form DX plan.
 - `src/content/server.md`: public architecture and security model for `shibumi-server`.
-- `src/content/ship.md`: existing-project ship setup, mirrored by the non-nav `/ship` page. Files under `public/ship/v*.ts` are immutable owned-source snapshots; publish a new versioned path and update `/ship` instead of changing an existing version.
+- `src/content/ship.md`: existing-project ship setup, mirrored by the non-nav `/ship` page. Files under `public/ship/v*.ts` are immutable owned-source snapshots; publish a new versioned path and update `/ship` instead of changing an existing version. `/install/ship` redirects to immutable `public/ship/install-v1.ts`, which validates project root and existing owned source before adding dependencies, package commands, and starting Clack setup.
 - `README.md` and `CONTRIBUTING.md`: repo docs, served inline from root.
 - `public/llms.txt`: crawler/agent-facing summary.
 

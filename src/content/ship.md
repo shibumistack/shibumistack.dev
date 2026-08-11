@@ -4,28 +4,19 @@ Connect any Bun project to `shibumi-server` with one small script that lives in 
 
 Requirements: Bun, Git, GitHub CLI, and SSH access to your server.
 
-## 1. Copy the ship script
+## 1. Connect
 
-Download versioned source into your project. The command writes a file but does not execute it. Read `scripts/ship.ts` before committing.
-
-```sh
-mkdir -p scripts
-curl -fsSLo scripts/ship.ts https://shibumistack.dev/ship/v2.ts
-bun add --dev '@clack/prompts@^0.7.0'
-```
-
-Source: <https://shibumistack.dev/ship/v2.ts>
-
-## 2. Add package scripts
-
-Let Bun update `package.json` without replacing existing scripts:
+Run this from your project root. The shell only downloads reviewed TypeScript to `/tmp`. Bun runs it, then starts project setup with Clack.
 
 ```sh
-bun pm pkg set 'scripts.ship=bun scripts/ship.ts' \
-  'scripts.ship:setup=bun scripts/ship.ts --setup'
+curl -fsSLo /tmp/shibumi-ship.ts https://shibumistack.dev/install/ship && bun /tmp/shibumi-ship.ts
 ```
 
-The added keys look like this:
+The installer validates your Git project, adds owned ship source and package commands, then starts interactive setup. Existing edits to `scripts/ship.ts` are never overwritten.
+
+## 2. Review owned source
+
+Your project receives `scripts/ship.ts` and these package keys:
 
 ```json
 {
@@ -39,19 +30,15 @@ The added keys look like this:
 }
 ```
 
-## 3. Connect the project
+Run `bun run ship:setup` later whenever you want to review deployment configuration again.
 
-```sh
-bun run ship:setup
-```
-
-Setup explains each boundary before saving anything. It connects through your existing SSH configuration, completes server registration, downloads commit-safe project config, and creates the GitHub webhook through `gh`.
+Source: <https://shibumistack.dev/ship/v3.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH target in `.git/config`.
 - Server only: checkout path, machine config, and webhook secret.
 
-## 4. Deploy
+## 3. Deploy
 
 ```sh
 bun run ship

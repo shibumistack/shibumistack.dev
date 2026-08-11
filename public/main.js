@@ -35,6 +35,26 @@
     }
   }
 
+  async function copyText(value) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+    } catch {}
+
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.append(textarea);
+    textarea.select();
+    const copied = document.execCommand("copy");
+    textarea.remove();
+    return copied;
+  }
+
   function shouldIntercept(event, link) {
     if (event.defaultPrevented || event.button !== 0) return false;
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return false;
@@ -189,12 +209,16 @@
       return;
     }
 
-    const copyButton = event.target.closest("[data-copy]");
+    const copyButton = event.target.closest("[data-copy], [data-copy-code]");
     if (copyButton) {
-      const value = copyButton.getAttribute("data-copy") || "";
-      navigator.clipboard.writeText(value);
-      copyButton.classList.add("copied");
-      setTimeout(() => { copyButton.classList.remove("copied"); }, 1400);
+      const value = copyButton.hasAttribute("data-copy-code")
+        ? copyButton.closest("pre")?.querySelector("code")?.textContent || ""
+        : copyButton.getAttribute("data-copy") || "";
+      copyText(value).then((copied) => {
+        if (!copied) return;
+        copyButton.classList.add("copied");
+        setTimeout(() => { copyButton.classList.remove("copied"); }, 1400);
+      });
       return;
     }
 
