@@ -11,7 +11,7 @@ Download versioned source into your project. The command writes a file but does 
 ```sh
 mkdir -p scripts
 curl -fsSLo scripts/ship.ts https://shibumistack.dev/ship/v2.ts
-bun add --dev @clack/prompts@^0.7.0
+bun add --dev '@clack/prompts@^0.7.0'
 ```
 
 Source: <https://shibumistack.dev/ship/v2.ts>
