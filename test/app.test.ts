@@ -130,6 +130,8 @@ describe("routes", () => {
     expect(htmlBody).toContain("Dogfooding with MCPVault");
     expect(htmlBody).toContain("Ready to add apps");
     expect(htmlBody).toContain("Adding apps");
+    expect(htmlBody).toContain("bun run ship");
+    expect(htmlBody).toContain("shibumi-server.json");
     expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/server | bash"');
     expect(htmlBody).toContain('"shibumi-server add sub.example.com"');
     expect(htmlBody.match(/aria-label="Replay terminal animation"/g)?.length).toBe(3);
@@ -149,7 +151,7 @@ describe("routes", () => {
     const res = await app.request("/install/server");
 
     expect(res.status).toBe(302);
-    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.4/install.sh");
+    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.6/install.sh");
   });
 
   test("serves extensions page", async () => {

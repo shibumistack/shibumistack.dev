@@ -21,7 +21,7 @@ A working project with Bun, Hono, and the right config for your deploy target. N
 
 ### Deploy targets
 
-Self-hosted (Docker + Caddy), Cloudflare Workers, Vercel, Fly.io, or static CDN.
+Self-hosted (rootless Podman behind host Caddy), Cloudflare Workers, Vercel, Fly.io, or static CDN. Self-hosted projects include owned `ship` and `ship:setup` scripts. `bun run ship` detects missing setup, guides confirmed SSH and GitHub webhook configuration, checks the project, pushes, and follows deployment status.
 
 ### Extensions
 

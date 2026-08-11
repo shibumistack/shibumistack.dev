@@ -36,6 +36,7 @@ bun dev      # hot reload server on http://localhost:9001
 bun start    # run server
 bun test     # route tests
 bun check    # TypeScript check without emitting files
+bun run ship # set up when needed, check, push, and follow deployment
 ```
 
 There is no lint or build script at the moment.
@@ -188,7 +189,9 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 - Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
 - Native `<details>` close jumps because the browser hides content before CSS can collapse it. Keep the explicit height animation in `src/pages/server.js`.
 - `shibumi-server` installation requires Linux, Bun, Git, rootless Podman, Caddy, and systemd. The Bash bootstrap installs Bun when missing, then starts interactive setup. Its public endpoint stays pinned to a reviewed release script, while that script resolves the latest npm package. macOS and Windows visitors must copy the command to a Linux server over SSH; never imply local installation, browser-driven remote installation, or SSH credential collection.
-- `shibumi-server add <domain> --dry-run` follows the real add prompts, port selection, and validation but writes no config or secrets and leaves systemd unchanged. User-run commands check npm for newer releases; registry failures must never block local work. The `serve` process skips this network check.
+- `shibumi-server add <domain> --dry-run` follows the real DNS and Caddy detection, prompts, port selection, and validation but writes no config or secrets, never invokes sudo, and leaves Caddy and systemd unchanged. Real Caddy changes use a constrained root helper only after the user confirms and sudo handles its own password. Existing domains preserve their current upstream until a healthy first deployment and explicit cutover.
+- `bun run ship` auto-detects missing setup, explains local `.git/config` versus committed `shibumi-server.json` before saving, runs confirmed setup over SSH, configures GitHub through `gh`, checks and pushes Git, then polls mode-restricted status over SSH. `bun run ship:setup` reconfigures without pushing. Never store or print the webhook secret during its SSH-to-`gh` handoff.
+- User-run commands check npm for newer releases; registry failures must never block local work. The `serve` process skips this network check.
 - `shibumi-server uninstall` preserves config, secrets, app checkouts, containers, Caddy, and GitHub settings. Only `--purge` removes config and secrets, after confirmation; automation must pass `--purge --yes` explicitly.
 
 ## Implementation Caveats

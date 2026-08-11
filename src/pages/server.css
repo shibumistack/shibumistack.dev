@@ -32,9 +32,9 @@
 .deploy-details p { margin:0 0 .75rem; }
 .deploy-details ol { margin:.5rem 0 .75rem; padding-left:1.25rem; }
 .deploy-details code { padding:.08rem .3rem; border:1px solid var(--line); border-radius:.35rem; background:var(--quiet); color:var(--text); font-family:var(--font-mono); }
-.server-intro,.dogfood-section,.install-section,.apps-section,.server-cta { margin-top:clamp(7rem,11vw,9rem); }
+.server-intro,.dogfood-section,.install-section,.apps-section,.ship-section,.server-cta { margin-top:clamp(7rem,11vw,9rem); }
 .server-intro { max-width:62rem; }
-.server-intro h2,.dogfood-section h2,.install-section h2,.apps-section h2,.server-cta h2 { margin:0; font-size:clamp(2.6rem,6vw,5.2rem); font-weight:400; line-height:.94; letter-spacing:-.055em; }
+.server-intro h2,.dogfood-section h2,.install-section h2,.apps-section h2,.ship-section h2,.server-cta h2 { margin:0; font-size:clamp(2.6rem,6vw,5.2rem); font-weight:400; line-height:.94; letter-spacing:-.055em; }
 .server-intro > p:last-child { max-width:46rem; margin:1.7rem 0 0; color:var(--muted); font-size:clamp(1.08rem,1.55vw,1.28rem); line-height:1.65; }
 .server-principles { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(1.5rem,4vw,3rem); margin-top:clamp(2.5rem,5vw,4rem); padding-top:1.4rem; border-top:1px solid var(--line); }
 .server-principles article > span { color:var(--accent); font:700 .75rem/1 var(--font-mono); letter-spacing:.15em; }
@@ -42,11 +42,13 @@
 .server-principles p { margin:0; color:var(--muted); line-height:1.6; }
 .server-principles code,.section-copy code { color:var(--text); font-family:var(--font-mono); }
 .server-principles p code,.section-copy p code { display:inline-block; margin:0 .08rem; padding:.08rem .38rem .12rem; border:1px solid var(--line); border-radius:.45rem; background:var(--quiet); font-size:.9em; line-height:1.25; white-space:nowrap; }
-.dogfood-section,.install-section,.apps-section { display:grid; grid-template-columns:minmax(0,.72fr) minmax(18rem,1fr); gap:clamp(2rem,7vw,6rem); align-items:start; }
+.dogfood-section,.install-section,.apps-section,.ship-section { display:grid; grid-template-columns:minmax(0,.72fr) minmax(18rem,1fr); gap:clamp(2rem,7vw,6rem); align-items:start; }
 .section-copy { min-width:0; color:var(--muted); font-size:clamp(1.02rem,1.35vw,1.14rem); line-height:1.68; }
 .section-copy p { margin:0 0 1rem; }
 .section-copy a { color:var(--text); text-decoration-color:var(--accent); text-underline-offset:.2em; transition:color 160ms ease; }
 .section-copy a:hover,.section-copy a:focus-visible { color:var(--accent-hover); }
+.ship-command { margin:1.35rem 0 1.5rem; padding:1.05rem 1.2rem; overflow-x:auto; border:1px solid var(--line); border-radius:.7rem; background:var(--quiet); color:var(--text); font:600 .95rem/1.4 var(--font-mono); }
+.ship-command code { color:inherit; }
 .text-link { display:inline-block; margin-top:.4rem; font-family:var(--font-sans); font-size:var(--text-sm); font-weight:700; text-decoration:none; }
 .install-terminal { width:100%; max-width:100%; margin:1.4rem 0; padding:1rem; overflow-x:auto; border:1px solid var(--line); border-radius:.5rem; background:light-dark(rgba(37,33,22,.04),rgba(0,0,0,.4)); color:var(--text); font:.82rem/1.5 var(--font-mono); }
 .install-terminal code { font:inherit; }
@@ -77,7 +79,7 @@
   .deploy-cli { max-width:34rem; }
   .server-principles { grid-template-columns:1fr; }
   .server-principles article { padding-bottom:1.2rem; border-bottom:1px solid var(--quiet); }
-  .dogfood-section,.install-section,.apps-section { grid-template-columns:1fr; }
+  .dogfood-section,.install-section,.apps-section,.ship-section { grid-template-columns:1fr; }
 }
 @media (max-width:32rem) {
   .deploy-step { grid-template-columns:4.7rem minmax(0,1fr) .8rem; gap:.65rem; font-size:.76rem; }

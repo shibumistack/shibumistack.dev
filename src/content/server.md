@@ -68,7 +68,7 @@ Use the installed command with a domain:
 shibumi-server add sub.example.com
 ```
 
-It asks for the repository and deployment directory, assigns an available local port, then registers the app and starts the service.
+It checks DNS and existing Caddy routes, asks for the repository and deployment directory, assigns an available local port, then previews the complete setup before changing anything.
 
 Preview the same prompts, port selection, and validation without changing the system:
 
@@ -76,9 +76,23 @@ Preview the same prompts, port selection, and validation without changing the sy
 shibumi-server add sub.example.com --dry-run
 ```
 
-The preview prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets or changing systemd. A real add prints the Caddy route and GitHub webhook details; it does not change Caddy or GitHub. Repeat the command for every app or domain.
+The preview prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add prepares the checkout and asks sudo only when its constrained helper saves, validates, and reloads Caddy. GitHub setup stays on your project machine through `bun run ship`. Repeat the command for every app or domain.
 
 Automation can pass the repository as `github:owner/repo`, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.
+
+## Push with one command
+
+Self-hosted projects own a small ship script:
+
+```sh
+bun run ship
+```
+
+First run detects missing setup, explains what stays local, then opens the server flow through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates the webhook without printing or storing its secret.
+
+Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
+
+Run `bun run ship:setup` whenever you want to review or change deployment setup.
 
 ## Install on your server
 

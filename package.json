@@ -6,12 +6,15 @@
     "test": "bun test test/app.test.ts",
     "check": "tsc --noEmit",
     "deploy": "./scripts/deploy.sh",
+    "ship": "bun scripts/ship.ts",
+    "ship:setup": "bun scripts/ship.ts --setup",
     "deploy:server": "git pull && podman-compose down && podman-compose up -d --build"
   },
   "dependencies": {
     "hono": "^4"
   },
   "devDependencies": {
+    "@clack/prompts": "^0.7.0",
     "@types/bun": "^1.3.13",
     "typescript": "^6.0.3"
   }

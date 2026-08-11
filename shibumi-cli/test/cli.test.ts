@@ -60,11 +60,16 @@ describe("copyTemplate", () => {
 describe("generateDeployConfig", () => {
   beforeEach(() => copyTemplate("bare", tempDir));
 
-  it("self-hosted: Dockerfile + Compose + Caddy", () => {
+  it("self-hosted: Dockerfile, Compose, and owned ship script", () => {
     generateDeployConfig(tempDir, "self-hosted", "app");
     expect(existsSync(join(tempDir, "Dockerfile"))).toBe(true);
     expect(existsSync(join(tempDir, "docker-compose.yml"))).toBe(true);
-    expect(existsSync(join(tempDir, "Caddyfile"))).toBe(true);
+    expect(existsSync(join(tempDir, "Caddyfile"))).toBe(false);
+    expect(existsSync(join(tempDir, "scripts", "ship.ts"))).toBe(true);
+    const packageJson = JSON.parse(readFileSync(join(tempDir, "package.json"), "utf8"));
+    expect(packageJson.scripts.ship).toBe("bun scripts/ship.ts");
+    expect(packageJson.devDependencies["@clack/prompts"]).toBe("^0.7.0");
+    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("${SHIBUMI_PORT:-3000}:3000");
   });
 
   it("cloudflare: wrangler.toml + worker entry", () => {

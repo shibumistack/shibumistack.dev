@@ -91,33 +91,32 @@ CMD ["bun", "start"]
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "\${SHIBUMI_PORT:-3000}:3000"
     volumes:
       - ./data:/app/data
-    restart: unless-stopped
-
-  caddy:
-    image: caddy:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy_data:/data
-    depends_on:
-      - app
-
-volumes:
-  caddy_data:
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -T 5 -O /dev/null http://127.0.0.1:3000/"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 `
       );
-      writeFileSync(
-        join(targetDir, "Caddyfile"),
-        `localhost {
-    reverse_proxy app:3000
-}
-`
-      );
+      mkdirSync(join(targetDir, "scripts"), { recursive: true });
+      cpSync(join(import.meta.dir, "templates", "ship.ts"), join(targetDir, "scripts", "ship.ts"));
+      const packagePath = join(targetDir, "package.json");
+      const packageJson = JSON.parse(readFileSync(packagePath, "utf8")) as {
+        scripts?: Record<string, string>;
+        devDependencies?: Record<string, string>;
+      };
+      packageJson.scripts = {
+        ...packageJson.scripts,
+        ship: "bun scripts/ship.ts",
+        "ship:setup": "bun scripts/ship.ts --setup",
+      };
+      packageJson.devDependencies = { ...packageJson.devDependencies, "@clack/prompts": "^0.7.0" };
+      writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);
       break;
 
     case "cloudflare":

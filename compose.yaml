@@ -6,7 +6,7 @@ services:
     # unless-stopped. Docker treats both alike; rootless podman does not.
     restart: always
     ports:
-      - "9001:9001"
+      - "${SHIBUMI_PORT:-9001}:9001"
     healthcheck:
       # No /health route on this app -- it serves pages, so a 200 on / is the
       # liveness signal. wget exits non-zero on any non-2xx or connect failure.

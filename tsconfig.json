@@ -7,5 +7,5 @@
     "noEmit": true,
     "types": ["bun"]
   },
-  "include": ["serve.ts", "src/**/*.ts", "test/**/*.ts"]
+  "include": ["serve.ts", "scripts/**/*.ts", "src/**/*.ts", "test/**/*.ts"]
 }
