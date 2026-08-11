@@ -14,6 +14,8 @@ curl -fsSLo /tmp/shibumi-ship.ts https://shibumistack.dev/install/ship && bun /t
 
 The installer validates your Git project, adds owned ship source and package commands, then starts interactive setup. Existing edits to `scripts/ship.ts` are never overwritten.
 
+Setup suggests the domain from your package name or Compose `SITE_URL` when available. For SSH, use the same `user@server` target or alias you use in your terminal.
+
 ## 2. Review owned source
 
 Your project receives `scripts/ship.ts` and these package keys:
@@ -32,7 +34,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun run ship:setup` later whenever you want to review deployment configuration again.
 
-Source: <https://shibumistack.dev/ship/v3.ts>
+Source: <https://shibumistack.dev/ship/v4.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH target in `.git/config`.

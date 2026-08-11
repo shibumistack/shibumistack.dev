@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, repositoryFromRemote, validateConfig } from "../scripts/ship";
+import { appIdForDomain, domainFromProject, repositoryFromRemote, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -20,6 +20,13 @@ describe("ship configuration", () => {
     expect(appIdForDomain("something-some.org")).toBe("something--some-org");
     expect(repositoryFromRemote("git@github.com:owner/repo.git")).toBe("owner/repo");
     expect(repositoryFromRemote("https://github.com/owner/repo.git")).toBe("owner/repo");
+  });
+
+  test("infers a domain from project name or Compose SITE_URL", () => {
+    expect(domainFromProject("example.com", "")).toBe("example.com");
+    expect(domainFromProject("vibetoolbox", "    SITE_URL: https://vibetoolbox.dev\n")).toBe("vibetoolbox.dev");
+    expect(domainFromProject("app", "    - SITE_URL=https://preview.example.com/path\n")).toBe("preview.example.com");
+    expect(domainFromProject("app", "    SITE_URL: http://localhost:3000\n")).toBeUndefined();
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {
