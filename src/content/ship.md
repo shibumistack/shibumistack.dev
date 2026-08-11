@@ -34,7 +34,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun run ship:setup` later whenever you want to review deployment configuration again.
 
-Source: <https://shibumistack.dev/ship/v4.ts>
+Source: <https://shibumistack.dev/ship/v5.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH target in `.git/config`.

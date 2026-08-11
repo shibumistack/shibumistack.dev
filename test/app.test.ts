@@ -157,36 +157,39 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v4.ts")');
+    expect(body).toContain('fetch("/ship/v5.ts")');
     expect(body).toContain("data-copy-code");
-    expect(body).not.toContain('href="/ship/v4.ts"');
+    expect(body).not.toContain('href="/ship/v5.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
 
     const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v4.ts");
+    const source = await app.request("/ship/v5.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
     const sourceBody = await source.text();
     expect(sourceBody).toContain("Project-owned client for shibumi-server");
+    expect(sourceBody).toContain('const SERVER_CLI = "~/.local/bin/shibumi-server"');
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).not.toContain("note(");
     expect((await app.request("/ship/v1.ts")).status).toBe(200);
     expect((await app.request("/ship/v2.ts")).status).toBe(200);
     expect((await app.request("/ship/v3.ts")).status).toBe(200);
+    expect((await app.request("/ship/v4.ts")).status).toBe(200);
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v2.ts");
-    const installer = await app.request("/ship/install-v2.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v3.ts");
+    const installer = await app.request("/ship/install-v3.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     expect(await installer.text()).toContain("owned script now runs setup with Clack");
     expect((await app.request("/ship/install-v1.ts")).status).toBe(200);
+    expect((await app.request("/ship/install-v2.ts")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {
