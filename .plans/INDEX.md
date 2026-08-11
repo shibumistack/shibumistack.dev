@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] Publish `shibumi-server` 0.1.6, upgrade Alpha, and run `bun run ship` through dry-run-safe setup before its first deploy.
+- [ ] Upgrade Alpha to `shibumi-server` 0.1.8, verify `update`, and run `bun run ship` through dry-run-safe setup before its first deploy.
 - [ ] Run the next live dogfood only with the tiny Bun fixture or MCPVault's future lightweight Shibumi app.
 
 ## Planned
@@ -12,6 +12,7 @@
 
 ## Recently shipped
 
+- [x] Publish `shibumi-server` 0.1.8 with exact-version self-update and branded, color-aware help (`909463a`).
 - [x] Build DNS-aware Caddy setup, client config, SSH deployment status, and owned ship scripts for `shibumi-server` 0.1.6.
 - [x] Add no-write app previews and non-blocking update warnings for `shibumi-server` 0.1.4 (`6a3d266`).
 - [x] Publish `shibumi-server` 0.1.2 with corrected systemd output, absolute-Bun launcher, safe uninstall, canonical repository input, and collision-free dashed domain IDs (`03e078a`).

@@ -3,7 +3,7 @@
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
                     <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.6</span></div>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.8</span></div>
                     <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
                 </div>
 
@@ -82,7 +82,7 @@
                             <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-success">done</span><div class="setup-ready terminal-ok">✓ Ready to add apps</div></div>
                         </div>
                     </div>
-                    <p>The installed service keeps using that exact release until you upgrade it. User-run commands check for a newer release and print the installer command when one is available. Registry problems never block local work.</p>
+                    <p>The installed service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest <code>shibumi-server update</code>. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.</p>
                     <p><code>shibumi-server uninstall</code> removes the service and installed code while preserving config and secrets. Add <code>--purge</code> to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.</p>
                 </div>
             </section>
