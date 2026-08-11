@@ -467,8 +467,12 @@ nav a[aria-current="page"] {
 }
 
 .install-dialog-content {
+    position: relative;
     width: min(28rem, 100%);
+    max-height: calc(100dvh - 2rem);
     padding: 2.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     border: 1px solid var(--line);
     border-radius: 20px;
     background: var(--bg);
@@ -480,6 +484,30 @@ nav a[aria-current="page"] {
 .install-dialog[open] .install-dialog-content {
     transform: translateY(0) scale(1);
 }
+
+.install-dialog-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.install-dialog-close:hover,
+.install-dialog-close:focus-visible {
+    background: var(--quiet);
+    color: var(--text);
+}
+
+.install-dialog-close svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; }
 
 .install-dialog-head {
     display: flex;
@@ -566,6 +594,44 @@ nav a[aria-current="page"] {
 
 .install-dialog-alt code {
     color: var(--text);
+}
+
+@media (max-width: 640px), (max-height: 480px) {
+    .install-dialog { padding: 0.5rem; }
+
+    .install-dialog-content {
+        max-height: calc(100dvh - 1rem);
+        padding: 1.25rem;
+        border-radius: 16px;
+    }
+
+    .install-dialog-close { top: 0.7rem; right: 0.7rem; }
+
+    .install-dialog-head {
+        padding-right: 1.75rem;
+        font-size: clamp(1.125rem, 5.5vw, 1.35rem);
+    }
+
+    .install-dialog-hint {
+        margin-bottom: 0.85rem;
+        font-size: var(--text-sm);
+        line-height: 1.4;
+    }
+
+    .install-dialog-command {
+        gap: 0.45rem;
+        padding: 0.7rem 0.75rem;
+        border-radius: 10px;
+    }
+
+    .install-dialog-command code {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        white-space: normal;
+        font-size: var(--text-xs);
+        line-height: 1.4;
+    }
+    .install-dialog-command .copy-command { flex: 0 0 auto; }
 }
 
 /* ---- menu toggle ---- */

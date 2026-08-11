@@ -170,6 +170,12 @@
       return;
     }
 
+    const dialogClose = event.target.closest("[data-dialog-close]");
+    if (dialogClose) {
+      dialogClose.closest("dialog")?.close();
+      return;
+    }
+
     const dialogTrigger = event.target.closest("[data-dialog]");
     if (dialogTrigger) {
       const dialog = document.getElementById(dialogTrigger.getAttribute("data-dialog"));

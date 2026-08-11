@@ -1,5 +1,6 @@
 <dialog class="install-dialog" id="server-install-dialog" aria-labelledby="server-install-dialog-title">
   <div class="install-dialog-content">
+    <button class="install-dialog-close" type="button" data-dialog-close aria-label="Close install dialog">{{icon(close)}}</button>
     <div class="install-dialog-head">
       <span class="kanji">渋み</span>
       <span id="server-install-dialog-title">Install on your Linux server</span>
@@ -7,7 +8,7 @@
     <p class="install-dialog-hint"><strong>Requires Linux with Bun, Git, rootless Podman, Caddy, and systemd.</strong> If you're using macOS or Windows, SSH into your Linux VPS or homelab server, then run this command there.</p>
     <div class="install-dialog-command">
       <span class="prompt-mark">›</span>
-      <code>curl -fsSL https://shibumistack.dev/install/server | bash</code>
+      <code>curl -fsSL https://shibumistack.dev/<wbr>install/server | bash</code>
       <button class="copy-command" type="button" data-copy="curl -fsSL https://shibumistack.dev/install/server | bash" aria-label="Copy install command">{{icon(copy)}}{{icon(check)}}</button>
     </div>
     <p class="server-install-note">This page only copies the command. It never connects to your server or asks for SSH credentials.</p>
