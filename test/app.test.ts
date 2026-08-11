@@ -154,6 +154,9 @@ describe("routes", () => {
     expect(body).toContain("Ship an existing project");
     expect(body).toContain("bun run ship:setup");
     expect(body).toContain("shibumi-server.json");
+    expect(body).toContain("data-ship-source");
+    expect(body).toContain("syntax-keyword");
+    expect(body).not.toContain('href="/ship/v1.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
 
     const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
