@@ -78,6 +78,11 @@ const pageMeta: Record<string, PageMeta> = {
     description: "A small Bun service that validates, builds, and deploys your app to your own server with rootless Podman behind Caddy.",
     path: "/server",
   },
+  ship: {
+    title: "Ship an existing project: Shibumi Stack",
+    description: "Add the owned Shibumi ship workflow to an existing Bun project, connect it to your server, and deploy with one command.",
+    path: "/ship",
+  },
   building: {
     title: "Roadmap: Shibumi Stack",
     description: "What ships first, what comes next, and where the design is still open.",
@@ -554,7 +559,12 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   return layout;
 }
 
-app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.11/install.sh", 302));
+app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.22/install.sh", 302));
+app.get("/ship/v1.ts", async (c) => c.body(await read("public/ship/v1.ts"), 200, {
+  "Cache-Control": "public, max-age=31536000, immutable",
+  "Content-Disposition": 'inline; filename="ship.ts"',
+  "Content-Type": "text/plain; charset=utf-8",
+}));
 
 app.use("*", async (c, next) => {
   if (c.req.method !== "GET" && c.req.method !== "HEAD") {

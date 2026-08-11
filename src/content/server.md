@@ -92,7 +92,7 @@ First run detects missing setup, explains what stays local, then opens the serve
 
 Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
 
-Run `bun run ship:setup` whenever you want to review or change deployment setup.
+Run `bun run ship:setup` whenever you want to review or change deployment setup. For an existing project, [add the owned ship workflow](/ship.md).
 
 ## Install on your server
 

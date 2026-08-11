@@ -3,7 +3,7 @@
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
                     <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.11</span></div>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.22</span></div>
                     <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
                 </div>
 
@@ -120,7 +120,7 @@
                     <pre class="ship-command"><code>bun run ship</code></pre>
                     <p>First run detects missing setup, explains what stays local, then opens the server flow through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates the webhook without printing or storing its secret.</p>
                     <p>Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
-                    <p>Run <code>bun run ship:setup</code> whenever you want to review or change deployment setup.</p>
+                    <p>Run <code>bun run ship:setup</code> whenever you want to review or change deployment setup. Existing project? <a href="/ship">Add the owned ship workflow</a>.</p>
                 </div>
             </section>
 

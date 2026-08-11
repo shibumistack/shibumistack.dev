@@ -147,11 +147,31 @@ describe("routes", () => {
     expect(await markdownRes.text()).toContain("# shibumi-server");
   });
 
+  test("serves existing-project ship guidance and versioned source", async () => {
+    const page = await app.request("/ship");
+    const body = await page.text();
+    expect(page.status).toBe(200);
+    expect(body).toContain("Ship an existing project");
+    expect(body).toContain("bun run ship:setup");
+    expect(body).toContain("shibumi-server.json");
+    expect(body).not.toContain('href="/ship" aria-current="page"');
+
+    const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
+    expect(markdown.status).toBe(200);
+    expect(await markdown.text()).toContain("# Ship an existing project");
+
+    const source = await app.request("/ship/v1.ts");
+    expect(source.status).toBe(200);
+    expect(source.headers.get("content-type")).toContain("text/plain");
+    expect(source.headers.get("cache-control")).toContain("immutable");
+    expect(await source.text()).toContain("export function runShipCli");
+  });
+
   test("redirects the server installer to its source", async () => {
     const res = await app.request("/install/server");
 
     expect(res.status).toBe(302);
-    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.11/install.sh");
+    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.22/install.sh");
   });
 
   test("serves extensions page", async () => {

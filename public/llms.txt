@@ -7,6 +7,7 @@
 - [Home](/index.md)
 - [Roadmap](/building.md)
 - [shibumi-server](/server.md)
+- [Ship an existing project](/ship.md)
 - [DX plan](/dx.md)
 - [Brand](/brand.md)
 
@@ -16,6 +17,7 @@
 
 ## Docs
 
+- [Ship an existing project](/ship.md): add owned source, connect through SSH, and deploy with `bun run ship`.
 - [Contributing](/CONTRIBUTING.md)
 - [License](/LICENSE)
 - [README](/README.md)

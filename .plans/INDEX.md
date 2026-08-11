@@ -7,11 +7,13 @@
 
 ## Planned
 
+- [ ] Build full task-oriented shibumi-server documentation beyond the `/server` overview and `/ship` onboarding page.
 - [ ] Add durable delivery state across restarts and health-check rollback.
 - [ ] Add webhook adapters for git hosts beyond GitHub.
 
 ## Recently shipped
 
+- [x] Add non-nav `/ship` onboarding with immutable v1 owned source for existing Bun projects.
 - [x] Publish `shibumi-server` 0.1.11 with lockfile-pinned interactive runtime dependencies (`f442b65`).
 - [x] Publish `shibumi-server` 0.1.8 with exact-version self-update and branded, color-aware help (`909463a`).
 - [x] Build DNS-aware Caddy setup, client config, SSH deployment status, and owned ship scripts for `shibumi-server` 0.1.6.

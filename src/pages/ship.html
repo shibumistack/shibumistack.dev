@@ -1,0 +1,73 @@
+            <section class="ship-hero">
+                <div>
+                    <p class="eyebrow">Existing projects</p>
+                    <h1>Own your<br><span class="accent-word">ship.</span></h1>
+                </div>
+                <div class="ship-intro">
+                    <p class="dek">Connect any Bun project to shibumi-server with one small script that lives in your repository.</p>
+                    <p>Projects created by Shibumi already include these files. For an existing project, add the same owned source once, review it, and commit it.</p>
+                    <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>GitHub CLI</span><span>SSH</span></div>
+                </div>
+            </section>
+
+            <section class="ship-step" id="add-source">
+                <div class="ship-step-label"><span>01</span><p>Add source</p></div>
+                <div class="ship-step-body">
+                    <h2>Copy the ship script.</h2>
+                    <p>Download versioned source into your project. The command writes a file but does not execute it. Read <code>scripts/ship.ts</code> before committing.</p>
+                    <pre class="ship-code"><code>mkdir -p scripts
+curl -fsSLo scripts/ship.ts https://shibumistack.dev/ship/v1.ts
+bun add --dev @clack/prompts@^0.7.0</code></pre>
+                    <p class="ship-source-link"><a href="/ship/v1.ts">View ship script source →</a></p>
+                </div>
+            </section>
+
+            <section class="ship-step" id="package-scripts">
+                <div class="ship-step-label"><span>02</span><p>Package scripts</p></div>
+                <div class="ship-step-body">
+                    <h2>Add two commands.</h2>
+                    <p>Let Bun update <code>package.json</code> without replacing existing scripts:</p>
+                    <pre class="ship-code"><code>bun pm pkg set 'scripts.ship=bun scripts/ship.ts' \
+  'scripts.ship:setup=bun scripts/ship.ts --setup'</code></pre>
+                    <p>The added keys look like this:</p>
+                    <pre class="ship-code ship-code-json"><code>{
+  "scripts": {
+    "ship": "bun scripts/ship.ts",
+    "ship:setup": "bun scripts/ship.ts --setup"
+  },
+  "devDependencies": {
+    "@clack/prompts": "^0.7.0"
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <section class="ship-step" id="setup">
+                <div class="ship-step-label"><span>03</span><p>Connect</p></div>
+                <div class="ship-step-body">
+                    <h2>Run setup once.</h2>
+                    <pre class="ship-code ship-code-command"><code>bun run ship:setup</code></pre>
+                    <p>Setup explains each boundary before saving anything. It connects through your existing SSH configuration, completes server registration, downloads commit-safe project config, and creates the GitHub webhook through <code>gh</code>.</p>
+                    <dl class="ship-boundaries">
+                        <div><dt>Committed</dt><dd><code>scripts/ship.ts</code>, <code>shibumi-server.json</code>, and package changes</dd></div>
+                        <div><dt>Local only</dt><dd>SSH target in <code>.git/config</code></dd></div>
+                        <div><dt>Server only</dt><dd>Checkout path, machine config, and webhook secret</dd></div>
+                    </dl>
+                </div>
+            </section>
+
+            <section class="ship-step" id="ship">
+                <div class="ship-step-label"><span>04</span><p>Deploy</p></div>
+                <div class="ship-step-body">
+                    <h2>Push when ready.</h2>
+                    <pre class="ship-code ship-code-command"><code>bun run ship</code></pre>
+                    <p>Ship requires a clean tree on the configured branch. It runs your project test and check scripts, verifies origin state, pushes one commit, then follows deployment status over SSH.</p>
+                    <p>Existing domains keep their current Caddy upstream until the first Shibumi deployment passes health checks and you approve cutover.</p>
+                </div>
+            </section>
+
+            <section class="ship-finish">
+                <p class="eyebrow">Keep the source</p>
+                <h2>Review it. Change it. Delete it if you leave.</h2>
+                <p>The ship workflow is project code, not a hidden deployment runtime. Server behavior and security boundaries are documented on the <a href="/server">shibumi-server page</a>.</p>
+            </section>
