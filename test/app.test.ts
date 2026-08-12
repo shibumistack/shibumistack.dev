@@ -237,11 +237,12 @@ describe("routes", () => {
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v1.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v1.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v2.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v2.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
     expect(await bootstrap.text()).toContain("ship/install-v9.ts");
+    expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {
