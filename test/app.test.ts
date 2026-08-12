@@ -195,16 +195,16 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v7.ts")');
+    expect(body).toContain('fetch("/ship/v8.ts")');
     expect(body).toContain("data-copy-code");
-    expect(body).not.toContain('href="/ship/v7.ts"');
+    expect(body).not.toContain('href="/ship/v8.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
 
     const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v7.ts");
+    const source = await app.request("/ship/v8.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -220,11 +220,12 @@ describe("routes", () => {
     expect((await app.request("/ship/v4.ts")).status).toBe(200);
     expect((await app.request("/ship/v5.ts")).status).toBe(200);
     expect((await app.request("/ship/v6.ts")).status).toBe(200);
+    expect((await app.request("/ship/v7.ts")).status).toBe(200);
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v5.ts");
-    const installer = await app.request("/ship/install-v5.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v6.ts");
+    const installer = await app.request("/ship/install-v6.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     expect(await installer.text()).toContain("owned script now runs setup with Clack");
