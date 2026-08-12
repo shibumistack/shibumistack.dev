@@ -51,9 +51,10 @@ There is no lint or build script at the moment.
 `src/app.ts` owns all dynamic behavior:
 
 - `/` maps to the `index` page.
-- One-segment lowercase routes such as `/brand`, `/docs`, and `/building` are
-  resolved from `src/pages/{page}.html`, `src/pages/{page}/index.html`,
+- One-segment lowercase routes such as `/brand` and `/building` are resolved
+  from `src/pages/{page}.html`, `src/pages/{page}/index.html`,
   `src/content/{page}.md`, or `src/content/{page}/index.md`.
+- `/docs` and nested `/docs/*` routes use `src/pages/docs/index.html`, CSS, and JS as a shared shell around allowlisted Markdown files under `src/content/docs/`. `/docs/decisions` renders original `src/content/docs.md` content.
 - When both HTML and Markdown exist, HTML is served by default and Markdown is
   served only when the request prefers `Accept: text/markdown`.
 - Markdown-only pages such as `/dx` serve Markdown directly.
@@ -64,10 +65,10 @@ There is no lint or build script at the moment.
 - Unknown routes render `src/pages/404.html` with status `404`.
 - Remaining paths are served statically from `public/`.
 
-The resolver is intentionally not a framework router: it supports only `/`,
-one safe route segment, optional folder-style `index` files, and direct
-top-level `.md` files. It does not support nested routes, route params, loaders,
-or per-file code.
+The generic resolver intentionally supports only `/`, one safe route segment,
+optional folder-style `index` files, and direct top-level `.md` files. Docs use
+one explicit allowlisted nested-route resolver. No arbitrary nested paths,
+route params, loaders, or per-file code.
 
 `src/layout.html` contains structural insert markers:
 

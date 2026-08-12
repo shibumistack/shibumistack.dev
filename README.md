@@ -41,8 +41,9 @@ bun run ship:setup # review or change deploy setup without pushing
 ## Routing
 
 - `/` maps to the `index` page.
-- One-segment routes such as `/brand`, `/docs`, `/server`, `/ship`, and `/building` are discovered
+- One-segment routes such as `/brand`, `/server`, `/ship`, and `/building` are discovered
   from `src/pages/{page}.html` and optional `src/content/{page}.md`.
+- `/docs` and nested `/docs/*` routes use a shared documentation shell with Markdown sources under `src/content/docs/`; `/docs/decisions` retains original technical-decision content.
 - Markdown-only pages such as `/dx` serve Markdown directly.
 - Requests with `Accept: text/markdown` receive Markdown when a page has a
   Markdown alternate.

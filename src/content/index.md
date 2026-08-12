@@ -8,7 +8,7 @@ Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Ho
 
 You install a small and elegant new framework. Then, one day you realize you're debugging 600MB of dependencies you never wanted.
 
-Shibumi is a **frameworkless framework**. Every file is something you can open, read, and understand. Extensions ship with an `agents.md` so your coding agent knows how they work. Nothing runs unless you can own it.
+Shibumi is a **frameworkless framework**. Every file is something you can open, read, and understand. Extensions ship named agent guidance and merge it into root `agents.md`, so your coding agent knows how they work. Nothing runs unless you can own it.
 
 ## Your agent knows the project
 
@@ -33,7 +33,7 @@ Extensions add their own fragments. Install auth, and the agent learns the sessi
 
 ## Self-hosted deploys
 
-[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v0.1.26 installer:
+[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v{{server-version}} installer:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash

@@ -5,7 +5,7 @@
   "files": [
     { "from": "files/src/middleware/images.ts", "to": "src/middleware/images.ts" }
   ],
-  "agents": "agents.md",
+  "agents": "agents/images.md",
   "hooks": [
     {
       "file": "src/app.ts",

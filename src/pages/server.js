@@ -54,6 +54,32 @@
     button.addEventListener("animationend", () => button.classList.remove("is-spinning"), { once: true });
   }
 
+  function railTo(terminal, row) {
+    const output = terminal.querySelector(".clack-output");
+    const rail = output?.querySelector(".clack-rail");
+    const glyph = row?.querySelector(".clack-glyph");
+    if (!output || !rail || !glyph) return;
+    const glyphHeight = glyph.getBoundingClientRect().height;
+    rail.style.height = `${row.offsetTop + glyphHeight / 2 - parseFloat(getComputedStyle(rail).top)}px`;
+  }
+
+  function resetRail(terminal) {
+    const rail = terminal.querySelector(".clack-rail");
+    if (rail) rail.style.height = "0px";
+  }
+
+  function completeRail(terminal, steps) {
+    railTo(terminal, steps[steps.length - 1]);
+  }
+
+  function keepRailMeasured(terminal, steps) {
+    const update = () => {
+      const visible = [...steps].filter((step) => step.classList.contains("visible"));
+      if (visible.length) railTo(terminal, visible[visible.length - 1]);
+    };
+    window.addEventListener("resize", update);
+  }
+
   function animateDeploy() {
     const terminal = document.querySelector("[data-server-cli]");
     const typed = terminal?.querySelector("[data-server-typed]");
@@ -71,11 +97,13 @@
       cursor.classList.remove("done");
       replay?.classList.remove("is-ready");
       steps.forEach((step) => step.classList.remove("visible", "complete"));
+      resetRail(terminal);
 
       if (reducedMotion) {
         typed.textContent = command;
         cursor.classList.add("done");
         steps.forEach((step) => step.classList.add("visible", "complete"));
+        completeRail(terminal, steps);
         replay?.classList.add("is-ready");
         return;
       }
@@ -86,6 +114,7 @@
         if (current !== generation || step >= steps.length) return;
         const row = steps[step];
         row.classList.add("visible");
+        railTo(terminal, row);
         setTimeout(() => {
           if (current !== generation) return;
           row.classList.add("complete");
@@ -112,6 +141,7 @@
       spin(replay);
       run(80);
     });
+    keepRailMeasured(terminal, steps);
     run(600);
   }
 
@@ -132,11 +162,13 @@
       cursor.classList.remove("done");
       replay?.classList.remove("is-ready");
       steps.forEach((step) => step.classList.remove("visible"));
+      resetRail(terminal);
 
       if (reducedMotion) {
         typed.textContent = command;
         cursor.classList.add("done");
         steps.forEach((step) => step.classList.add("visible"));
+        completeRail(terminal, steps);
         replay?.classList.add("is-ready");
         return;
       }
@@ -150,6 +182,7 @@
           return;
         }
         steps[step].classList.add("visible");
+        railTo(terminal, steps[step]);
         setTimeout(() => reveal(step + 1), 500);
       }
 
@@ -173,6 +206,7 @@
       run(80);
     });
 
+    keepRailMeasured(terminal, steps);
     if (reducedMotion) {
       run();
     } else if ("IntersectionObserver" in window) {
@@ -189,5 +223,5 @@
 
   animateDeploy();
   animatePromptTerminal(document.querySelector("[data-setup-cli]"), "curl -fsSL https://shibumistack.dev/install/server | bash");
-  animatePromptTerminal(document.querySelector("[data-app-cli]"), "shibumi-server add sub.example.com");
+  animatePromptTerminal(document.querySelector("[data-app-cli]"), "shis add sub.example.com");
 })();

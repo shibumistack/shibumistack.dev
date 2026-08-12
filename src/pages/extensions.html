@@ -7,9 +7,10 @@
   <div class="page-content">
 
     <div class="ext-intro">
-      <p>Extensions copy source files into your project. No hidden dependencies, no abstractions. You own the code from the moment it lands.</p>
+      <p>Extensions copy source files into your project. You own the code from the moment it lands.</p>
+      <aside class="ext-rfc"><strong>RFC</strong> Packaging, lifecycle, conflict handling, checks, and registry design remain under review. Commands and manifests shown here are proposals, not a stable public contract.</aside>
       <div class="ext-install-bar">
-        <code>bun run shibumi add &lt;name&gt;</code>
+        <code>bun run shibumi add &lt;name&gt;</code> <span>planned</span>
       </div>
     </div>
 
@@ -48,7 +49,8 @@
     <p>An extension is a directory with a manifest, agent guidance, and source files. Publish to npm. Install with <code>bun run shibumi add my-ext</code>.</p>
     <pre><code>src/extensions/my-ext/
 ├── manifest.json
-├── agents.md
+├── agents/
+│   └── my-ext.md
 └── files/</code></pre>
 
   </div>

@@ -125,7 +125,8 @@ An extension is a directory with three exports:
 ```
 src/extensions/my-ext/
 ├── manifest.json    # metadata, files, hooks
-├── agents.md        # guidance for coding agents
+├── agents/
+│   └── my-ext.md    # extension-owned agent guidance
 └── files/           # source files to copy into the project
     └── src/
         └── ...
@@ -141,7 +142,7 @@ src/extensions/my-ext/
   "files": [
     { "from": "files/src/lib/helper.ts", "to": "src/lib/helper.ts" }
   ],
-  "agents": "agents.md",
+  "agents": "agents/my-ext.md",
   "deps": ["some-package"],
   "migration": "files/migration.sql",
   "hooks": [

@@ -48,7 +48,7 @@ Copy code, not dependencies. Auth, Resend email, uploads, payments, and admin ar
 
 ### Agents
 
-Each extension can append an `agents.md` fragment so coding agents know the local conventions.
+Each extension can merge named guidance such as `agents/auth.md` into root `agents.md`, so coding agents know local conventions and fragment ownership stays clear.
 
 ### [shibumi-server](/server.md)
 

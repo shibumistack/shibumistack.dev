@@ -4,20 +4,22 @@
 
 No dashboard or cloud deploy service.
 
+> **Released now:** VPS and homelab deployment through `shibumi-server`. Other deployment targets remain planned.
+
 ## A deployment
 
-```text
+```clack
 git push origin main
-  received  GitHub push
-  verified  webhook, repo, branch, and commit
-  checked   memory and disk
-  config    Compose validated
-  built     rootless Podman
-  replaced  old container
-  healthy   ready behind Caddy
-  cleaned   old images (keeping last 2 for rollbacks)
-  shipped   Deployment complete
-            https://example.com
+渋み  shis (shibumi-server)
+Received GitHub push
+Verified webhook, repo, branch, and commit
+Checked memory and disk
+Validated Compose configuration
+Built with rootless Podman
+Replaced container and passed health check
+Kept two rollback images and cleaned older ones
+Deployment complete
+https://example.com
 ```
 
 GitHub sends a signed webhook when you push. Your current app keeps running while `shibumi-server` verifies the push, checks the host, validates the setup, and builds the new image. If those steps pass, it replaces the old container, checks the new one's health behind Caddy, keeps the previous two images for quick rollbacks, and removes older ones.
@@ -64,8 +66,25 @@ It stages the resolved release with lockfile-pinned production dependencies, the
 
 Use the installed command with a domain:
 
-```sh
+```run
 shibumi-server add sub.example.com
+渋み  shis (shibumi-server)
+success|DNS detected (cloudflare)
+prompt|Where's the repository?
+answer|https://github.com/owner/example
+prompt|Where should deployments live?
+answer|/home/deploy/shibumi/sub-example-com
+info|Health path /healthz (default)
+prompt|Domain configuration
+answer|Recommended defaults
+success|Added sub.example.com
+result|sub.example.com is ready
+info|Domain    sub.example.com
+info|Webhook   https://sub.example.com/hooks/github/sub-example-com
+info|Upstream  127.0.0.1:9100
+info|Caddy     configured and reloaded
+info|Secret    stored on server
+outro|Connect your project: https://shibumistack.dev/ship
 ```
 
 It checks DNS and existing Caddy routes, asks for the repository and deployment directory, assigns an available local port, then previews the complete setup before changing anything.

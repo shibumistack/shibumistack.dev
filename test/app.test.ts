@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import app, { icon, iconNames } from "../src/app";
+import packageJson from "../package.json";
 
 describe("routes", () => {
   test("serves homepage as HTML by default", async () => {
@@ -15,7 +16,9 @@ describe("routes", () => {
     expect(body).toContain('<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1e1510">');
     expect(body).toContain('<meta name="color-scheme" content="light dark">');
     expect(body).toContain('aria-label="Replay terminal animation"');
-    expect(body).toContain("terminal-label-success");
+    expect(body).toContain("home-clack-done");
+    expect(body).toContain("home-clack-rail");
+    expect(body).toContain(`pinned v${packageJson.shibumiServerVersion} installer`);
   });
 
   test("negotiates Markdown only when preferred", async () => {
@@ -35,6 +38,38 @@ describe("routes", () => {
 
     expect(htmlRes.status).toBe(200);
     expect(htmlRes.headers.get("content-type")).toContain("text/html");
+  });
+
+  test("serves task-oriented documentation routes", async () => {
+    const index = await app.request("/docs");
+    const indexBody = await index.text();
+    expect(index.status).toBe(200);
+    expect(indexBody).toContain("Shibumi docs");
+    expect(indexBody).toContain('class="docs-sidebar"');
+    expect(indexBody).toContain('href="/docs/server/history-rollback"');
+    expect(indexBody).toContain('href="/docs/decisions"');
+
+    const server = await app.request("/docs/server");
+    const serverBody = await server.text();
+    expect(serverBody).toContain('class="docs-clack"');
+    expect(serverBody).toContain("Replaced container and passed health check");
+    expect(serverBody).toContain('class="docs-return"');
+    expect(serverBody).toContain('class="docs-clack docs-clack-collapsible"');
+
+    const rollback = await app.request("/docs/server/history-rollback");
+    const rollbackBody = await rollback.text();
+    expect(rollback.status).toBe(200);
+    expect(rollbackBody).toContain("History and rollback");
+    expect(rollbackBody).toContain('<span class="syntax-command">shis</span> rollback example-com 4e5f322');
+    expect(rollbackBody).toContain('class="docs-code docs-terminal"');
+    expect(rollbackBody).toContain('href="/docs/server/history-rollback" aria-current="page"');
+
+    const markdown = await app.request("/docs/server/history-rollback", { headers: { accept: "text/markdown" } });
+    expect(markdown.status).toBe(200);
+    expect(markdown.headers.get("content-type")).toContain("text/markdown");
+    expect(await markdown.text()).toContain("# History and rollback");
+
+    expect((await app.request("/docs/not-here")).status).toBe(404);
   });
 
   test("serves discovered HTML pages with Markdown alternates", async () => {
@@ -123,19 +158,22 @@ describe("routes", () => {
 
     expect(htmlRes.status).toBe(200);
     expect(htmlBody).toContain("No cloud deploy service");
+    expect(htmlBody).toContain(`Open source · v${packageJson.shibumiServerVersion}`);
+    expect(htmlBody).toContain(`Installed shibumi-server ${packageJson.shibumiServerVersion}`);
     expect(htmlBody).toContain("Bad builds don't go live");
     expect(htmlBody).toContain("rootless Podman");
     expect(htmlBody).toContain("What do these checks mean?");
-    expect(htmlBody.match(/class="deploy-check\b/g)?.length).toBe(9);
+    expect(htmlBody.match(/class="deploy-step clack-row/g)?.length).toBe(9);
     expect(htmlBody).toContain("Dogfooding with MCPVault");
-    expect(htmlBody).toContain("Ready to add apps");
+    expect(htmlBody).toContain("Next: <strong>shis add example.com</strong>");
     expect(htmlBody).toContain("Adding apps");
     expect(htmlBody).toContain("bun run ship");
     expect(htmlBody).toContain("shibumi-server.json");
     expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/server | bash"');
-    expect(htmlBody).toContain('"shibumi-server add sub.example.com"');
+    expect(htmlBody).toContain('"shis add sub.example.com"');
     expect(htmlBody.match(/aria-label="Replay terminal animation"/g)?.length).toBe(3);
-    expect(htmlBody).toContain("terminal-label-success");
+    expect(htmlBody.match(/class="setup-step clack-row/g)?.length).toBe(12);
+    expect(htmlBody.match(/shis <span>\(shibumi-server\)<\/span>/g)?.length).toBe(3);
     expect(htmlBody).toContain('href="/server" aria-current="page"');
     expect(htmlBody).toContain('data-dialog="server-install-dialog"');
     expect(htmlBody).toContain("data-page-script");
@@ -196,7 +234,7 @@ describe("routes", () => {
     const res = await app.request("/install/server");
 
     expect(res.status).toBe(302);
-    expect(res.headers.get("location")).toBe("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.26/install.sh");
+    expect(res.headers.get("location")).toBe(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh`);
   });
 
   test("serves extensions page", async () => {

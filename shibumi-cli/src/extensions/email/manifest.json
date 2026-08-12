@@ -5,6 +5,6 @@
   "files": [
     { "from": "files/src/lib/email.ts", "to": "src/lib/email.ts" }
   ],
-  "agents": "agents.md",
+  "agents": "agents/email.md",
   "deps": ["resend"]
 }

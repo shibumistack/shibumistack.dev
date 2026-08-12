@@ -1,0 +1,17 @@
+<div class="docs-frame">
+  <button class="docs-menu" type="button" aria-expanded="false" aria-controls="docs-sidebar">Browse docs</button>
+  <aside class="docs-sidebar" id="docs-sidebar" aria-label="Documentation">
+    <div class="docs-sidebar-head"><a href="/docs"><span>渋み</span> Docs</a><button type="button" class="docs-close" aria-label="Close documentation menu">×</button></div>
+    <div class="docs-nav"><!-- insert:docs-sidebar --></div>
+  </aside>
+  <article class="docs-article">
+    <header class="docs-article-head">
+      <p>{{docs-section}}</p>
+      <h1>{{docs-title}}<span>.</span></h1>
+      <div>{{docs-description}}</div>
+    </header>
+    <div class="docs-prose"><!-- insert:docs-content --></div>
+    <div class="docs-pager" role="navigation" aria-label="Documentation pages"><!-- insert:docs-pager --></div>
+  </article>
+  <aside class="docs-outline" aria-label="On this page"><strong>On this page</strong><div data-docs-outline></div></aside>
+</div>

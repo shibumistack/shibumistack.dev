@@ -5,6 +5,7 @@
 ## Pages
 
 - [Home](/index.md)
+- [Documentation](/docs)
 - [Roadmap](/building.md)
 - [shibumi-server](/server.md)
 - [Ship an existing project](/ship.md)
@@ -17,6 +18,16 @@
 
 ## Docs
 
+- [Server overview](/docs/server)
+- [Install server](/docs/server/install)
+- [Add an app](/docs/server/add-app)
+- [Connect project](/docs/server/ship)
+- [Deployments](/docs/server/deployments)
+- [History and rollback](/docs/server/history-rollback)
+- [Operations](/docs/server/operations)
+- [Security model](/docs/server/security)
+- [Server commands](/docs/reference/server-commands)
+- [CLI preview](/docs/cli)
 - [Ship an existing project](/ship.md): add owned source, connect through SSH, and deploy with `bun run ship`.
 - [Contributing](/CONTRIBUTING.md)
 - [License](/LICENSE)

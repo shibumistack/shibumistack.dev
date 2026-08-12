@@ -3,8 +3,11 @@ import { serveStatic } from "hono/bun";
 import type { Context } from "hono";
 import { readdir, stat } from "node:fs/promises";
 import { YAML } from "bun";
+import packageJson from "../package.json";
 
 const app = new Hono();
+const serverVersion = packageJson.shibumiServerVersion;
+if (!/^\d+\.\d+\.\d+$/.test(serverVersion)) throw new Error("package.json shibumiServerVersion must be a stable semantic version");
 
 type MediaRange = {
   type: string;
@@ -38,12 +41,21 @@ type BlogPost = {
   path: string;
 };
 
+type DocPage = {
+  path: string;
+  title: string;
+  description: string;
+  section: "Start" | "Server" | "CLI" | "Reference";
+  source: string;
+};
+
 const safeNameSource = "[a-z0-9][a-z0-9-]*";
 const fileStemPattern = new RegExp(`^${safeNameSource}$`);
 const iconTokenPattern = new RegExp(`{{icon\\((${safeNameSource})\\)}}`, "g");
 const activeTokenPattern = new RegExp(`{{active\\((${safeNameSource})\\)}}`, "g");
 const pageRoutePattern = new RegExp(`^\\/(${safeNameSource})\\/?$`);
 const blogPostPattern = new RegExp(`^\\/blog\\/(${safeNameSource})$`);
+const docsRoutePattern = /^\/docs(?:\/([a-z0-9][a-z0-9/-]*))?\/?$/;
 const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
 const unresolvedTokenPattern = /{{[^}]+}}/;
 const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
@@ -56,6 +68,21 @@ const assetVersion = String(
     Bun.file("public/main.js").lastModified,
   ),
 );
+
+const docs: DocPage[] = [
+  { path: "", title: "Shibumi docs", description: "Build apps that keep your zen.", section: "Start", source: "src/content/docs/index.md" },
+  { path: "decisions", title: "Technical decisions", description: "Why Shibumi uses seven visible pieces and stays out of your runtime.", section: "Start", source: "src/content/docs.md" },
+  { path: "server", title: "Server overview", description: "Deploy signed GitHub pushes to rootless Podman behind Caddy.", section: "Server", source: "src/content/server.md" },
+  { path: "server/install", title: "Install server", description: "Prepare a Linux host and install a pinned shibumi-server release.", section: "Server", source: "src/content/docs/server/install.md" },
+  { path: "server/add-app", title: "Add an app", description: "Register a domain, repository, checkout, and Caddy route.", section: "Server", source: "src/content/docs/server/add-app.md" },
+  { path: "server/ship", title: "Connect project", description: "Connect project-owned ship tooling to shibumi-server.", section: "Server", source: "src/content/docs/server/ship.md" },
+  { path: "server/deployments", title: "Deployments", description: "Understand webhook checks, resource guards, health checks, and cutover.", section: "Server", source: "src/content/docs/server/deployments.md" },
+  { path: "server/history-rollback", title: "History and rollback", description: "Inspect verified deployments and rebuild an earlier Git commit.", section: "Server", source: "src/content/docs/server/history-rollback.md" },
+  { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
+  { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
+  { path: "cli", title: "CLI preview", description: "Planned create-shibumi and extension command surface.", section: "CLI", source: "src/content/docs/cli/index.md" },
+  { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
+];
 
 const pageMeta: Record<string, PageMeta> = {
   index: {
@@ -123,7 +150,7 @@ function wantsMarkdown(c: Context): boolean {
 }
 
 async function markdown(c: Context, path: string, contentType = "text/markdown") {
-  return c.body(await Bun.file(path).text(), 200, {
+  return c.body((await Bun.file(path).text()).replaceAll("{{server-version}}", serverVersion), 200, {
     "content-type": `${contentType}; charset=utf-8`,
     "content-disposition": "inline",
   });
@@ -358,7 +385,7 @@ async function pageScript(path?: string): Promise<string> {
 }
 
 async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Promise<string> {
-  const page = files.pagePath ? await renderTokens(`page ${files.key}`, await read(files.pagePath)) : "";
+  const page = files.pagePath ? await renderTokens(`page ${files.key}`, await read(files.pagePath), { "server-version": serverVersion }) : "";
   const pageDialog = files.key === "server" ? await part("server-install-dialog") : "";
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: meta?.title ?? "Shibumi Stack",
@@ -481,6 +508,140 @@ function safeMarkdownHtml(markdown: string): string {
   });
 }
 
+function highlightDocsCode(text: string, language = "text"): string {
+  let code = escapeHtml(text);
+  const stash: string[] = [];
+  const token = (className: string, value: string) => {
+    const key = String.fromCodePoint(0xe000 + stash.length);
+    stash.push(`<span class="syntax-${className}">${value}</span>`);
+    return key;
+  };
+
+  if (["sh", "bash", "shell"].includes(language)) {
+    code = code
+      .replace(/(^|\s)(#[^\n]*)/gm, (_match, lead, value) => `${lead}${token("comment", value)}`)
+      .replace(/(&quot;[^\n]*?&quot;|'[^\n]*?')/g, (value) => token("string", value))
+      .replace(/(^|[;&|]\s*)(bun|shis|git|curl|cd|systemctl|journalctl|podman|npm)(?=\s|$)/gm, (_match, lead, value) => `${lead}${token("command", value)}`)
+      .replace(/(^|\s)(--?[a-z][a-z0-9-]*)(?=\s|$)/g, (_match, lead, value) => `${lead}${token("option", value)}`);
+  } else if (language === "json") {
+    code = code
+      .replace(/(&quot;[^&\n]*?&quot;)(\s*:)?/g, (_match, value, colon) => token(colon ? "key" : "string", value) + (colon ?? ""))
+      .replace(/\b(true|false|null)\b/g, (value) => token("literal", value))
+      .replace(/\b-?\d+(?:\.\d+)?\b/g, (value) => token("number", value));
+  } else if (["ts", "typescript", "js", "javascript"].includes(language)) {
+    code = code
+      .replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, (value) => token("comment", value))
+      .replace(/(&quot;[^\n]*?&quot;|'[^\n]*?'|`[^\n]*?`)/g, (value) => token("string", value))
+      .replace(/\b(import|export|from|const|let|function|async|await|return|if|else|new|throw|type|interface)\b/g, (value) => token("keyword", value));
+  } else if (language === "diff") {
+    code = code.replace(/^\+.*$/gm, (value) => token("added", value)).replace(/^-.*$/gm, (value) => token("removed", value));
+  }
+
+  return code.replace(/[\ue000-\uf8ff]/g, (key) => stash[key.codePointAt(0)! - 0xe000]);
+}
+
+function docsMarkdownHtml(markdown: string): string {
+  const slugs = new Map<string, number>();
+  return Bun.markdown.render(markdown, {
+    html: () => "",
+    heading: (children, attrs: { level: number }) => {
+      if (attrs.level === 1) return `<h1>${children}</h1>`;
+      const base = children.replace(/<[^>]+>/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "section";
+      const count = slugs.get(base) ?? 0;
+      slugs.set(base, count + 1);
+      const id = count === 0 ? base : `${base}-${count + 1}`;
+      return `<h${attrs.level} id="${id}">${children}<a class="docs-anchor" href="#${id}" aria-label="Link to ${id}">#</a></h${attrs.level}>`;
+    },
+    paragraph: (children) => `<p>${children}</p>`,
+    strong: (children) => `<strong>${children}</strong>`,
+    emphasis: (children) => `<em>${children}</em>`,
+    codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
+    code: (text, meta?: { language?: string }) => {
+      const language = (meta?.language ?? "text").toLowerCase();
+      if (language === "clack" || language === "run") {
+        const lines = text.trimEnd().split("\n");
+        const command = lines.shift() ?? "";
+        const brand = lines.shift() ?? "渋み  shis (shibumi-server)";
+        const typed = lines.map((line) => {
+          const separator = line.indexOf("|");
+          return separator === -1 ? { type: "success", value: line } : { type: line.slice(0, separator), value: line.slice(separator + 1) };
+        });
+        const outro = typed.at(-1)?.type === "outro" ? typed.pop() : undefined;
+        const steps = typed.filter(({ value }) => value).map(({ type, value }) => `<div class="docs-clack-step docs-clack-${escapeHtml(type)}">${type === "answer" ? '<span class="docs-clack-spacer"></span>' : '<span class="docs-clack-symbol" aria-hidden="true"></span>'}<span>${highlightDocsCode(value, "text")}</span></div>`).join("");
+        const toggle = language === "run" ? '<button class="docs-return" type="button" aria-expanded="false">Output</button>' : "";
+        return `<div class="docs-clack${language === "run" ? " docs-clack-collapsible" : ""}"><div class="docs-clack-command"><span>›</span><code>${highlightDocsCode(command, "sh")}</code>${toggle}<button class="docs-copy copy-command" type="button" data-copy-code aria-label="Copy session">Copy</button></div><div class="docs-clack-flow"><div class="docs-clack-brand"><span aria-hidden="true">┌</span><strong>${escapeHtml(brand)}</strong></div>${steps}<div class="docs-clack-outcome"><span aria-hidden="true">└</span><div><strong>${escapeHtml(outro?.value ?? "Complete")}</strong></div></div></div><code class="docs-clack-source">${escapeHtml(text)}</code></div>`;
+      }
+      const terminal = ["sh", "bash", "shell", "text"].includes(language);
+      return `<div class="docs-code ${terminal ? "docs-terminal" : "docs-source"}" data-language="${escapeHtml(language)}"><div class="docs-code-bar">${terminal ? "" : `<span>${escapeHtml(language)}</span>`}<button class="docs-copy copy-command" type="button" data-copy-code aria-label="Copy code">Copy</button></div><pre><code>${highlightDocsCode(text, language)}</code></pre></div>`;
+    },
+    link: (children, attrs: { href: string }) => isSafeHref(attrs.href) ? `<a href="${attrs.href}">${children}</a>` : children,
+    list: (children, attrs: { ordered: boolean }) => `<${attrs.ordered ? "ol" : "ul"}>${children}</${attrs.ordered ? "ol" : "ul"}>`,
+    listItem: (children) => `<li>${children}</li>`,
+    table: (children) => `<div class="docs-table-wrap"><table>${children}</table></div>`,
+    thead: (children) => `<thead>${children}</thead>`,
+    tbody: (children) => `<tbody>${children}</tbody>`,
+    tr: (children) => `<tr>${children}</tr>`,
+    th: (children) => `<th>${children}</th>`,
+    td: (children) => `<td>${children}</td>`,
+    blockquote: (children) => {
+      const callout = /^<p><strong>(Released now|Note|Warning|Important):<\/strong>/.exec(children);
+      if (!callout) return `<blockquote><span class="docs-quote-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg></span><div>${children}</div></blockquote>`;
+      const tone = callout[1] === "Warning" ? "warning" : "info";
+      return `<aside class="docs-callout docs-callout-${tone}" role="note"><span class="docs-callout-icon" aria-hidden="true">${tone === "warning" ? "!" : "i"}</span><div>${children}</div></aside>`;
+    },
+  });
+}
+
+function docsSidebar(activePath: string): string {
+  const sections: DocPage["section"][] = ["Start", "Server", "CLI", "Reference"];
+  return sections.map((section) => {
+    const links = docs.filter((page) => page.section === section).map((page) => {
+      const href = page.path ? `/docs/${page.path}` : "/docs";
+      return `<a href="${href}"${page.path === activePath ? ' aria-current="page"' : ""}>${escapeHtml(page.title)}</a>`;
+    }).join("");
+    return `<div class="docs-nav-group"><h2>${section}</h2>${links}</div>`;
+  }).join("");
+}
+
+async function renderDocs(path: string): Promise<string | undefined> {
+  const page = docs.find((item) => item.path === path);
+  if (!page || !await Bun.file(page.source).exists()) return;
+  const source = (await read(page.source)).replaceAll("{{server-version}}", serverVersion);
+  const current = docs.indexOf(page);
+  const previous = docs[current - 1];
+  const next = docs[current + 1];
+  const link = (item: DocPage, direction: string) => `<a class="docs-pager-${direction}" href="${item.path ? `/docs/${item.path}` : "/docs"}"><span>${direction === "prev" ? "Previous" : "Next"}</span><strong>${escapeHtml(item.title)}</strong></a>`;
+
+  let body = await renderTokens("docs shell", await read("src/pages/docs/index.html"), {
+    "docs-title": page.title,
+    "docs-description": page.description,
+    "docs-section": page.section,
+  });
+  body = insert(body, "docs-sidebar", docsSidebar(path));
+  body = insert(body, "docs-content", docsMarkdownHtml(source));
+  body = insert(body, "docs-pager", `${previous ? link(previous, "prev") : ""}${next ? link(next, "next") : ""}`);
+
+  const meta: PageMeta = {
+    title: `${page.title}: Shibumi Stack Docs`,
+    description: page.description,
+    path: page.path ? `/docs/${page.path}` : "/docs",
+  };
+  let layout = await renderTokens("layout", await read("src/layout.html"), {
+    title: meta.title,
+    description: meta.description,
+    canonical: `https://shibumistack.dev${meta.path}`,
+    "asset-version": assetVersion,
+  });
+  layout = insert(layout, "meta", await metaTags(meta));
+  layout = insert(layout, "page-style", await pageStyle("src/pages/docs/index.css"));
+  layout = insert(layout, "nav", await nav("docs"));
+  layout = insert(layout, "page", body);
+  layout = insert(layout, "footer", await part("footer", { year: String(new Date().getFullYear()) }) + await part("install-dialog"));
+  layout = insert(layout, "page-script", await pageScript("src/pages/docs/index.js"));
+  assertNoInserts(layout);
+  return layout;
+}
+
 async function renderBlogList(): Promise<string> {
   const posts = await discoverBlogPosts();
   const items = posts
@@ -559,7 +720,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   return layout;
 }
 
-app.get("/install/server", (c) => c.redirect("https://raw.githubusercontent.com/bitbonsai/shibumi-server/v0.1.26/install.sh", 302));
+app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
 app.get("/install/ship", (c) => c.redirect("/ship/install-v3.ts", 302));
 for (const version of ["v1", "v2", "v3"]) {
   app.get(`/ship/install-${version}.ts`, async (c) => c.body(await read(`public/ship/install-${version}.ts`), 200, {
@@ -582,6 +743,16 @@ app.use("*", async (c, next) => {
   }
 
   const pathname = new URL(c.req.url).pathname;
+
+  const docsMatch = pathname.match(docsRoutePattern);
+  if (docsMatch) {
+    const docPath = docsMatch[1] ?? "";
+    const doc = docs.find((item) => item.path === docPath);
+    if (doc && wantsMarkdown(c)) return markdown(c, doc.source);
+    const docHtml = await renderDocs(docPath);
+    if (docHtml) return c.html(docHtml);
+    return next();
+  }
 
   if (pathname === "/blog") {
     return c.html(await renderBlogList());

@@ -8,13 +8,37 @@
   margin-bottom: 1rem;
 }
 
+.ext-rfc {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  color: var(--text-secondary);
+}
+
+.ext-rfc strong {
+  margin-right: 0.45rem;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
 .ext-install-bar {
-  display: inline-block;
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
   padding: 0.5rem 1rem;
   background: var(--code-bg);
   border-radius: 4px;
   font-family: var(--mono);
   font-size: 0.9rem;
+}
+
+.ext-install-bar span {
+  color: var(--text-secondary);
+  font: 0.7rem var(--mono);
+  text-transform: uppercase;
 }
 
 .ext-item {

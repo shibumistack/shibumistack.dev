@@ -3,22 +3,30 @@
                     <p class="eyebrow">Self-hosted deploys</p>
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
                     <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
-                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v0.1.26</span></div>
+                    <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v{{server-version}}</span></div>
                     <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
                 </div>
 
                 <div class="deploy-cli" data-server-cli aria-label="Simulated shibumi-server deployment">
                     <div class="deploy-command"><span class="prompt-mark">›</span><code><span data-server-typed></span><span class="typing-cursor" data-server-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
-                    <div class="deploy-output" aria-live="polite">
-                        <div class="deploy-step"><span class="deploy-label terminal-label">received</span><span>GitHub push</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">verified</span><span>webhook · repo · branch · commit</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">checked</span><span>memory + disk</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">config</span><span>Compose validated</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">built</span><span>rootless Podman</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">replaced</span><span>old container</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">healthy</span><span>ready behind Caddy</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label">cleaned</span><span>old images (keeping last 2 for rollbacks)</span><span class="deploy-check terminal-ok" aria-hidden="true">✓</span></div>
-                        <div class="deploy-step"><span class="deploy-label terminal-label terminal-label-success">shipped</span><span class="deploy-result-message"><strong>Deployment complete</strong><a href="https://example.com">https://example.com</a></span><span class="deploy-check deploy-celebration terminal-ok" aria-hidden="true">🎉</span></div>
+                    <svg class="clack-symbols" aria-hidden="true">
+                        <defs>
+                            <symbol id="clack-elbow" viewBox="0 0 16 20"><path d="M8 10h8"/></symbol>
+                            <symbol id="clack-diamond" viewBox="0 0 16 20"><path d="m8 4 6 6-6 6-6-6Z"/></symbol>
+                            <symbol id="clack-circle" viewBox="0 0 16 20"><circle cx="8" cy="10" r="5"/></symbol>
+                        </defs>
+                    </svg>
+                    <div class="deploy-output clack-output" aria-live="polite">
+                        <span class="clack-rail" aria-hidden="true"></span>
+                        <div class="deploy-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Received GitHub push</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Verified webhook, repo, branch, and commit</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Checked memory and disk</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Validated Compose configuration</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Built with rootless Podman</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Replaced container and passed health check</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Kept two rollback images and cleaned older ones</span></div>
+                        <div class="deploy-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span class="deploy-result-message"><strong>Deployment complete</strong><a href="https://example.com">https://example.com</a></span></div>
                     </div>
                     <details class="deploy-details">
                         <summary>What do these checks mean?</summary>
@@ -74,12 +82,13 @@
                     <p>Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Caddy, and systemd, checking the host before it changes server configuration.</p>
                     <div class="install-terminal setup-cli" data-setup-cli aria-label="Simulated shibumi-server installation">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
-                        <div class="setup-output">
-                            <div class="setup-step setup-head"><span class="setup-kanji">渋み</span><strong>shibumi-server</strong><span>Small server deploys</span></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label">checked</span><div><span class="setup-question setup-requirements" aria-label="Installed requirements: Git, Podman, Caddy, and systemd"><span>Git <i aria-hidden="true">✓</i></span><span>Podman <i aria-hidden="true">✓</i></span><span>Caddy <i aria-hidden="true">✓</i></span><span>systemd <i aria-hidden="true">✓</i></span></span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-confirmed">installed</span><div><span class="setup-question">shibumi-server</span><span class="setup-answer">Latest release pinned</span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label">command</span><div><span class="setup-question">~/.local/bin/shibumi-server</span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-success">done</span><div class="setup-ready terminal-ok">✓ Ready to add apps</div></div>
+                        <div class="setup-output clack-output">
+                            <span class="clack-rail" aria-hidden="true"></span>
+                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Server requirements</span><span class="setup-answer setup-requirements" aria-label="Installed requirements: Git, Podman, Caddy, and systemd"><span>Git ✓</span><span>Podman ✓</span><span>Caddy ✓</span><span>systemd ✓</span></span></div></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Install shibumi-server on this server?</span><span class="setup-answer">Yes</span></div></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Installed shibumi-server {{server-version}}</span></div>
+                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Next: <strong>shis add example.com</strong></span></div>
                         </div>
                     </div>
                     <p>The installer stages the release with lockfile-pinned production dependencies before activation. The installed service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest <code>shibumi-server update</code>. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.</p>
@@ -96,12 +105,15 @@
                     <p>Use the installed command with a domain. It checks DNS and existing Caddy routes, asks for the repository and deployment directory, assigns an available local port, then previews the complete setup before changing anything.</p>
                     <div class="install-terminal setup-cli" data-app-cli aria-label="Simulated interactive app registration">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
-                        <div class="setup-output">
-                            <div class="setup-step setup-head"><span class="setup-kanji">渋み</span><strong>add an app</strong><span>sub.example.com</span></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label">repo</span><div><span class="setup-question">Where's the repository?</span><span class="setup-answer">github:user/repo</span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label">dir</span><div><span class="setup-question">Where should deployments live?</span><span class="setup-answer">/srv/shibumi/apps/sub-example-com</span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label">port</span><div><span class="setup-question">9100 <span class="setup-note">[auto-assigned]</span></span></div></div>
-                            <div class="setup-step setup-row"><span class="setup-label terminal-label terminal-label-success">done</span><div><span class="setup-ready terminal-ok">✓ App added</span><span class="setup-answer">https://sub.example.com</span></div></div>
+                        <div class="setup-output clack-output">
+                            <span class="clack-rail" aria-hidden="true"></span>
+                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>DNS detected (cloudflare)</span></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Where's the repository?</span><span class="setup-answer">https://github.com/bitbonsai/example</span></div></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Where should deployments live?</span><span class="setup-answer">/home/user/shibumi/sub-example-com</span></div></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-info clack-filled"><use href="#clack-circle"/></svg><span>Health path /healthz <span class="setup-note">(default)</span></span></div>
+                            <div class="setup-step clack-row clack-select"><svg class="clack-glyph clack-active clack-filled"><use href="#clack-diamond"/></svg><div><span class="setup-question">Domain configuration</span><span class="setup-answer"><b>●</b> Recommended defaults <small>(zstd + gzip, indexing allowed, safe headers, rotated logs)</small><br><i>○</i> Customize…</span></div></div>
+                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>App ready at <strong>https://sub.example.com</strong></span></div>
                         </div>
                     </div>
                     <p>Want to check it first? Run <code>shibumi-server add sub.example.com --dry-run</code>. It uses the same detection, prompts, port selection, and validation, then prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>

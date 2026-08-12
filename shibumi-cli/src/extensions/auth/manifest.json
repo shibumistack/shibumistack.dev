@@ -7,7 +7,7 @@
     { "from": "files/src/middleware/auth.ts", "to": "src/middleware/auth.ts" },
     { "from": "files/src/routes/auth.ts", "to": "src/routes/auth.ts" }
   ],
-  "agents": "agents.md",
+  "agents": "agents/auth.md",
   "hooks": [
     {
       "file": "src/app.ts",

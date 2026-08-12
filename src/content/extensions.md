@@ -1,6 +1,8 @@
 # Extensions
 
-Extensions add features to your Shibumi project. They copy source code into your app instead of adding dependencies or hidden abstractions. You own the files from the moment they land.
+Extensions add features to your Shibumi project. They copy source code into your app instead of hiding behavior behind a Shibumi runtime. You own the files from the moment they land.
+
+> **RFC:** Extension packaging, lifecycle, conflict handling, checks, and community registry design are still under review. Commands and manifest fields below describe the current proposal, not a stable public contract.
 
 ## Install an extension
 
@@ -72,6 +74,12 @@ What it needs:
 
 ## How extensions work
 
+An extension is an install plan: source files, metadata, agent guidance, migrations, dependencies, environment variables, and checks.
+
+### Manifest
+
+Manifest metadata can describe name, version, author, license, source repository, compatibility, categories, themes, deploy targets, and official or community ownership. Exact schema remains part of the RFC.
+
 ### Files
 
 Each extension declares files to copy. They land in your project exactly where specified:
@@ -102,11 +110,15 @@ Extensions can modify existing files when they install. The `hooks` field specif
 }
 ```
 
-Hooks are idempotent: running the same extension twice won't duplicate code.
+Hooks must be idempotent: running the same extension twice must not duplicate code.
+
+### Prompts
+
+Extensions may ask for choices such as session strategy, email provider, or storage backend. Answers become visible generated configuration rather than hidden installer state.
 
 ### Agents
 
-Each extension ships an `agents.md` fragment. When you install it, the fragment is appended to your project's `agents.md`. Coding agents read this file and know how the extension works.
+Each extension ships named guidance such as `agents/auth.md`. Installation merges it into the project's discoverable root `agents.md`, while the named source path keeps extension ownership clear.
 
 ### Dependencies
 
@@ -118,6 +130,20 @@ Extensions can declare npm dependencies. They're installed automatically:
 }
 ```
 
+### Checks
+
+Extension submissions should prove they install into fixture apps. Proposed checks include tests, formatting, declared-file verification, and rejection of undeclared network access or install scripts.
+
+```json
+{
+  "name": "auth",
+  "files": [{ "from": "files/src/lib/session.ts", "to": "src/lib/session.ts" }],
+  "agents": "agents/auth.md",
+  "env": ["SESSION_SECRET"],
+  "checks": ["bun test"]
+}
+```
+
 ## Writing your own
 
 An extension is a directory:
@@ -125,7 +151,8 @@ An extension is a directory:
 ```
 src/extensions/my-ext/
 ├── manifest.json
-├── agents.md
+├── agents/
+│   └── my-ext.md
 └── files/
     └── src/
         └── ...

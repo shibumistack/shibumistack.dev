@@ -224,7 +224,7 @@ bun run shibumi add email
 Extensions are **copy-paste, not dependencies** (like shadcn/ui):
 1. Source files copied into your project, not hidden in node_modules
 2. A migration if it needs DB tables
-3. An `agents.md` fragment appended to the project's `agents.md`
+3. Named guidance such as `agents/auth.md`, merged into the project's root `agents.md`
 4. **Hooks** that wire themselves into existing code (imports, middleware, routes)
 
 You own the code. Modify it, delete it, fork it. No lock-in.
@@ -262,7 +262,7 @@ The user runs one command. No manual wiring. Hooks are idempotent: running the s
 
 ### agents.md: AI-Native DX
 
-Each extension ships an `agents.md` fragment. When you `shibumi add auth`, it appends instructions to your project's `agents.md`:
+Each extension ships named guidance such as `agents/auth.md`. When you `shibumi add auth`, Shibumi merges it into your project's discoverable root `agents.md`:
 
 ```markdown
 ## Auth (added via shibumi add auth)
@@ -292,10 +292,10 @@ AI agents read this file and know how to work with the project. The more extensi
 Anyone can publish a Shibumi extension as an npm package (`@shibumi/auth`, `shibumi-ext-stripe`, etc.). The contract is simple:
 
 1. Export a `files/` directory with source to copy
-2. Export an `agents.md` fragment
+2. Export named guidance under `agents/<extension>.md`
 3. Optionally export a `migration.sql`
 
-`shibumi add <name>` resolves from npm, copies files in, appends agents.md, runs migration.
+`shibumi add <name>` resolves from npm, copies files in, merges named guidance into root `agents.md`, and runs migration.
 
 ## Example Workflows
 
@@ -372,7 +372,7 @@ mkdir shibumi-ext-comments && cd $_
 ```
 Three exports, that's the whole contract:
 - `files/` directory with source to copy
-- `agents.md` fragment
+- `agents/<extension>.md` guidance fragment
 - `migration.sql` (optional)
 
 ```
@@ -416,4 +416,4 @@ Package: [`shibumi-server`](https://github.com/bitbonsai/shibumi-server).
 - **base.css**: ships with every template. Delete if you don't want it.
 - **Extension registry**: npm-only. `@shibumi/*` for official, `shibumi-ext-*` for community. Listing page on shibumistack.dev.
 - **Extension updates**: don't auto-update. Ship a changelog, users diff manually. Same tradeoff as shadcn.
-- **`shibumi add --dry-run`**: yes. Shows files created/modified, deps added, agents.md changes.
+- **`shibumi add --dry-run`**: yes. Shows files created or modified, dependencies added, and root `agents.md` changes.
