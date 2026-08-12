@@ -55,13 +55,13 @@ Removes Shibumi config, webhook secret, deployment status, deployment history, m
 shis uninstall
 ```
 
-Removes service, launchers, and installed releases. Preserves config, secrets, app checkouts, containers, Caddy routes, and GitHub settings.
+Asks for confirmation, then removes service, launchers, and installed releases. Preserves config, secrets, app checkouts, containers, Caddy routes, and GitHub settings. Automation can pass `--yes`.
 
 ```sh
 shis uninstall --purge
 ```
 
-Purge also removes config and webhook secrets after confirmation. Automation must pass `--purge --yes` explicitly.
+Purge uses a stronger confirmation and also removes config and webhook secrets. Automation must pass `--purge --yes` explicitly.
 
 ## Service logs
 

@@ -212,7 +212,10 @@
     const copyButton = event.target.closest("[data-copy], [data-copy-code]");
     if (copyButton) {
       const value = copyButton.hasAttribute("data-copy-code")
-        ? copyButton.closest("pre")?.querySelector("code")?.textContent || ""
+        ? copyButton.closest("pre")?.querySelector("code")?.textContent
+          ?? copyButton.closest(".docs-code")?.querySelector("pre code")?.textContent
+          ?? copyButton.closest(".docs-clack")?.querySelector(".docs-clack-source")?.textContent
+          ?? ""
         : copyButton.getAttribute("data-copy") || "";
       copyText(value).then((copied) => {
         if (!copied) return;

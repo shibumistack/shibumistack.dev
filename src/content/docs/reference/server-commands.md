@@ -9,7 +9,7 @@ shis                              Guided installation
 shis setup                        Guided installation
 shis init                         Install only, for automation
 shis update                       Install latest stable release
-shis uninstall [--purge [--yes]]
+shis uninstall [--purge] [--yes]
 ```
 
 ## Apps
