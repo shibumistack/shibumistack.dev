@@ -322,12 +322,35 @@ export function matchingWebhook(value: unknown, webhookUrl: string): GitHubWebho
   return { id: hook.id, needsRepair: typeof code === "number" && code !== 0 && (code < 200 || code >= 300) };
 }
 
+async function ensureGitHubAuth(): Promise<void> {
+  const status = await run(["gh", "auth", "status", "-h", "github.com"], { allowFailure: true });
+  if (status.exitCode === 0) return;
+  explain("GitHub sign-in required", "GitHub CLI stores your credentials. Shibumi never reads them.");
+  const accepted = await confirm({ message: "Sign in to GitHub now?", initialValue: true });
+  if (isCancel(accepted) || !accepted) throw new Error("Next: run gh auth login -h github.com -p https -w, then rerun bun run ship.");
+  const login = await run(["gh", "auth", "login", "-h", "github.com", "-p", "https", "-w"], { inherit: true, allowFailure: true });
+  if (login.exitCode !== 0 || (await run(["gh", "auth", "status", "-h", "github.com"], { allowFailure: true })).exitCode !== 0) {
+    throw new Error("GitHub sign-in did not complete.\n\nNext: run gh auth login -h github.com -p https -w, then rerun bun run ship.");
+  }
+}
+
+async function authorizeWebhookAccess(): Promise<void> {
+  explain("GitHub webhook access required", "GitHub CLI needs admin:repo_hook to create or repair this repository webhook.");
+  const accepted = await confirm({ message: "Authorize webhook access now?", initialValue: true });
+  if (isCancel(accepted) || !accepted) throw new Error("Next: run gh auth refresh -h github.com -s admin:repo_hook, then rerun bun run ship.");
+  const refresh = await run(["gh", "auth", "refresh", "-h", "github.com", "-s", "admin:repo_hook"], { inherit: true, allowFailure: true });
+  if (refresh.exitCode !== 0) throw new Error("GitHub webhook authorization did not complete.\n\nNext: run gh auth refresh -h github.com -s admin:repo_hook, then rerun bun run ship.");
+}
+
 async function findWebhook(config: ClientConfig): Promise<GitHubWebhook | undefined> {
   const repository = config.repository.slice("github:".length);
-  const auth = await run(["gh", "auth", "status"], { allowFailure: true });
-  if (auth.exitCode !== 0) return undefined;
-  const hooks = await run(["gh", "api", `repos/${repository}/hooks?per_page=100`], { allowFailure: true });
-  if (hooks.exitCode !== 0) return undefined;
+  await ensureGitHubAuth();
+  let hooks = await run(["gh", "api", `repos/${repository}/hooks?per_page=100`], { allowFailure: true });
+  if (hooks.exitCode !== 0) {
+    await authorizeWebhookAccess();
+    hooks = await run(["gh", "api", `repos/${repository}/hooks?per_page=100`], { allowFailure: true });
+  }
+  if (hooks.exitCode !== 0) throw new Error(`${hooks.stderr.trim() || "GitHub CLI could not read repository webhooks"}\n\nNext: confirm repository admin access, then rerun bun run ship.`);
   return matchingWebhook(JSON.parse(hooks.stdout), config.webhookUrl);
 }
 
@@ -350,13 +373,18 @@ async function ensureWebhook(config: ClientConfig, target: string): Promise<void
   const secretValue: unknown = JSON.parse(secretResult.stdout);
   const secret = secretValue && typeof secretValue === "object" ? (secretValue as { secret?: unknown }).secret : undefined;
   if (typeof secret !== "string" || !/^[a-f0-9]{64}$/.test(secret)) throw new Error("server returned an invalid webhook secret");
-  const result = existing
-    ? await run(["gh", "api", "-X", "PATCH", `repos/${repository}/hooks/${existing.id}/config`, "-f", `secret=${secret}`], { allowFailure: true })
-    : await run(["gh", "api", "-X", "POST", `repos/${repository}/hooks`, "--input", "-"], {
-      input: JSON.stringify({ name: "web", active: true, events: ["push"], config: { url: config.webhookUrl, content_type: "json", insecure_ssl: "0", secret } }),
-      allowFailure: true,
-    });
-  if (result.exitCode !== 0) throw new Error(`${result.stderr.trim() || "GitHub CLI could not configure webhook"}\n\nNext: run gh auth refresh -h github.com -s admin:repo_hook, then rerun bun run ship.`);
+  const args = existing
+    ? ["gh", "api", "-X", "PATCH", `repos/${repository}/hooks/${existing.id}/config`, "--input", "-"]
+    : ["gh", "api", "-X", "POST", `repos/${repository}/hooks`, "--input", "-"];
+  const input = existing
+    ? JSON.stringify({ secret })
+    : JSON.stringify({ name: "web", active: true, events: ["push"], config: { url: config.webhookUrl, content_type: "json", insecure_ssl: "0", secret } });
+  let result = await run(args, { input, allowFailure: true });
+  if (result.exitCode !== 0) {
+    await authorizeWebhookAccess();
+    result = await run(args, { input, allowFailure: true });
+  }
+  if (result.exitCode !== 0) throw new Error(`${result.stderr.trim() || "GitHub CLI could not configure webhook"}\n\nNext: confirm repository admin access, then rerun bun run ship.`);
   log.success(existing ? "GitHub webhook secret refreshed" : "GitHub webhook created");
 }
 
