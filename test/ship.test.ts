@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, domainFromProject, repositoryFromRemote, validateConfig } from "../scripts/ship";
+import { appIdForDomain, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -27,6 +27,14 @@ describe("ship configuration", () => {
     expect(domainFromProject("vibetoolbox", "    SITE_URL: https://vibetoolbox.dev\n")).toBe("vibetoolbox.dev");
     expect(domainFromProject("app", "    - SITE_URL=https://preview.example.com/path\n")).toBe("preview.example.com");
     expect(domainFromProject("app", "    SITE_URL: http://localhost:3000\n")).toBeUndefined();
+  });
+
+  test("distinguishes healthy and failed matching webhooks", () => {
+    const hook = { id: 42, active: true, config: { url: config.webhookUrl }, last_response: { code: 401 } };
+    expect(matchingWebhook([hook], config.webhookUrl)).toEqual({ id: 42, needsRepair: true });
+    expect(matchingWebhook([{ ...hook, last_response: { code: 200 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
+    expect(matchingWebhook([{ ...hook, last_response: { code: 0 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
+    expect(matchingWebhook([hook], "https://example.com/other")).toBeUndefined();
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {

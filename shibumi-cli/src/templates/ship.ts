@@ -310,50 +310,54 @@ async function remoteSetup(target: string, _force: boolean): Promise<ClientConfi
   return config;
 }
 
-async function webhookExists(config: ClientConfig): Promise<boolean | undefined> {
+interface GitHubWebhook { id: number; needsRepair: boolean }
+
+export function matchingWebhook(value: unknown, webhookUrl: string): GitHubWebhook | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const hook = value.find((item) => item && typeof item === "object"
+    && (item as { active?: unknown }).active === true
+    && (item as { config?: { url?: unknown } }).config?.url === webhookUrl) as { id?: unknown; last_response?: { code?: unknown } } | undefined;
+  if (!hook || typeof hook.id !== "number") return undefined;
+  const code = hook.last_response?.code;
+  return { id: hook.id, needsRepair: typeof code === "number" && code !== 0 && (code < 200 || code >= 300) };
+}
+
+async function findWebhook(config: ClientConfig): Promise<GitHubWebhook | undefined> {
   const repository = config.repository.slice("github:".length);
   const auth = await run(["gh", "auth", "status"], { allowFailure: true });
   if (auth.exitCode !== 0) return undefined;
   const hooks = await run(["gh", "api", `repos/${repository}/hooks?per_page=100`], { allowFailure: true });
   if (hooks.exitCode !== 0) return undefined;
-  const value: unknown = JSON.parse(hooks.stdout);
-  return Array.isArray(value) && value.some((hook) => {
-    if (!hook || typeof hook !== "object") return false;
-    const item = hook as { active?: unknown; config?: { url?: unknown } };
-    return item.active === true && item.config?.url === config.webhookUrl;
-  });
+  return matchingWebhook(JSON.parse(hooks.stdout), config.webhookUrl);
 }
 
 // Fetch the secret only when GitHub needs it. It moves through process memory
 // from server output to `gh` input and is never printed or written locally.
 async function ensureWebhook(config: ClientConfig, target: string): Promise<void> {
-  const existing = await webhookExists(config);
-  if (existing) {
+  const existing = await findWebhook(config);
+  if (existing && !existing.needsRepair) {
     log.success("GitHub webhook is active");
     return;
   }
+  const repository = config.repository.slice("github:".length);
   explain(
-    existing === false ? "GitHub webhook is missing" : "GitHub webhook could not be verified",
-    `Repository  ${config.repository.slice("github:".length)}\nPayload URL ${config.webhookUrl}\nEvents      push\n\nThe secret will travel from server to GitHub CLI through this process. It stays in memory and is never printed, written to disk, or committed.`,
+    existing ? "GitHub webhook needs repair" : "GitHub webhook is missing",
+    `Repository  ${repository}\nPayload URL ${config.webhookUrl}\nEvents      push\n\nThe secret travels from server to GitHub CLI through memory only.`,
   );
-  const create = await confirm({ message: "Create webhook with GitHub CLI?", initialValue: true });
-  if (isCancel(create) || !create) {
-    throw new Error(`configure the GitHub webhook manually, then rerun ship: https://github.com/${config.repository.slice("github:".length)}/settings/hooks/new`);
-  }
+  const accepted = await confirm({ message: existing ? "Refresh webhook secret?" : "Create webhook with GitHub CLI?", initialValue: true });
+  if (isCancel(accepted) || !accepted) throw new Error(`Next: review ${config.webhookUrl} at https://github.com/${repository}/settings/hooks`);
   const secretResult = await ssh(target, ["env", "SHIBUMI_SKIP_UPDATE_CHECK=1", SERVER_CLI, "webhook-secret", config.appId]);
   const secretValue: unknown = JSON.parse(secretResult.stdout);
   const secret = secretValue && typeof secretValue === "object" ? (secretValue as { secret?: unknown }).secret : undefined;
   if (typeof secret !== "string" || !/^[a-f0-9]{64}$/.test(secret)) throw new Error("server returned an invalid webhook secret");
-  const body = JSON.stringify({
-    name: "web",
-    active: true,
-    events: ["push"],
-    config: { url: config.webhookUrl, content_type: "json", insecure_ssl: "0", secret },
-  });
-  const repository = config.repository.slice("github:".length);
-  const result = await run(["gh", "api", "-X", "POST", `repos/${repository}/hooks`, "--input", "-"], { input: body, allowFailure: true });
-  if (result.exitCode !== 0) throw new Error("GitHub CLI could not create webhook. Confirm repository Webhooks read/write permission");
-  log.success("GitHub webhook created");
+  const result = existing
+    ? await run(["gh", "api", "-X", "PATCH", `repos/${repository}/hooks/${existing.id}/config`, "-f", `secret=${secret}`], { allowFailure: true })
+    : await run(["gh", "api", "-X", "POST", `repos/${repository}/hooks`, "--input", "-"], {
+      input: JSON.stringify({ name: "web", active: true, events: ["push"], config: { url: config.webhookUrl, content_type: "json", insecure_ssl: "0", secret } }),
+      allowFailure: true,
+    });
+  if (result.exitCode !== 0) throw new Error(`${result.stderr.trim() || "GitHub CLI could not configure webhook"}\n\nNext: run gh auth refresh -h github.com -s admin:repo_hook, then rerun bun run ship.`);
+  log.success(existing ? "GitHub webhook secret refreshed" : "GitHub webhook created");
 }
 
 async function setup(force: boolean): Promise<{ config: ClientConfig; target: string; changed: boolean }> {
@@ -411,7 +415,9 @@ async function preflight(config: ClientConfig): Promise<void> {
 async function followStatus(config: ClientConfig, target: string, commit: string): Promise<void> {
   const progress = spinner();
   progress.start("Waiting for webhook");
-  const deadline = Date.now() + 12 * 60_000;
+  const startedAt = Date.now();
+  const deadline = startedAt + 12 * 60_000;
+  const webhookDeadline = startedAt + 45_000;
   let lastStage = "";
   while (Date.now() < deadline) {
     const result = await ssh(target, [
@@ -433,6 +439,10 @@ async function followStatus(config: ClientConfig, target: string, commit: string
         progress.stop(`Deployment failed during ${status.stage ?? "unknown"}`, 1);
         throw new Error(status.message ?? "deployment failed");
       }
+    }
+    if (!lastStage && Date.now() >= webhookDeadline) {
+      progress.stop("Webhook did not start deployment", 1);
+      throw new Error(`GitHub webhook did not reach shibumi-server.\n\nNext: check https://github.com/${config.repository.slice("github:".length)}/settings/hooks, then rerun bun run ship after repairing delivery.`);
     }
     await Bun.sleep(2_000);
   }
