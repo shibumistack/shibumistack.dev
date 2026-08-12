@@ -52,7 +52,7 @@ The first build exhausted the server's memory. That failure led directly to pre-
 
 ## Install once on your server
 
-Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Caddy, and systemd, checking the host before it changes server configuration:
+Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Podman Compose, Caddy, and systemd, checking the host before it changes server configuration:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
@@ -115,7 +115,7 @@ Run `bun run ship:setup` whenever you want to review or change deployment setup.
 
 ## Install on your server
 
-`shibumi-server` requires Linux with Bun, Git, rootless Podman, Caddy, and systemd. If you're using macOS or Windows, SSH into your Linux VPS or homelab server first, then run this command there:
+`shibumi-server` requires Linux with Bun, Git, rootless Podman, a working `podman compose` or `podman-compose` frontend, Caddy, and systemd. If you're using macOS or Windows, SSH into your Linux VPS or homelab server first, then run this command there:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash

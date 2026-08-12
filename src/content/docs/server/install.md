@@ -8,6 +8,7 @@ Install once on a Linux VPS or homelab server as the user who will own deploymen
 - Git
 - Caddy
 - rootless Podman
+- Podman Compose through `podman compose` or `podman-compose`
 - systemd user session
 
 Bun is installed by the bootstrap when missing. macOS and Windows users should SSH into the Linux server first. Setup never asks a website for SSH or sudo credentials.
@@ -18,7 +19,7 @@ Bun is installed by the bootstrap when missing. macOS and Windows users should S
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-Setup checks host requirements before changing configuration. It stages an exact npm release with lockfile-pinned production dependencies and lifecycle scripts disabled. Both launchers are installed:
+Setup checks host requirements before changing configuration. It verifies a working Compose frontend and stores the available command for each app. It stages an exact npm release with lockfile-pinned production dependencies and lifecycle scripts disabled. Both launchers are installed:
 
 ```text
 ~/.local/bin/shis
