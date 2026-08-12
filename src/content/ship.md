@@ -6,12 +6,10 @@ Requirements: Bun, Git, GitHub CLI, and SSH access to your server.
 
 ## 1. Connect
 
-Run this from your project root. The shell only downloads reviewed TypeScript to `/tmp`. Bun runs it, then starts project setup with Clack.
+Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.
 
 ```sh
-curl -fsSLo /tmp/shibumi-ship.ts \
-  https://shibumistack.dev/install/ship \
-  && bun /tmp/shibumi-ship.ts
+curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
 The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to `scripts/ship.ts` are never overwritten.

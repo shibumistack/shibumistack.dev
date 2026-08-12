@@ -7,9 +7,7 @@ Deployment setup belongs to the project. `bun run ship` uses owned TypeScript so
 From local Git project root:
 
 ```sh
-curl -fsSLo /tmp/shibumi-ship.ts \
-  https://shibumistack.dev/install/ship \
-  && bun /tmp/shibumi-ship.ts
+curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
 Installer refuses to run outside Git root and never overwrites an existing owned `scripts/ship.ts` change.

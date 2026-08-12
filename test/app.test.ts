@@ -234,6 +234,14 @@ describe("routes", () => {
     expect(await installer.text()).toContain("owned script now runs setup with Clack");
     expect((await app.request("/ship/install-v1.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v2.ts")).status).toBe(200);
+
+    const bootstrapRedirect = await app.request("/install/ship.sh");
+    expect(bootstrapRedirect.status).toBe(302);
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v1.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v1.sh");
+    expect(bootstrap.status).toBe(200);
+    expect(bootstrap.headers.get("cache-control")).toContain("immutable");
+    expect(await bootstrap.text()).toContain("ship/install-v9.ts");
   });
 
   test("redirects the server installer to its source", async () => {
