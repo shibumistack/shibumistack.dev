@@ -294,6 +294,7 @@ async function remoteSetup(target: string, _force: boolean): Promise<ClientConfi
     const setup = await ssh(target, [
       "env", "SHIBUMI_SHIP_SETUP=1", SERVER_CLI, "add", domain,
       "--repository", `github:${project.repository}`,
+      "--ref", `refs/heads/${project.branch}`,
       "--compose-file", project.composeFile,
       "--service", project.service,
       "--health-path", project.healthPath,
@@ -306,6 +307,7 @@ async function remoteSetup(target: string, _force: boolean): Promise<ClientConfi
   if (downloaded.exitCode !== 0) throw new Error("server setup paused before app registration. Complete the printed DNS instructions, then run bun run ship again");
   const config = validateConfig(JSON.parse(downloaded.stdout));
   if (config.repository !== `github:${project.repository}`) throw new Error(`registered domain belongs to ${config.repository}\n\nNext: use the matching project or remove the conflicting server registration.`);
+  if (config.branch !== project.branch) throw new Error(`registered domain deploys ${config.branch}, but current branch is ${project.branch}.\n\nNext: check out ${config.branch}, or register another domain for ${project.branch}.`);
   await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
   log.success(`Found ${domain} on ${serverHostname}`);
   log.success("Wrote shibumi-server.json");

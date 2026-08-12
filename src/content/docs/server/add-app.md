@@ -1,6 +1,6 @@
 # Add an app
 
-Register one domain and GitHub repository at a time.
+Register one domain, GitHub repository, and branch at a time. Multiple domains may deploy different branches from the same repository.
 
 ## Before setup
 
@@ -43,7 +43,18 @@ shis add example.com \
   --port 9100
 ```
 
-Optional flags select branch ref, Compose file, Compose frontend, service, and health path. Append an app-owned test command after `--`:
+A GitHub tree URL selects its branch directly:
+
+```sh
+shis add staging.example.com \
+  --repository https://github.com/owner/repository/tree/shibumi \
+  --checkout /home/deploy/shibumi/staging-example-com \
+  --port 9101
+```
+
+Equivalent explicit form uses `--repository github:owner/repository --ref refs/heads/shibumi`. Domain and branch names remain independent. Each domain accepts webhooks only for its configured branch.
+
+Other optional flags select Compose file, Compose frontend, service, and health path. Append an app-owned test command after `--`:
 
 ```sh
 shis add example.com \

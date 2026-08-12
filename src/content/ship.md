@@ -14,7 +14,7 @@ curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 
 The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to `scripts/ship.ts` are never overwritten.
 
-Setup suggests the domain from your package name or Compose `SITE_URL`. Use your normal `user@server` target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
+Setup suggests the domain from your package name or Compose `SITE_URL` and registers your current branch. Use your normal `user@server` target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
 
 ## 2. Review owned source
 
