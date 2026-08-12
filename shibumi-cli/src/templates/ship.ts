@@ -88,11 +88,13 @@ async function offerSetupCommit(): Promise<"none" | "committed" | "declined"> {
     if (status.stdout.trim()) changed.push(file);
   }
   if (changed.length === 0) return "none";
-  const accepted = await confirm({ message: "Commit deployment setup now?", initialValue: true });
+  const updateOnly = changed.length === 1 && changed[0] === "scripts/ship.ts";
+  const trackedConfig = (await run(["git", "ls-files", "--error-unmatch", "shibumi-server.json"], { allowFailure: true })).exitCode === 0;
+  const accepted = await confirm({ message: updateOnly ? "Commit ship client update now?" : "Commit deployment setup now?", initialValue: true });
   if (isCancel(accepted) || !accepted) return "declined";
   await run(["git", "add", "--", ...changed]);
-  await run(["git", "commit", "--only", "-m", "Add Shibumi deployment", "--", ...changed], { inherit: true });
-  log.success("Committed Shibumi deployment setup");
+  await run(["git", "commit", "--only", "-m", trackedConfig ? "Update Shibumi deployment" : "Add Shibumi deployment", "--", ...changed], { inherit: true });
+  log.success(updateOnly ? "Committed ship client update" : "Committed Shibumi deployment setup");
   return "committed";
 }
 
@@ -385,7 +387,19 @@ async function ensureWebhook(config: ClientConfig, target: string): Promise<void
     result = await run(args, { input, allowFailure: true });
   }
   if (result.exitCode !== 0) throw new Error(`${result.stderr.trim() || "GitHub CLI could not configure webhook"}\n\nNext: confirm repository admin access, then rerun bun run ship.`);
-  log.success(existing ? "GitHub webhook secret refreshed" : "GitHub webhook created");
+  const hookId = existing?.id ?? (JSON.parse(result.stdout) as { id?: unknown }).id;
+  if (typeof hookId !== "number") throw new Error("GitHub returned an invalid webhook");
+  const ping = await run(["gh", "api", "-X", "POST", `repos/${repository}/hooks/${hookId}/pings`], { allowFailure: true });
+  if (ping.exitCode !== 0) throw new Error(`${ping.stderr.trim() || "GitHub CLI could not test webhook"}\n\nNext: review https://github.com/${repository}/settings/hooks.`);
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    await Bun.sleep(1_000);
+    const checked = await run(["gh", "api", `repos/${repository}/hooks/${hookId}`], { allowFailure: true });
+    if (checked.exitCode === 0 && (JSON.parse(checked.stdout) as { last_response?: { code?: unknown } }).last_response?.code === 200) {
+      log.success(existing ? "GitHub webhook repaired and tested" : "GitHub webhook created and tested");
+      return;
+    }
+  }
+  throw new Error(`GitHub webhook test did not return 200.\n\nNext: review https://github.com/${repository}/settings/hooks.`);
 }
 
 async function setup(force: boolean): Promise<{ config: ClientConfig; target: string; changed: boolean }> {

@@ -195,16 +195,16 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v11.ts")');
+    expect(body).toContain('fetch("/ship/v12.ts")');
     expect(body).toContain("data-copy-code");
-    expect(body).not.toContain('href="/ship/v11.ts"');
+    expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
 
     const markdown = await app.request("/ship", { headers: { accept: "text/markdown" } });
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v11.ts");
+    const source = await app.request("/ship/v12.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -224,11 +224,12 @@ describe("routes", () => {
     expect((await app.request("/ship/v8.ts")).status).toBe(200);
     expect((await app.request("/ship/v9.ts")).status).toBe(200);
     expect((await app.request("/ship/v10.ts")).status).toBe(200);
+    expect((await app.request("/ship/v11.ts")).status).toBe(200);
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v9.ts");
-    const installer = await app.request("/ship/install-v9.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v10.ts");
+    const installer = await app.request("/ship/install-v10.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     expect(await installer.text()).toContain("owned script now runs setup with Clack");
@@ -237,12 +238,13 @@ describe("routes", () => {
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v2.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v2.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v3.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v3.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
-    expect(await bootstrap.text()).toContain("ship/install-v9.ts");
+    expect(await bootstrap.text()).toContain("ship/install-v10.ts");
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
+    expect((await app.request("/ship/bootstrap-v2.sh")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {
