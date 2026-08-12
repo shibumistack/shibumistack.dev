@@ -7,7 +7,9 @@ Deployment setup belongs to the project. `bun run ship` uses owned TypeScript so
 From local Git project root:
 
 ```sh
-curl -fsSLo /tmp/shibumi-ship.ts https://shibumistack.dev/install/ship && bun /tmp/shibumi-ship.ts
+curl -fsSLo /tmp/shibumi-ship.ts \
+  https://shibumistack.dev/install/ship \
+  && bun /tmp/shibumi-ship.ts
 ```
 
 Installer refuses to run outside Git root and never overwrites an existing owned `scripts/ship.ts` change.
@@ -18,7 +20,7 @@ Installer refuses to run outside Git root and never overwrites an existing owned
 bun run ship:setup
 ```
 
-Use the same `user@server` target or SSH alias you already use. SSH target remains in local `.git/config`; it is not committed. Setup calls explicit `~/.local/bin/shibumi-server` remotely, exports sanitized project config, and uses GitHub CLI to create the webhook while keeping its secret in memory.
+Use the same `user@server` target or SSH alias you already use. Password login works: enter it once per run, then Shibumi reuses a temporary SSH connection. SSH target remains in local `.git/config`; it is not committed. Setup calls explicit `~/.local/bin/shibumi-server` remotely, exports sanitized project config, and uses GitHub CLI to create the webhook while keeping its secret in memory.
 
 Committed `shibumi-server.json` contains app identity, repository, branch, webhook URL, service, health path, and confirmed server hostname. It excludes secrets, checkout paths, SSH users, aliases, and credentials.
 
@@ -36,4 +38,4 @@ Ship checks Git state, runs configured project checks, pushes, then polls deploy
 bun run ship:setup
 ```
 
-Run setup again to review server target, domain, or generated client configuration.
+Run setup again to refresh project configuration and webhook setup. Change SSH target with `git config --local shibumi.server user@server`.

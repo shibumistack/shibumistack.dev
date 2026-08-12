@@ -9,12 +9,14 @@ Requirements: Bun, Git, GitHub CLI, and SSH access to your server.
 Run this from your project root. The shell only downloads reviewed TypeScript to `/tmp`. Bun runs it, then starts project setup with Clack.
 
 ```sh
-curl -fsSLo /tmp/shibumi-ship.ts https://shibumistack.dev/install/ship && bun /tmp/shibumi-ship.ts
+curl -fsSLo /tmp/shibumi-ship.ts \
+  https://shibumistack.dev/install/ship \
+  && bun /tmp/shibumi-ship.ts
 ```
 
-The installer validates your Git project, adds owned ship source and package commands, then starts interactive setup. Existing edits to `scripts/ship.ts` are never overwritten.
+The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to `scripts/ship.ts` are never overwritten.
 
-Setup suggests the domain from your package name or Compose `SITE_URL` when available. For SSH, use the same `user@server` target or alias you use in your terminal.
+Setup suggests the domain from your package name or Compose `SITE_URL`. Use your normal `user@server` target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
 
 ## 2. Review owned source
 
@@ -32,9 +34,9 @@ Your project receives `scripts/ship.ts` and these package keys:
 }
 ```
 
-Run `bun run ship:setup` later whenever you want to review deployment configuration again.
+Run `bun run ship:setup` later to refresh project configuration and webhook setup.
 
-Source: <https://shibumistack.dev/ship/v5.ts>
+Source: <https://shibumistack.dev/ship/v9.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH target in `.git/config`.

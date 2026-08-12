@@ -15,9 +15,11 @@
                 <div class="ship-step-body">
                     <h2>Run one installer.</h2>
                     <p>Run this from your project root. The shell only downloads reviewed TypeScript to <code>/tmp</code>. Bun runs it, then starts project setup with Clack.</p>
-                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSLo /tmp/shibumi-ship.ts https://shibumistack.dev/install/ship &amp;&amp; bun /tmp/shibumi-ship.ts</code></pre>
-                    <p>The installer validates your Git project, adds owned ship source and package commands, then starts interactive setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
-                    <p>Setup suggests the domain from your package name or Compose <code>SITE_URL</code> when available. For SSH, use the same <code>user@server</code> target or alias you use in your terminal.</p>
+                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSLo /tmp/shibumi-ship.ts \
+  https://shibumistack.dev/install/ship \
+  &amp;&amp; bun /tmp/shibumi-ship.ts</code></pre>
+                    <p>The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
+                    <p>Setup suggests the domain from your package name or Compose <code>SITE_URL</code>. Use your normal <code>user@server</code> target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.</p>
                 </div>
             </section>
 
@@ -25,7 +27,7 @@
                 <div class="ship-step-label"><span>02</span><p>Owned source</p></div>
                 <div class="ship-step-body">
                     <h2>See what changed.</h2>
-                    <p>Your project receives two package commands and <code>scripts/ship.ts</code>. Run <code>bun run ship:setup</code> later whenever you want to review deployment configuration again.</p>
+                    <p>Your project receives two package commands and <code>scripts/ship.ts</code>. Run <code>bun run ship:setup</code> later to refresh project configuration and webhook setup.</p>
                     <pre class="ship-code ship-code-json"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy package.json example">{{icon(copy)}}{{icon(check)}}</button><code>{
   "scripts": {
     "ship": "bun scripts/ship.ts",
