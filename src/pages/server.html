@@ -4,7 +4,10 @@
                     <h1>Push,<br><span class="accent-word">done.</span></h1>
                     <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
                     <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v{{server-version}}</span></div>
-                    <button class="btn btn-primary server-hero-install" type="button" data-dialog="server-install-dialog">Install on your server</button>
+                    <div class="server-hero-actions">
+                        <button class="btn btn-primary" type="button" data-dialog="server-install-dialog">Install on your server</button>
+                        <a class="btn btn-ghost" href="/ship">Connect a project</a>
+                    </div>
                 </div>
 
                 <div class="deploy-cli" data-server-cli aria-label="Simulated shibumi-server deployment">
@@ -142,6 +145,7 @@
                 <p>Requires Linux with Bun, Git, rootless Podman, Caddy, and systemd. On macOS or Windows, SSH into your Linux VPS or homelab server first.</p>
                 <div class="server-cta-actions">
                     <button class="btn btn-primary" type="button" data-dialog="server-install-dialog">Get the install command</button>
+                    <a class="btn btn-ghost" href="/ship">Connect a project</a>
                     <a class="btn btn-ghost" href="https://github.com/bitbonsai/shibumi-server">View source on GitHub →</a>
                 </div>
             </section>

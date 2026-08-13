@@ -8,7 +8,7 @@
 .server-hero-copy .dek { max-width:34rem; margin-top:1.75rem; }
 .status-line { display:flex; align-items:center; gap:.65rem; margin-top:1.4rem; color:var(--muted); font:var(--text-sm)/1.4 var(--font-mono); }
 .status-dot { width:.5rem; height:.5rem; border-radius:50%; background:var(--accent); box-shadow:0 0 0 .25rem var(--accent-soft); }
-.server-hero-install { margin-top:2.25rem; }
+.server-hero-actions { display:flex; flex-wrap:wrap; gap:.75rem; margin-top:2.25rem; }
 .deploy-cli { min-width:0; font:.84rem/1.55 var(--font-mono); color:var(--muted); }
 .deploy-command { display:flex; align-items:center; gap:.65rem; min-height:2rem; margin-bottom:1.5rem; color:var(--text); font-weight:700; }
 .deploy-output { display:grid; gap:.8rem; }
