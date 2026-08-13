@@ -195,7 +195,7 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v14.ts")');
+    expect(body).toContain('fetch("/ship/v15.ts")');
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
@@ -204,7 +204,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v14.ts");
+    const source = await app.request("/ship/v15.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -227,14 +227,15 @@ describe("routes", () => {
     expect((await app.request("/ship/v11.ts")).status).toBe(200);
     expect((await app.request("/ship/v12.ts")).status).toBe(200);
     expect((await app.request("/ship/v13.ts")).status).toBe(200);
+    expect((await app.request("/ship/v14.ts")).status).toBe(200);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
     expect(latest.headers.get("cache-control")).toBe("no-cache");
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v12.ts");
-    const installer = await app.request("/ship/install-v12.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v13.ts");
+    const installer = await app.request("/ship/install-v13.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
@@ -245,11 +246,11 @@ describe("routes", () => {
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v5.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v5.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v6.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v6.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
-    expect(await bootstrap.text()).toContain("ship/install-v12.ts");
+    expect(await bootstrap.text()).toContain("ship/install-v13.ts");
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v2.sh")).status).toBe(200);
   });
