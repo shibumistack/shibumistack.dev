@@ -80,9 +80,9 @@
         .home-clack-row > :not(.home-clack-glyph) { grid-column: 2; grid-row: 1; }
         .home-clack-brand strong { color: var(--accent); }
         .home-clack-brand strong span { font-weight: 500; }
-        .home-clack-submit { color: light-dark(#3d8f50, #78e88f); }
-        .home-clack-active { color: light-dark(#16839a, #62dff0); }
-        .home-clack-info { color: light-dark(#397fc0, #74b6ff); }
+        .home-clack-submit { color: var(--terminal-success); }
+        .home-clack-active { color: var(--terminal-active); }
+        .home-clack-info { color: var(--terminal-info); }
         .home-clack-prompt { grid-template-rows: auto auto .9rem; }
         .home-clack-prompt > div { display: contents; }
         .home-clack-prompt .cli-question { grid-column: 2; grid-row: 1; font-weight: 700; }
@@ -91,7 +91,7 @@
         .home-clack-select > div { display: block; grid-column: 2; grid-row: 1; }
         .home-clack-select .cli-question,.home-clack-select .cli-option { display: block; }
         .home-clack-done { grid-template-rows: auto; }
-        .home-clack-done > div { display: grid; gap: .15rem; color: light-dark(#3d8f50, #78e88f); }
+        .home-clack-done > div { display: grid; gap: .15rem; color: var(--terminal-success); }
         .home-clack-next { display: block; color: var(--muted); font-weight: 500; }
         .home-clack-next b { color: var(--accent); }
 

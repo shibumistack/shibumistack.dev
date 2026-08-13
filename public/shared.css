@@ -13,6 +13,9 @@
     --success: light-dark(#397a43, #64b464);
     --success-text: light-dark(#397a43, #74c77a);
     --success-ink: #17331f;
+    --terminal-success: light-dark(#3d8f50, #78e88f);
+    --terminal-active: light-dark(#16839a, #62dff0);
+    --terminal-info: light-dark(#397fc0, #74b6ff);
     --max: 1120px;
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     --font-serif: ui-serif, Georgia, "Iowan Old Style", "Apple Garamond", Cambria, "Times New Roman", serif;
@@ -575,7 +578,7 @@ nav a[aria-current="page"] {
 
 .copy-command .icon-check { display: none; }
 .copy-command.copied .icon-copy { display: none; }
-.copy-command.copied .icon-check { display: block; color: #64b464; }
+.copy-command.copied .icon-check { display: block; color: var(--success); }
 
 .install-dialog-hint {
     margin: 0 0 1.2rem;
