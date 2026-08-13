@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -49,6 +49,15 @@ describe("ship configuration", () => {
     expect(canFollowDeployment({ commit, state: "succeeded" }, commit)).toBe(true);
     expect(canFollowDeployment({ commit, state: "failed" }, commit)).toBe(false);
     expect(canFollowDeployment({ commit: "b".repeat(40), state: "running" }, commit)).toBe(false);
+  });
+
+  test("finds terminal history after a queued deployment replaces status", () => {
+    const commit = "a".repeat(40);
+    expect(terminalHistory([
+      { commit, state: "accepted" },
+      { commit, state: "succeeded" },
+      { commit: "b".repeat(40), state: "running" },
+    ], commit)).toEqual({ commit, state: "succeeded" });
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {
