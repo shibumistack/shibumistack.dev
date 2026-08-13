@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, missingComposeMessage, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -41,6 +41,17 @@ describe("ship configuration", () => {
     expect(composeFileFromTracked(["package.json", "compose.yaml"])).toBe("compose.yaml");
     expect(composeFileFromTracked(["website/compose.yaml", "package.json"])).toBe("website/compose.yaml");
     expect(() => composeFileFromTracked(["a/compose.yaml", "b/compose.yaml"])).toThrow("multiple");
+  });
+
+  test("names current branch and another worktree when Compose is elsewhere", () => {
+    expect(missingComposeMessage("main", [{
+      branch: "staging",
+      path: "/repo.staging",
+      composeFile: "website/compose.yaml",
+    }])).toContain("no tracked Compose file found on current branch main");
+    expect(missingComposeMessage("main", [{ branch: "staging", path: "/repo.staging", composeFile: "website/compose.yaml" }]))
+      .toContain("staging → /repo.staging/website/compose.yaml");
+    expect(missingComposeMessage("main", [])).toContain("add compose.yaml");
   });
 
   test("follows only an active deployment for the same commit", () => {

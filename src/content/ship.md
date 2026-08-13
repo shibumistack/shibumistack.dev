@@ -34,7 +34,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun run ship:setup` later to refresh project configuration and webhook setup. Run `bun run ship:update` to update only the owned ship client, without changing server setup, webhooks, or `shibumi-server.json`.
 
-Source: <https://shibumistack.dev/ship/v18.ts>
+Source: <https://shibumistack.dev/ship/v19.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH target in `.git/config`.

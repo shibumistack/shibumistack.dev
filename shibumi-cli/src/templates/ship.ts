@@ -13,7 +13,7 @@
 
 import { cancel, confirm, intro, isCancel, log, outro, spinner, text } from "@clack/prompts";
 import { chmod, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const root = process.cwd();
 const configPath = join(root, "shibumi-server.json");
@@ -22,7 +22,7 @@ const SSH_TARGET = /^(?!-)[A-Za-z0-9_.@:-]+$/;
 const COMMIT = /^[a-f0-9]{40}$/;
 const SERVER_CLI = "~/.local/bin/shibumi-server";
 const LATEST_SOURCE = "https://shibumistack.dev/ship/latest.ts";
-const CURRENT_SOURCE = "https://shibumistack.dev/ship/v18.ts";
+const CURRENT_SOURCE = "https://shibumistack.dev/ship/v19.ts";
 let sshControlDirectory: string | undefined;
 let sshControlTarget: string | undefined;
 const accent = (value: string) => process.stdout.isTTY && !("NO_COLOR" in process.env) && process.env.TERM !== "dumb"
@@ -144,14 +144,52 @@ export function domainFromProject(packageName: unknown, compose: string): string
   return siteUrlDomain && DOMAIN.test(siteUrlDomain) ? siteUrlDomain : undefined;
 }
 
+function composeCandidates(files: string[]): string[] {
+  return files.filter((file) => /(^|\/)(?:compose\.ya?ml|docker-compose\.ya?ml)$/.test(file));
+}
+
 export function composeFileFromTracked(files: string[]): string {
-  const candidates = files.filter((file) => /(^|\/)(?:compose\.ya?ml|docker-compose\.ya?ml)$/.test(file));
+  const candidates = composeCandidates(files);
   for (const preferred of ["compose.yaml", "compose.yml", "docker-compose.yml", "docker-compose.yaml"]) {
     if (candidates.includes(preferred)) return preferred;
   }
   if (candidates.length === 1) return candidates[0];
-  if (candidates.length === 0) throw new Error("no Compose file found\n\nNext: add compose.yaml, or run ship from a branch containing deployment files.");
+  if (candidates.length === 0) throw new Error("no Compose file found");
   throw new Error(`multiple Compose files found:\n${candidates.map((file) => `  ${file}`).join("\n")}\n\nNext: keep one deployment Compose file or configure the intended path explicitly.`);
+}
+
+interface WorktreeCompose {
+  branch: string;
+  path: string;
+  composeFile: string;
+}
+
+export function missingComposeMessage(branch: string, alternatives: WorktreeCompose[]): string {
+  const heading = `no tracked Compose file found on current branch ${branch}.`;
+  if (alternatives.length === 0) return `${heading}\n\nNext: add compose.yaml, or run ship from a branch containing deployment files.`;
+  const rows = alternatives.map((item) => `  ${item.branch} → ${join(item.path, item.composeFile)}`).join("\n");
+  const next = alternatives.length === 1
+    ? `cd '${alternatives[0].path.replaceAll("'", "'\\''")}' and rerun installer.`
+    : "choose one listed worktree, cd to it, and rerun installer.";
+  return `${heading}\n\nCompose found in another local worktree:\n${rows}\n\nNext: ${next}`;
+}
+
+async function otherWorktreeCompose(): Promise<WorktreeCompose[]> {
+  const listed = await run(["git", "worktree", "list", "--porcelain", "-z"], { allowFailure: true });
+  if (listed.exitCode !== 0) return [];
+  const alternatives: WorktreeCompose[] = [];
+  for (const record of listed.stdout.split("\0\0")) {
+    const fields = record.split("\0");
+    const path = fields.find((field) => field.startsWith("worktree "))?.slice(9);
+    const branch = fields.find((field) => field.startsWith("branch refs/heads/"))?.slice(18);
+    if (!path || !branch || resolve(path) === resolve(root)) continue;
+    const tracked = await run(["git", "-C", path, "ls-files"], { allowFailure: true });
+    if (tracked.exitCode !== 0) continue;
+    for (const composeFile of composeCandidates(tracked.stdout.split("\n").filter(Boolean))) {
+      alternatives.push({ branch, path, composeFile });
+    }
+  }
+  return alternatives;
 }
 
 async function inferredProject() {
@@ -159,7 +197,9 @@ async function inferredProject() {
   const repository = repositoryFromRemote(await git("remote", "get-url", "origin"));
   const branch = await git("branch", "--show-current");
   if (!branch) throw new Error("ship requires a named Git branch");
-  const composeFile = composeFileFromTracked((await git("ls-files")).split("\n").filter(Boolean));
+  const tracked = (await git("ls-files")).split("\n").filter(Boolean);
+  if (composeCandidates(tracked).length === 0) throw new Error(missingComposeMessage(branch, await otherWorktreeCompose()));
+  const composeFile = composeFileFromTracked(tracked);
   const compose = await readFile(join(root, composeFile), "utf8");
   const domain = domainFromProject(packageJson.name, compose);
   const service = /^services:\s*\n\s{2}([A-Za-z0-9_.-]+):/m.exec(compose)?.[1] ?? "web";
@@ -441,6 +481,7 @@ async function ensureWebhook(config: ClientConfig, target: string): Promise<void
 
 async function setup(force: boolean): Promise<{ config: ClientConfig; target: string; changed: boolean }> {
   let config = await readConfig();
+  if (force || !config) await inferredProject();
   let target = await localSshTarget();
   if (!target) target = await requestSshTarget(config?.server.hostname);
   if (!target) throw new Error("SSH server is required");
