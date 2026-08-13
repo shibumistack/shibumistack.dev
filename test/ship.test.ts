@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
+import { appIdForDomain, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -35,6 +35,12 @@ describe("ship configuration", () => {
     expect(matchingWebhook([{ ...hook, last_response: { code: 200 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
     expect(matchingWebhook([{ ...hook, last_response: { code: 0 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
     expect(matchingWebhook([hook], "https://example.com/other")).toBeUndefined();
+  });
+
+  test("selects one tracked root or nested Compose file", () => {
+    expect(composeFileFromTracked(["package.json", "compose.yaml"])).toBe("compose.yaml");
+    expect(composeFileFromTracked(["website/compose.yaml", "package.json"])).toBe("website/compose.yaml");
+    expect(() => composeFileFromTracked(["a/compose.yaml", "b/compose.yaml"])).toThrow("multiple");
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {

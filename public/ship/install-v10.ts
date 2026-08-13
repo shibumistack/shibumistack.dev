@@ -19,6 +19,7 @@ const knownSourceHashes = new Set([
   "01f2c0c4e618450628c5b5669a4a4c775e6008550c1b56b973a616baf91c4ccc",
   "21430ef23072f99b092b95484b84241dd770c7ca3134ab7aa45f34ef3101f577",
   "cca1474885693da8f83803e6fff152196ed0f84544c0aecc8ace0c3a66dfb32f",
+  "79c48192236b4ebe68ff536744801b8c9cedb41c3736a6bb213cbd3f7ac800ba",
 ]);
 const expectedScripts = {
   ship: "bun scripts/ship.ts",

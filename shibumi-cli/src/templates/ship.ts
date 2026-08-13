@@ -118,14 +118,23 @@ export function domainFromProject(packageName: unknown, compose: string): string
   return siteUrlDomain && DOMAIN.test(siteUrlDomain) ? siteUrlDomain : undefined;
 }
 
+export function composeFileFromTracked(files: string[]): string {
+  const candidates = files.filter((file) => /(^|\/)(?:compose\.ya?ml|docker-compose\.ya?ml)$/.test(file));
+  for (const preferred of ["compose.yaml", "compose.yml", "docker-compose.yml", "docker-compose.yaml"]) {
+    if (candidates.includes(preferred)) return preferred;
+  }
+  if (candidates.length === 1) return candidates[0];
+  if (candidates.length === 0) throw new Error("no Compose file found\n\nNext: add compose.yaml, or run ship from a branch containing deployment files.");
+  throw new Error(`multiple Compose files found:\n${candidates.map((file) => `  ${file}`).join("\n")}\n\nNext: keep one deployment Compose file or configure the intended path explicitly.`);
+}
+
 async function inferredProject() {
   const packageJson = JSON.parse(await readFile(join(root, "package.json"), "utf8")) as { name?: unknown; scripts?: Record<string, unknown> };
   const repository = repositoryFromRemote(await git("remote", "get-url", "origin"));
   const branch = await git("branch", "--show-current");
   if (!branch) throw new Error("ship requires a named Git branch");
-  const composeFile = await Bun.file(join(root, "compose.yaml")).exists() ? "compose.yaml" : "docker-compose.yml";
-  let compose = "";
-  try { compose = await readFile(join(root, composeFile), "utf8"); } catch {}
+  const composeFile = composeFileFromTracked((await git("ls-files")).split("\n").filter(Boolean));
+  const compose = await readFile(join(root, composeFile), "utf8");
   const domain = domainFromProject(packageJson.name, compose);
   const service = /^services:\s*\n\s{2}([A-Za-z0-9_.-]+):/m.exec(compose)?.[1] ?? "web";
   const healthPath = /https?:\/\/(?:127\.0\.0\.1|localhost):\d+(\/[^\s"'\\]*)/.exec(compose)?.[1] ?? "/healthz";

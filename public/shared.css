@@ -10,7 +10,7 @@
     --accent: light-dark(#ff6600, #ff8833);
     --accent-soft: light-dark(rgba(255, 102, 0, 0.1), rgba(255, 136, 51, 0.15));
     --accent-hover: light-dark(#e55a00, #ffa055);
-    --success: #64b464;
+    --success: light-dark(#397a43, #64b464);
     --success-text: light-dark(#397a43, #74c77a);
     --success-ink: #17331f;
     --max: 1120px;
