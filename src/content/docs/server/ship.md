@@ -28,7 +28,7 @@ Committed `shibumi-server.json` contains app identity, repository, branch, webho
 bun run ship
 ```
 
-Ship checks Git state, runs configured project checks, pushes, then polls deployment status over existing SSH access. Push stays normal Git; Shibumi does not need GitHub deployment tokens or a public status endpoint.
+Ship checks Git state, runs configured project checks, pushes when commits are ahead, then polls deployment status over existing SSH access. If `HEAD` is already pushed, Shibumi asks the server to redeploy that exact commit. Push stays normal Git; Shibumi does not need GitHub deployment tokens or a public status endpoint.
 
 ## Change setup
 

@@ -425,9 +425,9 @@ async function setup(force: boolean): Promise<{ config: ClientConfig; target: st
   return { config, target, changed: !previous || JSON.stringify(previous) !== JSON.stringify(config) };
 }
 
-// Refuse ambiguous deploys: wrong origin, wrong branch, dirty work, remote work
-// not present locally, or no new commit. Run project-owned checks before push.
-async function preflight(config: ClientConfig): Promise<void> {
+// Refuse ambiguous deploys: wrong origin, wrong branch, dirty work, or remote
+// work not present locally. Run project-owned checks before every deployment.
+async function preflight(config: ClientConfig): Promise<number> {
   const project = await inferredProject();
   if (`github:${project.repository}` !== config.repository) throw new Error(`origin does not match ${config.repository}`);
   if (project.branch !== config.branch) throw new Error(`current branch must be ${config.branch}`);
@@ -442,11 +442,9 @@ async function preflight(config: ClientConfig): Promise<void> {
     progress.stop("Branch is behind or diverged", 1);
     throw new Error(`pull origin/${config.branch} before shipping`);
   }
-  if (counts[0] < 1) {
-    progress.stop("Nothing to ship", 1);
-    throw new Error("branch has no unpushed commits");
-  }
-  progress.stop(`${counts[0]} commit${counts[0] === 1 ? "" : "s"} ready`);
+  progress.stop(counts[0] > 0
+    ? `${counts[0]} commit${counts[0] === 1 ? "" : "s"} ready to push`
+    : "Current commit already pushed and ready to deploy");
 
   const scripts = project.packageJson.scripts ?? {};
   for (const name of ["test", "check"]) {
@@ -461,6 +459,7 @@ async function preflight(config: ClientConfig): Promise<void> {
     }
     check.stop(`${name} passed`);
   }
+  return counts[0];
 }
 
 // Follow status for the exact pushed commit. This prevents an older or parallel
@@ -545,15 +544,23 @@ export async function runShip(): Promise<void> {
         : `${accent("Next:")} bun run ship`);
       return;
     }
-    await preflight(result.config);
-    const accepted = await confirm({ message: `Push ${result.config.branch} and deploy ${result.config.domain}?`, initialValue: true });
+    const ahead = await preflight(result.config);
+    const accepted = await confirm({
+      message: ahead > 0
+        ? `Push ${result.config.branch} and deploy ${result.config.domain}?`
+        : `Redeploy current ${result.config.branch} commit to ${result.config.domain}?`,
+      initialValue: true,
+    });
     if (isCancel(accepted) || !accepted) {
       cancel("Ship cancelled");
       return;
     }
-    await run(["git", "push", "origin", result.config.branch], { inherit: true });
     const commit = await git("rev-parse", "HEAD");
     if (!COMMIT.test(commit)) throw new Error("cannot determine shipped commit");
+    if (ahead > 0) await run(["git", "push", "origin", result.config.branch], { inherit: true });
+    else await ssh(result.target, [
+      "env", "SHIBUMI_SKIP_UPDATE_CHECK=1", SERVER_CLI, "redeploy", result.config.appId, commit,
+    ]);
     await followStatus(result.config, result.target, commit);
     const changed = await completeCutover(result.config, result.target);
     outro(changed

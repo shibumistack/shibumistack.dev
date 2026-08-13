@@ -24,7 +24,7 @@ Open <http://localhost:9001>.
 bun start        # run server
 bun test         # run route tests
 bun check        # TypeScript check
-bun run ship     # set up when needed, check, push, and follow deploy
+bun run ship     # set up when needed, check, push if needed, and deploy
 bun run ship:setup # review or change deploy setup without pushing
 ```
 

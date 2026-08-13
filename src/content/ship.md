@@ -46,7 +46,7 @@ Source: <https://shibumistack.dev/ship/v12.ts>
 bun run ship
 ```
 
-Ship requires a clean tree on the configured branch. It runs your project test and check scripts, verifies origin state, pushes one commit, then follows deployment status over SSH.
+Ship requires a clean tree on the configured branch. It runs your project test and check scripts, verifies origin state, pushes when commits are ahead, then follows deployment status over SSH. When `HEAD` is already pushed, it redeploys that exact commit instead of stopping.
 
 Existing domains keep their current Caddy upstream until the first Shibumi deployment passes health checks and you approve cutover.
 
