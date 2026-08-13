@@ -36,7 +36,7 @@
   async function loadSource() {
     if (loaded) return;
     try {
-      const response = await fetch("/ship/v15.ts");
+      const response = await fetch("/ship/v16.ts");
       if (!response.ok) throw new Error(String(response.status));
       const source = await response.text();
       highlight(source);

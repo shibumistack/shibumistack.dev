@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, repositoryFromRemote, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -41,6 +41,14 @@ describe("ship configuration", () => {
     expect(composeFileFromTracked(["package.json", "compose.yaml"])).toBe("compose.yaml");
     expect(composeFileFromTracked(["website/compose.yaml", "package.json"])).toBe("website/compose.yaml");
     expect(() => composeFileFromTracked(["a/compose.yaml", "b/compose.yaml"])).toThrow("multiple");
+  });
+
+  test("follows only an active deployment for the same commit", () => {
+    const commit = "a".repeat(40);
+    expect(canFollowDeployment({ commit, state: "running" }, commit)).toBe(true);
+    expect(canFollowDeployment({ commit, state: "succeeded" }, commit)).toBe(true);
+    expect(canFollowDeployment({ commit, state: "failed" }, commit)).toBe(false);
+    expect(canFollowDeployment({ commit: "b".repeat(40), state: "running" }, commit)).toBe(false);
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {

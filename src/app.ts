@@ -721,28 +721,28 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v13.ts", 302));
-app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v6.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v15.ts"), 200, {
+app.get("/install/ship", (c) => c.redirect("/ship/install-v14.ts", 302));
+app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v7.sh", 302));
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v16.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",
 }));
-for (const version of ["v1", "v2", "v3", "v4", "v5", "v6"]) {
+for (const version of ["v1", "v2", "v3", "v4", "v5", "v6", "v7"]) {
   app.get(`/ship/bootstrap-${version}.sh`, async (c) => c.body(await read(`public/ship/bootstrap-${version}.sh`), 200, {
     "Cache-Control": "public, max-age=31536000, immutable",
     "Content-Disposition": 'inline; filename="shibumi-ship.sh"',
     "Content-Type": "text/plain; charset=utf-8",
   }));
 }
-for (const version of ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13"]) {
+for (const version of ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"]) {
   app.get(`/ship/install-${version}.ts`, async (c) => c.body(await read(`public/ship/install-${version}.ts`), 200, {
     "Cache-Control": "public, max-age=31536000, immutable",
     "Content-Disposition": 'inline; filename="shibumi-ship.ts"',
     "Content-Type": "text/plain; charset=utf-8",
   }));
 }
-for (const version of ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15"]) {
+for (const version of ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16"]) {
   app.get(`/ship/${version}.ts`, async (c) => c.body(await read(`public/ship/${version}.ts`), 200, {
     "Cache-Control": "public, max-age=31536000, immutable",
     "Content-Disposition": 'inline; filename="ship.ts"',
