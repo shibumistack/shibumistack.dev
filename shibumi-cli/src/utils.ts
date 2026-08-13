@@ -114,6 +114,7 @@ CMD ["bun", "start"]
         ...packageJson.scripts,
         ship: "bun scripts/ship.ts",
         "ship:setup": "bun scripts/ship.ts --setup",
+        "ship:update": "bun scripts/ship.ts --update",
       };
       packageJson.devDependencies = { ...packageJson.devDependencies, "@clack/prompts": "^0.7.0" };
       writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);

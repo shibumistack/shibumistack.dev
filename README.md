@@ -26,6 +26,7 @@ bun test         # run route tests
 bun check        # TypeScript check
 bun run ship     # set up when needed, check, push if needed, and deploy
 bun run ship:setup # review or change deploy setup without pushing
+bun run ship:update # update only owned ship client source
 ```
 
 ## Project structure

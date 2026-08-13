@@ -37,3 +37,11 @@ bun run ship:setup
 ```
 
 Run setup again to refresh project configuration and webhook setup. Change SSH target with `git config --local shibumi.server user@server`.
+
+## Update client
+
+```sh
+bun run ship:update
+```
+
+Update only `scripts/ship.ts`. Server setup, webhook, SSH target, and `shibumi-server.json` stay unchanged. Unknown local edits are never overwritten.

@@ -10,6 +10,7 @@
     "deploy": "./scripts/deploy.sh",
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
+    "ship:update": "bun scripts/ship.ts --update",
     "deploy:server": "git pull && podman-compose down && podman-compose up -d --build"
   },
   "dependencies": {

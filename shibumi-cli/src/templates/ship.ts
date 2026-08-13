@@ -12,7 +12,7 @@
  */
 
 import { cancel, confirm, intro, isCancel, log, outro, spinner, text } from "@clack/prompts";
-import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -21,6 +21,8 @@ const DOMAIN = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z](?
 const SSH_TARGET = /^(?!-)[A-Za-z0-9_.@:-]+$/;
 const COMMIT = /^[a-f0-9]{40}$/;
 const SERVER_CLI = "~/.local/bin/shibumi-server";
+const LATEST_SOURCE = "https://shibumistack.dev/ship/latest.ts";
+const CURRENT_SOURCE = "https://shibumistack.dev/ship/v13.ts";
 let sshControlDirectory: string | undefined;
 let sshControlTarget: string | undefined;
 const accent = (value: string) => process.stdout.isTTY && !("NO_COLOR" in process.env) && process.env.TERM !== "dumb"
@@ -571,8 +573,33 @@ export async function runShip(): Promise<void> {
   }
 }
 
+async function updateShipClient(): Promise<void> {
+  intro("渋み  ship update");
+  const response = await fetch(LATEST_SOURCE, { headers: { accept: "text/plain" } });
+  if (!response.ok) throw new Error(`ship client returned HTTP ${response.status}`);
+  const source = await response.text();
+  if (!source.startsWith("#!/usr/bin/env bun") || !source.includes("export function runShipCli")) {
+    throw new Error("downloaded ship client is invalid");
+  }
+  const current = await readFile(import.meta.path, "utf8");
+  if (source === current) {
+    outro("Ship client is current");
+    return;
+  }
+  const reviewed = await fetch(CURRENT_SOURCE, { headers: { accept: "text/plain" } });
+  if (!reviewed.ok || await reviewed.text() !== current) {
+    throw new Error(`scripts/ship.ts contains owned changes.\n\nNext: review and merge ${LATEST_SOURCE} manually.`);
+  }
+  const temporary = `${import.meta.path}.tmp-${process.pid}`;
+  await writeFile(temporary, source, { mode: 0o644 });
+  await chmod(temporary, 0o644);
+  await rename(temporary, import.meta.path);
+  outro("Ship client updated. Review and commit scripts/ship.ts.");
+}
+
 export function runShipCli(): void {
-  runShip().catch((error) => {
+  const action = process.argv.slice(2).includes("--update") ? updateShipClient() : runShip();
+  action.catch((error) => {
     cancel(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
   });
