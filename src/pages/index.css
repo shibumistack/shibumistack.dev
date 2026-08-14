@@ -9,6 +9,7 @@
         .intro p { margin: 0 0 1rem; }
 
         .hero {
+            margin-bottom: clamp(2.75rem, 6vw, 4.5rem);
             --hero-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
             --hero-gap: clamp(2.5rem, 7vw, 5rem);
             --hero-title-max: 10.8ch;
@@ -187,6 +188,44 @@
             font-weight: 700;
             letter-spacing: 0.08em;
             text-transform: uppercase;
+        }
+
+        .name-meaning {
+            display: flex;
+            align-items: center;
+            gap: 1.05rem;
+            max-width: 38rem;
+            margin: 2.2rem 0 0;
+            padding: 0.9rem 1.15rem;
+            border: 1px solid light-dark(var(--line), rgba(228, 221, 208, 0.06));
+            border-radius: 14px;
+            background: light-dark(var(--quiet), rgba(228, 221, 208, 0.025));
+            color: var(--muted);
+            font-size: 0.95rem;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .name-meaning p { margin: 0; }
+
+        .name-meaning-seal {
+            flex: none;
+            writing-mode: vertical-rl;
+            padding: 0.5rem 0.28rem;
+            border: 1.5px solid var(--accent);
+            border-radius: 8px;
+            color: var(--accent);
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            opacity: 0.85;
+        }
+
+        .name-meaning p > span {
+            color: var(--text);
+            font-style: normal;
+            font-weight: 600;
         }
 
         .feature-grid {

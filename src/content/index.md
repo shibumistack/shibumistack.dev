@@ -4,6 +4,8 @@ Refined simplicity for shipping web apps.
 
 Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores. Clear seams. Nothing hidden.
 
+Shibumi (渋み) is a Japanese concept meaning understated elegance, refined simplicity, or subtle beauty.
+
 ## What Shibumi is
 
 You install a small and elegant new framework. Then, one day you realize you're debugging 600MB of dependencies you never wanted.
