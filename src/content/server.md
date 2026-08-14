@@ -50,9 +50,11 @@ I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-sour
 
 The first build exhausted the server's memory. That failure led directly to pre-build memory and disk checks, plus a timeout for builds that run too long.
 
-## Install once on your server
+## Prepare a server
 
-Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Podman Compose, Caddy, and systemd, checking the host before it changes server configuration:
+You need a Linux VPS or homelab server reachable through SSH. Setup uses Bun, Git, rootless Podman, Podman Compose, Caddy, and systemd, checking the host before it changes server configuration.
+
+The recommended app flow starts from your local project and installs the server component through confirmed SSH when needed. You can also prepare the server directly:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
@@ -62,42 +64,23 @@ It stages the resolved release with lockfile-pinned production dependencies, the
 
 `shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
 
-## Adding apps is a breeze
+## Connect from your project
 
-Use the installed command with a domain:
-
-```run
-shibumi-server add sub.example.com
-渋み  shis (shibumi-server)
-success|DNS detected (cloudflare)
-prompt|Where's the repository?
-answer|https://github.com/owner/example
-prompt|Where should deployments live?
-answer|/home/deploy/shibumi/sub-example-com
-info|Health path /healthz (default)
-prompt|Domain configuration
-answer|Recommended defaults
-success|Added sub.example.com
-result|sub.example.com is ready
-info|Domain    sub.example.com
-info|Webhook   https://sub.example.com/hooks/github/sub-example-com
-info|Upstream  127.0.0.1:9100
-info|Caddy     configured and reloaded
-info|Secret    stored on server
-outro|Connect your project: https://shibumistack.dev/ship
-```
-
-It checks DNS and existing Caddy routes, asks for the repository and deployment directory, assigns an available local port, then previews the complete setup before changing anything.
-
-Preview the same prompts, port selection, and validation without changing the system:
+Run one installer from your local project root:
 
 ```sh
-shibumi-server add sub.example.com --dry-run
+curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-The preview prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add prepares the checkout and asks sudo only when its constrained helper saves, validates, and reloads Caddy. GitHub setup stays on your project machine through `bun run ship`. Repeat the command for every app or domain.
+It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, registers the app, configures and tests the GitHub webhook, then writes owned project source.
 
-Automation can pass the repository as `github:owner/repo`, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.
+DNS and webhook delivery may depend on external changes. If either is not ready, setup keeps the owned files and prints the exact next action. Resume with:
+
+```sh
+bun run ship:setup
+```
+
+`shis add sub.example.com` remains available for server operators and automation. Use `--dry-run` to follow the same detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add ends with the exact local installer command instead of sending you through a webpage.
 
 ## Push with one command
 
@@ -107,7 +90,7 @@ Self-hosted projects own a small ship script:
 bun run ship
 ```
 
-First run detects missing setup, explains what stays local, then opens the server flow through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates the webhook without printing or storing its secret.
+The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates and tests the webhook without printing or storing its secret.
 
 Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, matchingWebhook, missingComposeMessage, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, isAgentExecution, matchingWebhook, missingComposeMessage, parseShipArgs, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -16,6 +16,24 @@ const config = {
 } as const;
 
 describe("ship configuration", () => {
+  test("detects agent and non-interactive execution", () => {
+    expect(isAgentExecution({ PI_CODING_AGENT: "true" }, true, true)).toBeTrue();
+    expect(isAgentExecution({}, false, true)).toBeTrue();
+    expect(isAgentExecution({}, true, true)).toBeFalse();
+  });
+
+  test("parses explicit automation options", () => {
+    expect(parseShipArgs(["--", "--yes", "--server", "deploy@example-vps", "--domain", "app.example.com"])).toEqual({
+      setup: false,
+      update: false,
+      yes: true,
+      server: "deploy@example-vps",
+      domain: "app.example.com",
+    });
+    expect(() => parseShipArgs(["--yes", "--server"])).toThrow("--server requires a value");
+    expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
+  });
+
   test("derives collision-free app IDs and GitHub repositories", () => {
     expect(appIdForDomain("something-some.org")).toBe("something--some-org");
     expect(repositoryFromRemote("git@github.com:owner/repo.git")).toBe("owner/repo");

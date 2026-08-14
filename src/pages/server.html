@@ -79,10 +79,10 @@
             <section class="install-section" aria-labelledby="install-title">
                 <div>
                     <p class="eyebrow">Install</p>
-                    <h2 id="install-title">Install once<br>on your server.</h2>
+                    <h2 id="install-title">Prepare your<br>server.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>Start with a Linux VPS or homelab server. Setup uses Bun, Git, rootless Podman, Caddy, and systemd, checking the host before it changes server configuration.</p>
+                    <p>You need a Linux VPS or homelab server reachable through SSH. The recommended app flow starts from your local project and installs this server component through confirmed SSH when needed. You can also prepare it directly.</p>
                     <div class="install-terminal setup-cli" data-setup-cli aria-label="Simulated shibumi-server installation">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                         <div class="setup-output clack-output">
@@ -91,7 +91,7 @@
                             <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Server requirements</span><span class="setup-answer setup-requirements" aria-label="Installed requirements: Git, Podman, Caddy, and systemd"><span>Git ✓</span><span>Podman ✓</span><span>Caddy ✓</span><span>systemd ✓</span></span></div></div>
                             <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Install shibumi-server on this server?</span><span class="setup-answer">Yes</span></div></div>
                             <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Installed shibumi-server {{server-version}}</span></div>
-                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Next: <strong>shis add example.com</strong></span></div>
+                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>From project root: <strong>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</strong></span></div>
                         </div>
                     </div>
                     <p>The installer stages the release with lockfile-pinned production dependencies before activation. The installed service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest <code>shibumi-server update</code>. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.</p>
@@ -101,27 +101,26 @@
 
             <section class="apps-section" aria-labelledby="apps-title">
                 <div>
-                    <p class="eyebrow">Apps</p>
-                    <h2 id="apps-title">Adding apps<br>is a breeze.</h2>
+                    <p class="eyebrow">Project</p>
+                    <h2 id="apps-title">Connect from<br>your project.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>Use the installed command with a domain. It checks DNS and existing Caddy routes, asks for the repository and deployment directory, assigns an available local port, then previews the complete setup before changing anything.</p>
-                    <div class="install-terminal setup-cli" data-app-cli aria-label="Simulated interactive app registration">
+                    <p>Run one installer from your local project root. It infers project settings, connects through SSH, registers the app, and configures GitHub.</p>
+                    <div class="install-terminal setup-cli" data-app-cli aria-label="Simulated local project connection">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                         <div class="setup-output clack-output">
                             <span class="clack-rail" aria-hidden="true"></span>
-                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
+                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; ship</strong></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Found repository, branch, and Compose service</span></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">SSH target</span><span class="setup-answer">deploy@example-vps</span></div></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Connected to shibumi-server</span></div>
                             <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>DNS detected (cloudflare)</span></div>
-                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Where's the repository?</span><span class="setup-answer">https://github.com/bitbonsai/example</span></div></div>
-                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Where should deployments live?</span><span class="setup-answer">/home/user/shibumi/sub-example-com</span></div></div>
-                            <div class="setup-step clack-row"><svg class="clack-glyph clack-info clack-filled"><use href="#clack-circle"/></svg><span>Health path /healthz <span class="setup-note">(default)</span></span></div>
-                            <div class="setup-step clack-row clack-select"><svg class="clack-glyph clack-active clack-filled"><use href="#clack-diamond"/></svg><div><span class="setup-question">Domain configuration</span><span class="setup-answer"><b>●</b> Recommended defaults <small>(zstd + gzip, indexing allowed, safe headers, rotated logs)</small><br><i>○</i> Customize…</span></div></div>
-                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>App ready at <strong>https://sub.example.com</strong></span></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>GitHub webhook created and tested</span></div>
+                            <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>Want to check it first? Run <code>shibumi-server add sub.example.com --dry-run</code>. It uses the same detection, prompts, port selection, and validation, then prints the app ID, checkout, webhook URL, secret variable, and Caddy upstream without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>
-                    <p>A real add prepares the checkout and asks sudo only when its constrained helper saves, validates, and reloads Caddy. GitHub setup stays on your project machine through <code>bun run ship</code>. Repeat the command for every app or domain.</p>
-                    <p>Automation can pass the repository as <code>github:owner/repo</code>, plus the checkout and port, as flags to skip the prompts. Domain-derived app IDs escape literal hyphens so dashed labels cannot collide with dots.</p>
+                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files and prints the exact next action. Resume with <code>bun run ship:setup</code>. No reinstall needed.</p>
+                    <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>
                 </div>
             </section>
 
@@ -133,7 +132,7 @@
                 <div class="section-copy">
                     <p>Self-hosted projects own a small ship script:</p>
                     <pre class="ship-command"><code>bun run ship</code></pre>
-                    <p>First run detects missing setup, explains what stays local, then opens the server flow through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates the webhook without printing or storing its secret.</p>
+                    <p>The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates and tests the webhook without printing or storing its secret.</p>
                     <p>Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
                     <p>Run <code>bun run ship:setup</code> whenever you want to review or change deployment setup. Existing project? <a href="/ship">Add the owned ship workflow</a>.</p>
                 </div>

@@ -1,6 +1,6 @@
-# Add an app
+# Add an app from the server
 
-Register one domain, GitHub repository, and branch at a time. Multiple domains may deploy different branches from the same repository.
+This server-operator path registers one domain, GitHub repository, and branch at a time. Recommended onboarding starts from your [local project](/docs/server/ship), which invokes the same registration through SSH and continues into GitHub setup.
 
 ## Before setup
 

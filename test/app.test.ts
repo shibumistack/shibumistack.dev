@@ -53,8 +53,8 @@ describe("routes", () => {
     const serverBody = await server.text();
     expect(serverBody).toContain('class="docs-clack"');
     expect(serverBody).toContain("Replaced container and passed health check");
-    expect(serverBody).toContain('class="docs-return"');
-    expect(serverBody).toContain('class="docs-clack docs-clack-collapsible"');
+    expect(serverBody).toContain("https://shibumistack.dev/install/ship.sh");
+    expect(serverBody).toContain("bun run ship:setup");
 
     const rollback = await app.request("/docs/server/history-rollback");
     const rollbackBody = await rollback.text();
@@ -165,15 +165,15 @@ describe("routes", () => {
     expect(htmlBody).toContain("What do these checks mean?");
     expect(htmlBody.match(/class="deploy-step clack-row/g)?.length).toBe(9);
     expect(htmlBody).toContain("Dogfooding with MCPVault");
-    expect(htmlBody).toContain("Next: <strong>shis add example.com</strong>");
-    expect(htmlBody).toContain("Adding apps");
+    expect(htmlBody).toContain("From project root: <strong>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</strong>");
+    expect(htmlBody).toContain("Connect from");
     expect(htmlBody).toContain("bun run ship");
     expect(htmlBody).toContain("shibumi-server.json");
     expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/server | bash"');
-    expect(htmlBody).toContain('"shis add sub.example.com"');
+    expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/ship.sh | sh"');
     expect(htmlBody.match(/aria-label="Replay terminal animation"/g)?.length).toBe(3);
     expect(htmlBody.match(/class="setup-step clack-row/g)?.length).toBe(12);
-    expect(htmlBody.match(/shis <span>\(shibumi-server\)<\/span>/g)?.length).toBe(3);
+    expect(htmlBody.match(/shis <span>\(shibumi-server\)<\/span>/g)?.length).toBe(2);
     expect(htmlBody).toContain('href="/server" aria-current="page"');
     expect(htmlBody).toContain('data-dialog="server-install-dialog"');
     expect(htmlBody).toContain("data-page-script");
@@ -192,10 +192,11 @@ describe("routes", () => {
     expect(body).toContain("Ship an existing project");
     expect(body).toContain("https://shibumistack.dev/install/ship");
     expect(body).toContain("bun run ship:setup");
+    expect(body).toContain("detects non-interactive execution");
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v19.ts")');
+    expect(body).toContain('fetch("/ship/v20.ts")');
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
@@ -204,7 +205,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v19.ts");
+    const source = await app.request("/ship/v20.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -232,30 +233,36 @@ describe("routes", () => {
     expect((await app.request("/ship/v16.ts")).status).toBe(200);
     expect((await app.request("/ship/v17.ts")).status).toBe(200);
     expect((await app.request("/ship/v18.ts")).status).toBe(200);
+    expect((await app.request("/ship/v19.ts")).status).toBe(200);
+    expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
     expect(latest.headers.get("cache-control")).toBe("no-cache");
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v17.ts");
-    const installer = await app.request("/ship/install-v17.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v18.ts");
+    const installer = await app.request("/ship/install-v18.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("Installer changes were rolled back");
+    expect(installerBody).toContain("Setup files were kept so setup can resume");
+    expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
+    expect(installerBody).toContain('"--setup", "--yes", ...process.argv.slice(2)');
     expect((await app.request("/ship/install-v1.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v2.ts")).status).toBe(200);
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v10.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v10.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v11.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v11.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
-    expect(await bootstrap.text()).toContain("ship/install-v17.ts");
+    const bootstrapBody = await bootstrap.text();
+    expect(bootstrapBody).toContain("ship/install-v18.ts");
+    expect(bootstrapBody).toContain('bun "$temporary" "$@"');
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v2.sh")).status).toBe(200);
   });

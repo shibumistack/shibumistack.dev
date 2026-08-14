@@ -47,4 +47,4 @@ shis --version
 systemctl --user status shibumi-server
 ```
 
-Fresh installation has no app yet. Continue with [Add an app](/docs/server/add-app).
+Fresh installation has no app yet. From your local project root, continue with [Connect project to server](/docs/server/ship). Local setup registers the app through SSH. [`shis add`](/docs/server/add-app) remains available for server operators and automation.

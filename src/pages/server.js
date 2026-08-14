@@ -223,5 +223,5 @@
 
   animateDeploy();
   animatePromptTerminal(document.querySelector("[data-setup-cli]"), "curl -fsSL https://shibumistack.dev/install/server | bash");
-  animatePromptTerminal(document.querySelector("[data-app-cli]"), "shis add sub.example.com");
+  animatePromptTerminal(document.querySelector("[data-app-cli]"), "curl -fsSL https://shibumistack.dev/install/ship.sh | sh");
 })();

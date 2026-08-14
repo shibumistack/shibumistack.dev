@@ -4,8 +4,8 @@
                     <h1>Own your<br><span class="accent-word">ship.</span></h1>
                 </div>
                 <div class="ship-intro">
-                    <p class="dek">Connect any Bun project to shibumi-server with one small script that lives in your repository.</p>
-                    <p>Projects created by Shibumi already include these files. For an existing project, add the same owned source once, review it, and commit it.</p>
+                    <p class="dek">Connect any Bun project to shibumi-server from your local project root.</p>
+                    <p>One installer handles server registration through SSH, GitHub webhook setup, and owned project source. You do not need to add the app from a server shell first.</p>
                     <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>GitHub CLI</span><span>SSH</span></div>
                 </div>
             </section>
@@ -17,7 +17,8 @@
                     <p>Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.</p>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
                     <p>The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
-                    <p>Setup suggests the domain from your package name or Compose <code>SITE_URL</code> and registers your current branch. Use your normal <code>user@server</code> target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.</p>
+                    <p>Setup suggests the domain from your package name or Compose <code>SITE_URL</code>, asks for your normal <code>user@server</code> target or SSH alias, and registers the current branch. It installs or upgrades <code>shibumi-server</code> through confirmed SSH when needed. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.</p>
+                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files. Complete the printed action, then resume with <code>bun run ship:setup</code>. No reinstall needed.</p>
                     <p><strong>Cloudflare:</strong> For proxied domains, set SSL/TLS encryption mode to <strong>Full (strict)</strong>. Flexible mode sends HTTP to Caddy, causing an HTTPS redirect loop. GitHub reports <code>stopped after 10 redirects</code>, and webhook setup cannot finish.</p>
                 </div>
             </section>
@@ -57,6 +58,7 @@
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code>bun run ship</code></pre>
                     <p>Ship requires a clean tree on the configured branch. It runs your project test and check scripts, verifies origin state, pushes one commit, then follows deployment status over SSH.</p>
                     <p>Existing domains keep their current Caddy upstream until the first Shibumi deployment passes health checks and you approve cutover.</p>
+                    <p>Agents use the same <code>bun run ship</code> command. Ship detects non-interactive execution, accepts routine confirmations, and tells the agent exactly what to ask when user input is required.</p>
                 </div>
             </section>
 
