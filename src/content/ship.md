@@ -16,6 +16,8 @@ The installer validates your Git project, adds owned ship source and package com
 
 Setup suggests the domain from your package name or Compose `SITE_URL` and registers your current branch. Use your normal `user@server` target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
 
+**Cloudflare:** For proxied domains, set SSL/TLS encryption mode to **Full (strict)**. Flexible mode sends HTTP to Caddy, causing an HTTPS redirect loop. GitHub reports `stopped after 10 redirects`, and webhook setup cannot finish.
+
 ## 2. Review owned source
 
 Your project receives `scripts/ship.ts` and these package keys:

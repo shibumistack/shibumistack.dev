@@ -18,6 +18,7 @@
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
                     <p>The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
                     <p>Setup suggests the domain from your package name or Compose <code>SITE_URL</code> and registers your current branch. Use your normal <code>user@server</code> target or SSH alias. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.</p>
+                    <p><strong>Cloudflare:</strong> For proxied domains, set SSL/TLS encryption mode to <strong>Full (strict)</strong>. Flexible mode sends HTTP to Caddy, causing an HTTPS redirect loop. GitHub reports <code>stopped after 10 redirects</code>, and webhook setup cannot finish.</p>
                 </div>
             </section>
 
