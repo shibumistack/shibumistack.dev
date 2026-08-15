@@ -68,8 +68,13 @@ describe("generateDeployConfig", () => {
     expect(existsSync(join(tempDir, "scripts", "ship.ts"))).toBe(true);
     const packageJson = JSON.parse(readFileSync(join(tempDir, "package.json"), "utf8"));
     expect(packageJson.scripts.ship).toBe("bun scripts/ship.ts");
+    expect(packageJson.scripts["ship:logs"]).toBe("bun scripts/ship.ts --logs");
+    expect(packageJson.scripts.dev).toBe("bun scripts/ship.ts --dev");
+    expect(packageJson.scripts["dev:app"]).toBe("bun --watch src/server.ts");
     expect(packageJson.devDependencies["@clack/prompts"]).toBe("^0.7.0");
-    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("${SHIBUMI_PORT:-3000}:3000");
+    expect(readFileSync(join(tempDir, "src", "server.ts"), "utf8")).toContain("Bun.env.PORT ?? 3000");
+    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
+    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("memory: 512M");
   });
 
   it("cloudflare: wrangler.toml + worker entry", () => {

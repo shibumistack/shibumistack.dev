@@ -77,7 +77,7 @@ const docs: DocPage[] = [
   { path: "server/add-app", title: "Add an app", description: "Register a domain, repository, checkout, and Caddy route.", section: "Server", source: "src/content/docs/server/add-app.md" },
   { path: "server/ship", title: "Connect project", description: "Connect project-owned ship tooling to shibumi-server.", section: "Server", source: "src/content/docs/server/ship.md" },
   { path: "server/deployments", title: "Deployments", description: "Understand webhook checks, resource guards, health checks, and cutover.", section: "Server", source: "src/content/docs/server/deployments.md" },
-  { path: "server/history-rollback", title: "History and rollback", description: "Inspect verified deployments and rebuild an earlier Git commit.", section: "Server", source: "src/content/docs/server/history-rollback.md" },
+  { path: "server/history-rollback", title: "History and rollback", description: "Inspect verified deployments and restore the previous retained image.", section: "Server", source: "src/content/docs/server/history-rollback.md" },
   { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
   { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
   { path: "cli", title: "CLI preview", description: "Planned create-shibumi and extension command surface.", section: "CLI", source: "src/content/docs/cli/index.md" },
@@ -721,9 +721,9 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v18.ts", 302));
-app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v11.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v20.ts"), 200, {
+app.get("/install/ship", (c) => c.redirect("/ship/install-v19.ts", 302));
+app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v12.sh", 302));
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v21.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",

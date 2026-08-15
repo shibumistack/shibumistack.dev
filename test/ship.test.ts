@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { appIdForDomain, canFollowDeployment, composeFileFromTracked, domainFromProject, isAgentExecution, matchingWebhook, missingComposeMessage, parseShipArgs, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -11,6 +14,7 @@ const config = {
   branch: "main",
   webhookUrl: "https://example.com/hooks/github/example-com",
   service: "app",
+  port: 9100,
   healthPath: "/healthz",
   cutoverRequired: false,
 } as const;
@@ -26,12 +30,31 @@ describe("ship configuration", () => {
     expect(parseShipArgs(["--", "--yes", "--server", "deploy@example-vps", "--domain", "app.example.com"])).toEqual({
       setup: false,
       update: false,
+      rollback: false,
+      logs: false,
+      dev: false,
       yes: true,
       server: "deploy@example-vps",
       domain: "app.example.com",
     });
+    expect(parseShipArgs(["--rollback", "-y"])).toMatchObject({ rollback: true, yes: true });
+    expect(parseShipArgs(["--logs"])).toMatchObject({ logs: true });
+    expect(parseShipArgs(["--dev"])).toMatchObject({ dev: true });
     expect(() => parseShipArgs(["--yes", "--server"])).toThrow("--server requires a value");
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
+    expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
+  });
+
+  test("formats ship duration and resolves local client config", () => {
+    expect(formatDuration(1_200)).toBe("1 second");
+    expect(formatDuration(61_000)).toBe("1 minute 1 second");
+    expect(clientSettingsPath({}, "/home/user")).toBe("/home/user/.config/shibumi/config.json");
+    expect(clientSettingsPath({ XDG_CONFIG_HOME: "/tmp/config" }, "/home/user")).toBe("/tmp/config/shibumi/config.json");
+    expect(latestDeployDuration([
+      { kind: "webhook", state: "succeeded", durationMs: 42_000 },
+      { kind: "rollback", state: "succeeded", durationMs: 3_000 },
+      { kind: "webhook", state: "failed", durationMs: 8_000 },
+    ])).toBe(42_000);
   });
 
   test("derives collision-free app IDs and GitHub repositories", () => {
@@ -53,6 +76,39 @@ describe("ship configuration", () => {
     expect(matchingWebhook([{ ...hook, last_response: { code: 200 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
     expect(matchingWebhook([{ ...hook, last_response: { code: 0 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
     expect(matchingWebhook([hook], "https://example.com/other")).toBeUndefined();
+  });
+
+  test("generates bounded Bun deployment files", () => {
+    const built = deploymentFileTemplates(true);
+    expect(built.Dockerfile).toContain("RUN bun run build");
+    expect(built.Dockerfile).toContain('CMD ["bun", "run", "start"]');
+    expect(built["compose.yaml"]).toContain('127.0.0.1:${SHIBUMI_PORT:-9001}:3000');
+    expect(built["compose.yaml"]).toContain('memory: 512M');
+    expect(built[".dockerignore"]).toContain(".env.*");
+    expect(deploymentFileTemplates(false).Dockerfile).not.toContain("RUN bun run build");
+  });
+
+  test("generates missing deployment files before remote setup", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "shibumi-compose-"));
+    try {
+      await Bun.write(join(directory, "package.json"), JSON.stringify({ scripts: { build: "bun build ./src.ts --outdir dist", start: "bun dist/src.js" } }));
+      await Bun.write(join(directory, "src.ts"), "Bun.serve({ port: Number(Bun.env.PORT ?? 3000), fetch: () => new Response('ok') });\n");
+      for (const args of [["git", "init", "-q"], ["git", "add", "."], ["git", "-c", "user.name=Test", "-c", "user.email=test@example.com", "commit", "-qm", "initial"]]) {
+        expect(Bun.spawnSync(args, { cwd: directory }).exitCode).toBe(0);
+      }
+      const result = Bun.spawnSync([process.execPath, resolve(import.meta.dir, "../scripts/ship.ts"), "--setup", "-y"], {
+        cwd: directory,
+        env: { ...process.env, PI_CODING_AGENT: "" },
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      expect(result.exitCode).toBe(0);
+      expect(await readFile(join(directory, "Dockerfile"), "utf8")).toContain("RUN bun run build");
+      expect(await readFile(join(directory, "compose.yaml"), "utf8")).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
+      expect(await readFile(join(directory, ".dockerignore"), "utf8")).toContain(".env.*");
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
   });
 
   test("selects one tracked root or nested Compose file", () => {

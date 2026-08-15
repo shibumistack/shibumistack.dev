@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, existsSync } from "fs";
 import { join, extname } from "path";
 
 const DIST = join(import.meta.dir, "../dist");
-const PORT = 3000;
+const PORT = Number(Bun.env.PORT ?? 3000);
 
 const MIME: Record<string, string> = {
   ".html": "text/html",

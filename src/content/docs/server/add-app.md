@@ -20,7 +20,7 @@ Dry run follows real DNS detection, prompts, port selection, checkout validation
 shis add example.com
 ```
 
-Interactive setup asks for repository and checkout, assigns the first free port from `9100`, and previews Caddy choices. Public repositories may be cloned.
+Interactive setup asks for repository and checkout, assigns the first free port above `9000`, and previews Caddy choices. Public repositories may be cloned.
 
 Private repositories need non-interactive read access for the server deployment user. GitHub CLI can provide HTTPS credentials:
 

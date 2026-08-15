@@ -41,11 +41,12 @@ shis add <domain> \
 ```text
 shis status <app-id> [--commit <full-sha>] [--json]
 shis history <app-id> [--json]
-shis rollback <app-id> <sha> [--yes]
+shis logs <app-id>
+shis rollback <app-id> [--yes]
 shis caddy-cutover <app-id>
 ```
 
-Rollback SHA accepts 7 to 40 lowercase hexadecimal characters and must resolve uniquely inside configured branch history.
+Rollback restores the one previous successful image retained for the app and verifies health without rebuilding.
 
 ## Client handoff
 

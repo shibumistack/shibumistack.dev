@@ -91,16 +91,21 @@ CMD ["bun", "start"]
   app:
     build: .
     ports:
-      - "\${SHIBUMI_PORT:-3000}:3000"
+      - "127.0.0.1:\${SHIBUMI_PORT:-9001}:3000"
     volumes:
       - ./data:/app/data
-    restart: always
+    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -q -T 5 -O /dev/null http://127.0.0.1:3000/"]
       interval: 60s
       timeout: 10s
       retries: 3
       start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 `
       );
       mkdirSync(join(targetDir, "scripts"), { recursive: true });
@@ -110,11 +115,14 @@ CMD ["bun", "start"]
         scripts?: Record<string, string>;
         devDependencies?: Record<string, string>;
       };
+      const currentDev = packageJson.scripts?.dev;
       packageJson.scripts = {
         ...packageJson.scripts,
+        ...(currentDev ? { "dev:app": currentDev, dev: "bun scripts/ship.ts --dev" } : {}),
         ship: "bun scripts/ship.ts",
         "ship:setup": "bun scripts/ship.ts --setup",
         "ship:update": "bun scripts/ship.ts --update",
+        "ship:logs": "bun scripts/ship.ts --logs",
       };
       packageJson.devDependencies = { ...packageJson.devDependencies, "@clack/prompts": "^0.7.0" };
       writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);

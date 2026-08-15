@@ -1,6 +1,6 @@
 # History and rollback
 
-Inspect recent verified deployments or rebuild an earlier commit from configured branch history.
+Inspect recent verified deployments or restore the previous retained image.
 
 ## Recent history
 
@@ -23,20 +23,18 @@ Each app keeps latest 100 records in mode-`0600` JSONL. Records contain timestam
 
 History never stores webhook payloads, signatures, secrets, or request headers.
 
-## Roll back by SHA
+## Restore previous image
 
 ```sh
-shis rollback example-com 4e5f322
+shis rollback example-com
 ```
 
-SHA may contain 7 to 40 lowercase hexadecimal characters. Git must resolve prefix uniquely. Shibumi fetches configured branch, resolves full commit, and requires commit to be its ancestor. Unknown, ambiguous, or unrelated commits fail before deployment.
-
-Rollback runs normal resource checks, Compose validation, build, optional tests, startup, health checks, status updates, and history recording. It rebuilds source rather than trusting mutable tags.
+Shibumi selects the one previous successful image retained for the app, retags it under the Compose image name, recreates the service without building, and verifies health. Successful rollback rotates retention, making the replaced image available for the next rollback. Failed startup or health restores the current image.
 
 Use `--yes` only for confirmed automation:
 
 ```sh
-shis rollback example-com 4e5f322 --yes
+shis rollback example-com --yes
 ```
 
 Receiver pauses during rollback and restarts afterward, preventing webhook deployment from racing operator action.

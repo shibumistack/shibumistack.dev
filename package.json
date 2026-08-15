@@ -1,6 +1,6 @@
 {
   "name": "shibumistack.dev",
-  "shibumiServerVersion": "0.6.10",
+  "shibumiServerVersion": "0.6.12",
   "scripts": {
     "dev": "bun --hot serve.ts",
     "start": "bun run serve.ts",

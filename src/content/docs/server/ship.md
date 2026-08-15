@@ -12,17 +12,19 @@ curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 
 Installer refuses to run outside Git root and never overwrites an existing owned `scripts/ship.ts` change. It can install or upgrade `shibumi-server`, register the app, and configure GitHub through confirmed SSH. You do not need to run `shis add` first.
 
+When no tracked Compose file exists, setup offers to generate `Dockerfile`, `compose.yaml`, and `.dockerignore` from standard Bun package scripts. Review, commit, and push those files, then resume with `bun run ship:setup`. Existing files are never overwritten.
+
 ## First setup
 
 ```sh
 bun run ship:setup
 ```
 
-Use the same `user@server` target or SSH alias you already use. Password login works: enter it once per run, then Shibumi reuses a temporary SSH connection. SSH target remains in local `.git/config`; it is not committed. Setup calls explicit `~/.local/bin/shibumi-server` remotely, exports sanitized project config, and uses GitHub CLI to create and test the webhook while keeping its secret in memory.
+Use the same `user@server` target or SSH alias you already use. Password login works: enter it once per run, then Shibumi reuses a temporary SSH connection. SSH targets stay in mode-`0600` `~/.config/shibumi/config.json` (or `$XDG_CONFIG_HOME/shibumi/config.json`); they are not committed. New projects reuse the only saved server or show a picker when several are saved. Setup calls explicit `~/.local/bin/shibumi-server` remotely, exports sanitized project config, and uses GitHub CLI to create and test the webhook while keeping its secret in memory.
 
 If DNS or webhook delivery is not ready, installer keeps the owned setup files. Complete the printed action, then run `bun run ship:setup` again.
 
-Committed `shibumi-server.json` contains app identity, repository, branch, webhook URL, service, health path, and confirmed server hostname. It excludes secrets, checkout paths, SSH users, aliases, and credentials.
+Committed `shibumi-server.json` contains app identity, repository, branch, webhook URL, service, remote app port, health path, and confirmed server hostname. It excludes secrets, checkout paths, SSH users, aliases, and credentials.
 
 ## Ship
 
