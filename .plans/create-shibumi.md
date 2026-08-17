@@ -213,7 +213,8 @@ Native mode requires bounded archive extraction, exact commit identity, atomic s
 
 ### Phase 3: provider bakeoff
 
-- add static build target to `shibumistack.dev`
+- [x] add deterministic static `dist/` build target to `shibumistack.dev`
+- [x] package `dist/` in a scratch image with a 1.3 MiB BusyBox static runtime for current Shibumi rollback
 - deploy same artifact to Netlify, Cloudflare, and Vercel preview domains
 - record results in this plan
 - select default and minimum adapter contract

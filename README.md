@@ -21,10 +21,11 @@ Open <http://localhost:9001>.
 ## Useful commands
 
 ```sh
-bun start        # run server
-bun test         # run route tests
+bun start        # run dynamic development server
+bun run build    # render complete static site to dist/
+bun test         # run route and static artifact tests
 bun check        # TypeScript check
-bun ship         # build locally, upload, push if needed, and deploy
+bun ship         # build static image, upload, push if needed, and deploy
 bun ship -y      # prompt-free agent run; Bun needs no -- separator
 bun ship:setup   # review or change deploy setup without pushing
 bun ship:update  # update only owned ship client source
@@ -39,6 +40,7 @@ bun ship:update  # update only owned ship client source
 - `src/content/` contains Markdown alternates and Markdown-only pages.
 - `public/main.js` is the shared browser entrypoint.
 - Static assets live in `public/`.
+- `bun run build` renders every known route and copies assets to `dist/`.
 
 ## Routing
 
@@ -52,9 +54,13 @@ bun ship:update  # update only owned ship client source
 - Direct Markdown links such as `/docs.md` and `/README.md` are served inline as
   plain text.
 
+## Deployment
+
+Production runs a scratch container containing only a static BusyBox binary and generated `dist/`. Host Caddy owns HTTPS, compression, headers, and public routing. Shibumi retains image identity, health checks, and rollback without shipping Bun or application dependencies in the runtime image.
+
 ## Stack
 
-- **Bun**: runtime, test runner, package manager
+- **Bun**: development runtime, build tool, test runner, package manager
 - **Hono**: routes, middleware, and static serving
 - **Zod**: planned validation at input boundaries
 - **Drizzle**: planned schema, queries, and migrations

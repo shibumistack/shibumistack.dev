@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import type { Context } from "hono";
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { readdir, stat } from "node:fs/promises";
 import { YAML } from "bun";
 import packageJson from "../package.json";
@@ -62,12 +64,11 @@ const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
 const iconCache = new Map<string, string>();
 const namesCache = new Map<string, Set<string>>();
 
-const assetVersion = String(
-  Math.max(
-    Bun.file("public/shared.css").lastModified,
-    Bun.file("public/main.js").lastModified,
-  ),
-);
+const assetVersion = createHash("sha256")
+  .update(readFileSync("public/shared.css"))
+  .update(readFileSync("public/main.js"))
+  .digest("hex")
+  .slice(0, 12);
 
 const docs: DocPage[] = [
   { path: "", title: "Shibumi docs", description: "Build apps that keep your zen.", section: "Start", source: "src/content/docs/index.md" },
@@ -393,7 +394,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
     canonical: `https://shibumistack.dev${meta?.path ?? files.routePath}`,
     "asset-version": assetVersion,
   });
-  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
 
   layout = insert(layout, "meta", await metaTags(meta));
@@ -636,7 +637,7 @@ async function renderDocs(path: string): Promise<string | undefined> {
   layout = insert(layout, "page-style", await pageStyle("src/pages/docs/index.css"));
   layout = insert(layout, "nav", await nav("docs"));
   layout = insert(layout, "page", body);
-  layout = insert(layout, "footer", await part("footer", { year: String(new Date().getFullYear()) }) + await part("install-dialog"));
+  layout = insert(layout, "footer", await part("footer", { year: String(packageJson.siteYear) }) + await part("install-dialog"));
   layout = insert(layout, "page-script", await pageScript("src/pages/docs/index.js"));
   assertNoInserts(layout);
   return layout;
@@ -660,7 +661,7 @@ async function renderBlogList(): Promise<string> {
     canonical: "https://shibumistack.dev/blog",
     "asset-version": assetVersion,
   });
-  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
 
   layout = insert(layout, "meta", await metaTags({ title: "Blog: Shibumi Stack", description: "Notes on building calm, durable web apps.", path: "/blog" }));
@@ -672,6 +673,17 @@ async function renderBlogList(): Promise<string> {
 
   assertNoInserts(layout);
   return layout;
+}
+
+export async function staticHtmlRoutes(): Promise<string[]> {
+  const routes = new Set([
+    ...Object.values(pageMeta).map(({ path }) => path),
+    "/extensions",
+    "/blog",
+    ...docs.map(({ path }) => path ? `/docs/${path}` : "/docs"),
+    ...(await discoverBlogPosts()).map(({ slug }) => `/blog/${slug}`),
+  ]);
+  return [...routes].sort((left, right) => left === "/" ? -1 : right === "/" ? 1 : left.localeCompare(right));
 }
 
 async function renderBlogPost(slug: string): Promise<string | undefined> {
@@ -702,7 +714,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
     canonical: `https://shibumistack.dev/blog/${slug}`,
     "asset-version": assetVersion,
   });
-  const footer = await part("footer", { year: String(new Date().getFullYear()) });
+  const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
 
   layout = insert(

@@ -1,10 +1,12 @@
 {
   "name": "shibumistack.dev",
   "shibumiServerVersion": "0.7.11",
+  "siteYear": 2026,
   "scripts": {
     "dev": "bun --hot serve.ts",
     "start": "bun run serve.ts",
-    "test": "bun test test/app.test.ts",
+    "build": "bun scripts/build.ts",
+    "test": "bun test test/app.test.ts test/static.test.ts",
     "check": "tsc --noEmit",
     "sync:server": "bun scripts/sync-server-version.ts",
     "ship": "bun scripts/ship.ts",

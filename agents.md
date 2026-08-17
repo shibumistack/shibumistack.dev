@@ -14,14 +14,14 @@ repository.
 ## Stack
 
 - Runtime and package manager: Bun.
-- HTTP app: Hono in `src/app.ts`.
-- Static serving: `hono/bun` `serveStatic` from `public/`.
+- Development renderer: Hono in `src/app.ts`.
+- Static build: `scripts/build.ts` renders known routes and copies `public/` to `dist/`.
 - Templates: `src/layout.html`, page bodies in `src/pages/`, and fragments in
   `src/parts/`.
 - Shared assets: `public/`.
 - Markdown alternates and Markdown-only page content: `src/content/`.
 - Tests: Bun test runner in `test/app.test.ts`.
-- Deployment: Bun server on port `9001`, with `compose.yaml` and a Podman/Docker-compatible container.
+- Deployment: prebuilt scratch image with BusyBox `httpd` serving `dist/` on container port `3000`; host Caddy routes loopback traffic.
 
 Planned stack pieces in the product docs are Bun, Hono, Zod, Drizzle, SQLite,
 Alpine, and Nanostores. This site currently uses Bun and Hono directly; SQLite,
@@ -32,14 +32,15 @@ not active dependencies here.
 
 ```sh
 bun install
-bun dev      # hot reload server on http://localhost:9001
-bun start    # run server
-bun test     # route tests
-bun check    # TypeScript check without emitting files
-bun ship     # set up when needed, check, push, and follow deployment
+bun dev        # hot reload server on http://localhost:9001
+bun start      # run dynamic development server
+bun run build  # render deterministic static output to dist/
+bun test       # route and artifact tests
+bun check      # TypeScript check without emitting files
+bun ship       # build static image, upload, push, and follow deployment
 ```
 
-There is no lint or build script at the moment.
+There is no lint script.
 
 ## Routing
 
@@ -48,7 +49,7 @@ There is no lint or build script at the moment.
 - Port: `9001`.
 - Fetch handler: `app.fetch` from `src/app.ts`.
 
-`src/app.ts` owns all dynamic behavior:
+`src/app.ts` owns rendering behavior used by development, tests, and the static build:
 
 - `/` maps to the `index` page.
 - One-segment lowercase routes such as `/brand` and `/building` are resolved
@@ -64,6 +65,8 @@ There is no lint or build script at the moment.
   resolve from the repo root.
 - Unknown routes render `src/pages/404.html` with status `404`.
 - Remaining paths are served statically from `public/`.
+
+Production uses generated `dist/`. HTML routes use directory `index.html` files, direct Markdown files remain available, `httpd.conf` defines text MIME types and custom 404 handling, and installer endpoints contain executable static snapshots.
 
 The generic resolver intentionally supports only `/`, one safe route segment,
 optional folder-style `index` files, and direct top-level `.md` files. Docs use
@@ -204,7 +207,7 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 - `wantsMarkdown()` is intentionally conservative: Markdown is served only when
   `text/markdown` has positive quality and is at least as preferred as
   `text/html`.
-- The footer year is generated at request time from `new Date().getFullYear()`.
+- The footer year comes from `package.json` so repeated static builds remain byte-identical.
 - Brand assets under `public/brand/` include binary images and SVGs. Do not
   regenerate or modify them casually when making content or route changes.
 - `.DS_Store` files are present in the tree; avoid touching unrelated metadata
