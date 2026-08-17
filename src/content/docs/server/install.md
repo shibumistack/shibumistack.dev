@@ -48,3 +48,13 @@ systemctl --user status shibumi-server
 ```
 
 Fresh installation has no app yet. From your local project root, continue with [Connect project to server](/docs/server/ship). Local setup registers the app through SSH. [`shis add`](/docs/server/add-app) remains available for server operators and automation.
+
+## Update
+
+User-run `shis` commands check npm for a newer stable release with a short timeout and suggest:
+
+```sh
+shis update
+```
+
+Update validates one stable version, installs that exact release, and reuses idempotent initialization. Machine config, secrets, app checkouts, and running apps survive. Registry timeouts or errors never block commands, and `shis serve` performs no update check.

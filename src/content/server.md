@@ -1,6 +1,6 @@
 # shibumi-server
 
-`shibumi-server` is a small Bun service that deploys your app to your VPS or homelab server.
+`shibumi-server` runs verified application images on your VPS or homelab server. Builds happen on your computer.
 
 No dashboard or cloud deploy service.
 
@@ -10,15 +10,12 @@ No dashboard or cloud deploy service.
 
 ```clack
 bun ship
-Built linux/arm64 image from committed code
-Uploaded and verified image through SSH
-Received GitHub push
-Verified webhook, repo, branch, and commit
-Checked memory and disk
-Validated Compose configuration
-Replaced container and passed health check
-Kept active and rollback images, cleaned older ones
+1 commit ready to push
+test passed
+check passed
+Built and uploaded a1b2c3d (45 MiB, 7818747847bb)
 Deployment complete
+Shipped in 15 seconds
 https://example.com
 ```
 
@@ -34,7 +31,7 @@ Every deploy runs the same checks. You do not need to write tests for them.
 2. Check free memory and disk space.
 3. Validate the Compose configuration.
 4. Verify the uploaded image and run any optional app tests in a temporary container.
-5. Replace the old container, check the new one's local health endpoint, keep the previous two successful images for rollbacks, and remove older images.
+5. Replace the old container, check the new one's local health endpoint, keep the previous successful image for rollback, and remove older images.
 
 App tests are optional. Add a command such as `bun test` only when the project has its own test suite.
 
@@ -60,7 +57,7 @@ The recommended app flow starts from your local project and installs the server 
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-It stages the resolved release with lockfile-pinned production dependencies, then adds the `shibumi-server` command to `~/.local/bin`. The service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest `shibumi-server update`. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.
+It stages the resolved release with lockfile-pinned production dependencies, then installs compatible `shis` and `shibumi-server` commands in `~/.local/bin`. The service keeps using that exact release. User-run commands check npm for a newer stable release and suggest `shis update`; `serve` performs no registry check. Update installs one exact version while preserving config and secrets. Timeouts and registry failures never block local work.
 
 `shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
 
@@ -82,7 +79,7 @@ bun ship:setup
 
 `shis add sub.example.com` remains available for server operators and automation. Use `--dry-run` to follow the same detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add ends with the exact local installer command instead of sending you through a webpage.
 
-## Push with one command
+## Ship with one command
 
 Self-hosted projects own a small ship script:
 
@@ -92,7 +89,11 @@ bun ship
 
 The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates and tests the webhook without printing or storing its secret.
 
-Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
+Later runs check Git state, run project tests and type checks, create a build context from committed `HEAD`, and build for the server's Linux platform on your computer. Ship labels the image with app, repository, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git and follow deployment status over SSH. The server resolves the commit tree independently and rejects any mismatched image.
+
+Docker layer cache stays enabled. `bun ship --rebuild` performs a no-cache build. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
+
+Before each deployment, Ship checks whether reviewed client source is newer. It can run that immutable version immediately, then saves it to tracked `scripts/ship.ts` only after deployment succeeds. Network errors keep the current version and owned local edits are never overwritten.
 
 Run `bun ship:setup` whenever you want to review or change deployment setup. For an existing project, [add the owned ship workflow](/ship.md).
 

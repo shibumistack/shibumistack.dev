@@ -52,9 +52,20 @@ describe("routes", () => {
     const server = await app.request("/docs/server");
     const serverBody = await server.text();
     expect(serverBody).toContain('class="docs-clack"');
-    expect(serverBody).toContain("Replaced container and passed health check");
+    expect(serverBody).toContain("Built and uploaded a1b2c3d");
     expect(serverBody).toContain("https://shibumistack.dev/install/ship.sh");
     expect(serverBody).toContain("bun ship:setup");
+
+    const deployments = await app.request("/docs/server/deployments");
+    const deploymentsBody = await deployments.text();
+    expect(deploymentsBody).toContain("Client pipeline");
+    expect(deploymentsBody).toContain("Upload happens before Git push");
+    expect(deploymentsBody).toContain("Prebuilt available memory: 512 MiB");
+
+    const ship = await app.request("/docs/server/ship");
+    const shipBody = await ship.text();
+    expect(shipBody).toContain("checks mutable latest pointer against immutable reviewed source");
+    expect(shipBody).toContain("bun ship --rebuild");
 
     const rollback = await app.request("/docs/server/history-rollback");
     const rollbackBody = await rollback.text();
@@ -163,7 +174,11 @@ describe("routes", () => {
     expect(htmlBody).toContain("Bad images don't go live");
     expect(htmlBody).toContain("rootless Podman");
     expect(htmlBody).toContain("What do these checks mean?");
-    expect(htmlBody.match(/class="deploy-step clack-row/g)?.length).toBe(10);
+    expect(htmlBody.match(/class="deploy-step clack-row/g)?.length).toBe(7);
+    expect(htmlBody).toContain("Build on your computer");
+    expect(htmlBody).toContain("Built and uploaded a1b2c3d");
+    expect(htmlBody).toContain("shis update");
+    expect(htmlBody).toContain("checks for reviewed client source");
     expect(htmlBody).toContain("Dogfooding with MCPVault");
     expect(htmlBody).toContain("From project root: <strong>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</strong>");
     expect(htmlBody).toContain("Connect from");
@@ -185,7 +200,10 @@ describe("routes", () => {
       headers: { accept: "text/markdown" },
     });
     expect(markdownRes.status).toBe(200);
-    expect(await markdownRes.text()).toContain("# shibumi-server");
+    const markdownBody = await markdownRes.text();
+    expect(markdownBody).toContain("# shibumi-server");
+    expect(markdownBody).toContain("build for the server's Linux platform on your computer");
+    expect(markdownBody).toContain("reviewed client source");
   });
 
   test("serves existing-project ship guidance and versioned source", async () => {

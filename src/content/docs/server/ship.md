@@ -32,9 +32,11 @@ Committed `shibumi-server.json` contains app identity, repository, branch, webho
 bun ship
 ```
 
-Ship checks Git state, runs configured project checks, pushes when commits are ahead, then polls deployment status over existing SSH access. If `HEAD` is already pushed, Shibumi asks the server to redeploy that exact commit. Push stays normal Git; Shibumi does not need GitHub deployment tokens or a public status endpoint.
+Ship checks Git state and runs configured project checks. It creates build context from committed `HEAD`, builds for server's Linux platform, labels image with repository, app, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git and poll deployment status. If `HEAD` is already pushed, Shibumi uploads and redeploys that exact commit. Push stays normal Git; Shibumi needs no GitHub deployment token or public status endpoint.
 
-Agents use the same `bun ship` command. Ship detects non-interactive execution and accepts routine confirmations. Missing SSH, GitHub, domain, server registration, or cutover prerequisites produce a direct request for the agent to ask the user.
+Docker layer cache stays enabled. Use `bun ship --rebuild` for a no-cache build. Git submodules are currently refused because `git archive` cannot prove their nested content identity.
+
+Agents use `bun ship -y` for prompt-free routine confirmation. Clean-tree checks, project checks, image verification, and failures remain active. Missing SSH, GitHub, domain, server registration, or cutover prerequisites produce a direct request for agent to ask user.
 
 ## Change setup
 
@@ -46,8 +48,12 @@ Run setup again to refresh project configuration and webhook setup. Change SSH t
 
 ## Update client
 
+Before each normal deployment, Ship checks mutable latest pointer against immutable reviewed source. When newer source exists, it offers to run that version immediately. After successful deployment it updates tracked `scripts/ship.ts`, leaving change unstaged for review and commit. `bun ship -y` accepts update automatically.
+
+Network failures keep current client. Unknown local edits are never overwritten. Server setup, webhook, SSH target, and `shibumi-server.json` stay unchanged.
+
+Manual update remains available:
+
 ```sh
 bun ship:update
 ```
-
-Update only `scripts/ship.ts`. Server setup, webhook, SSH target, and `shibumi-server.json` stay unchanged. Unknown local edits are never overwritten.

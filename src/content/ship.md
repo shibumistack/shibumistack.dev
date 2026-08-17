@@ -72,7 +72,7 @@ Before tests or builds, Ship checks the mutable latest pointer against its own i
 
 Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git and follow deployment status. When `HEAD` is already pushed, it uploads and redeploys that exact commit.
 
-Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. A generic Compose override labels every image with repository, app ID, full revision, and Git source tree. The server independently resolves the webhook commit tree and verifies every identity label, tag, and platform before starting with `--no-build`.
+Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. A generic Compose override labels every image with repository, app ID, full revision, Git source tree, and platform identity. The server independently resolves the webhook commit tree and verifies every identity label, tag, and platform before starting with `--no-build`.
 
 Docker's content-addressed cache stays enabled by default. To diagnose mutable build inputs or suspected cache trouble, force every Dockerfile step to run again:
 

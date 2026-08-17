@@ -1,6 +1,20 @@
 # Deployments
 
-A signed GitHub push starts one deterministic deployment for one app.
+`bun ship` builds one exact committed image locally. A signed GitHub push then starts one deterministic server deployment for one app.
+
+## Client pipeline
+
+1. Require a clean tree on configured branch.
+2. Fetch Git and reject a behind or diverged branch.
+3. Run project tests and type checks.
+4. Create build context from committed `HEAD` with `git archive`.
+5. Build for server's Linux platform with Docker layer cache.
+6. Label image with app ID, repository, full commit, Git source tree, and platform.
+7. Upload exact commit-tagged image through SSH.
+8. Push Git, or request exact-commit redeploy when already pushed.
+9. Follow server status over SSH.
+
+Upload happens before Git push, so webhook cannot race a missing image. `bun ship --rebuild` passes `--no-cache` while retaining exact-commit identity.
 
 ## Request checks
 
@@ -8,30 +22,31 @@ Before reading full payload, receiver checks route, method, content type, GitHub
 
 Duplicate verified deliveries are acknowledged without deploying twice. One deployment may run per app; another receives `409 Conflict` instead of entering a hidden queue.
 
-## Pipeline
+## Server pipeline
 
 1. Check free memory and checkout filesystem space.
-2. Require a clean managed checkout.
+2. Require clean managed checkout.
 3. Fetch configured branch and verify exact webhook SHA.
-4. Reset checkout to that commit.
+4. Resolve Git source tree independently.
 5. Validate Compose configuration.
-6. Build with a deadline.
+6. Verify uploaded tag, app ID, repository, revision, source tree, and platform.
 7. Run optional app tests in a temporary container.
 8. Capture currently running image.
-9. Start replacement and check loopback health endpoint.
-10. Retain active image plus configured rollback images.
+9. Start replacement with `--no-build` and check loopback health endpoint.
+10. Retain active image plus configured rollback images, then prune dangling images.
 
-Current app remains running through validation, build, and tests. Cutover happens only after those steps pass.
+Current app remains running through validation and optional tests. Cutover happens only after those steps pass.
 
 ## Failed cutover
 
-If startup or health fails, Shibumi retags the previous running image under its Compose image name, recreates that service without building, and checks restored health. Attempted deployment remains failed in status and history.
+If startup or health fails, Shibumi retags previous running image under Compose image name, recreates service without building, and checks restored health. Attempted deployment remains failed in status and history.
 
 ## Resource defaults
 
-- Available memory: 2 GiB
+- Prebuilt available memory: 512 MiB
+- Fallback server-build available memory: 2 GiB
 - Free disk: 4 GiB
-- Build deadline: 10 minutes
-- Retained rollback images: 2
+- Fallback build deadline: 10 minutes
+- Retained earlier successful images: 1 (active plus one rollback image)
 
-Systemd also limits receiver and direct build processes. App containers need their own Compose resource limits.
+Images build on client by default, so running apps do not compete with production builds. Systemd limits receiver and fallback build processes. App containers need their own Compose resource limits.

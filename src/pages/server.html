@@ -1,8 +1,8 @@
             <section class="hero server-hero">
                 <div class="server-hero-copy">
                     <p class="eyebrow">Self-hosted deploys</p>
-                    <h1>Push,<br><span class="accent-word">done.</span></h1>
-                    <p class="dek">A small Bun service that deploys your app to your VPS or homelab server.</p>
+                    <h1>Ship,<br><span class="accent-word">done.</span></h1>
+                    <p class="dek">Build on your computer. Run verified images on your VPS or homelab server.</p>
                     <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v{{server-version}}</span></div>
                     <div class="server-hero-actions">
                         <button class="btn btn-primary" type="button" data-dialog="server-install-dialog">Install on your server</button>
@@ -22,15 +22,12 @@
                     <div class="deploy-output clack-output" aria-live="polite">
                         <span class="clack-rail" aria-hidden="true"></span>
                         <div class="deploy-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; ship</strong></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Built and uploaded exact commit image</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Received GitHub push</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Verified webhook, repo, branch, and commit</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Checked memory and disk</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Validated Compose configuration</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Verified uploaded linux/arm64 image</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Replaced container and passed health check</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Kept active and rollback images, cleaned older ones</span></div>
-                        <div class="deploy-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span class="deploy-result-message"><strong>Deployment complete</strong><a href="https://example.com">https://example.com</a></span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>1 commit ready to push</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>test passed</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>check passed</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Built and uploaded a1b2c3d (45 MiB, 7818747847bb)</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Deployment complete</span></div>
+                        <div class="deploy-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span class="deploy-result-message"><strong>Shipped in 15 seconds</strong><a href="https://example.com">https://example.com</a></span></div>
                     </div>
                     <details class="deploy-details">
                         <summary>What do these checks mean?</summary>
@@ -43,7 +40,7 @@
                                         <li>Check free memory and disk space.</li>
                                         <li>Validate the Compose configuration.</li>
                                         <li>Verify the uploaded image and run any optional app tests in a temporary container.</li>
-                                        <li>Replace the old container, check the new one's local health endpoint, keep the previous two successful images for rollbacks, and remove older images.</li>
+                                        <li>Replace the old container, check the new one's local health endpoint, keep the previous successful image for rollback, and remove older images.</li>
                                     </ol>
                                     <p>App tests are optional. Add a command such as <code>bun test</code> only when the project has its own test suite.</p>
                                 </div>
@@ -89,13 +86,13 @@
                         <div class="setup-output clack-output">
                             <span class="clack-rail" aria-hidden="true"></span>
                             <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
-                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Server requirements</span><span class="setup-answer setup-requirements" aria-label="Installed requirements: Git, Podman, Caddy, and systemd"><span>Git ✓</span><span>Podman ✓</span><span>Caddy ✓</span><span>systemd ✓</span></span></div></div>
                             <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Install shibumi-server on this server?</span><span class="setup-answer">Yes</span></div></div>
                             <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Installed shibumi-server {{server-version}}</span></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-info clack-filled"><use href="#clack-circle"/></svg><span>Launcher: ~/.local/bin/shis</span></div>
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>From project root: <strong>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</strong></span></div>
                         </div>
                     </div>
-                    <p>The installer stages the release with lockfile-pinned production dependencies before activation. The installed service keeps using that exact release until you upgrade it. User-run commands check for newer releases and suggest <code>shibumi-server update</code>. Update installs the exact stable release reported by npm while preserving config and secrets. Registry problems never block local work.</p>
+                    <p>The installer checks requirements silently, then stages lockfile-pinned production dependencies before activation. The service keeps using that exact release. User-run commands check npm for a newer stable version and suggest <code>shis update</code>; <code>serve</code> never performs this network check. Update installs one exact release while preserving config and secrets. Registry problems never block local work.</p>
                     <p><code>shibumi-server uninstall</code> removes the service and installed code while preserving config and secrets. Add <code>--purge</code> to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.</p>
                 </div>
             </section>
@@ -128,14 +125,15 @@
             <section class="ship-section" aria-labelledby="ship-title">
                 <div>
                     <p class="eyebrow">Ship</p>
-                    <h2 id="ship-title">Push with<br>one command.</h2>
+                    <h2 id="ship-title">Ship with<br>one command.</h2>
                 </div>
                 <div class="section-copy">
                     <p>Self-hosted projects own a small ship script:</p>
                     <pre class="ship-command"><code>bun ship</code></pre>
                     <p>The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates and tests the webhook without printing or storing its secret.</p>
-                    <p>Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH with an ETA. Existing domains keep their current upstream until first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
-                    <p>Use <code>bun ship:logs</code> for latest deployment log and <code>bun ship --rollback</code> to restore previous retained image. Run <code>bun ship:setup</code> whenever you want to review or change setup. Existing project? <a href="/ship">Add owned ship workflow</a>.</p>
+                    <p>Later runs check Git state, run project tests and type checks, build committed <code>HEAD</code> locally for the server platform, and upload the labeled image through SSH. Only then does Ship push Git and follow deployment status with an ETA. Existing domains keep their current upstream until first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
+                    <p>Before each deployment, Ship checks for reviewed client source. It can use that version immediately, then saves it to tracked <code>scripts/ship.ts</code> only after deployment succeeds. Network errors keep the current client; owned edits are never replaced.</p>
+                    <p>Docker layer cache stays enabled. Use <code>bun ship --rebuild</code> for a no-cache build, <code>bun ship:logs</code> for latest deployment log, or <code>bun ship --rollback</code> to restore previous retained image. Run <code>bun ship:setup</code> whenever you want to review or change setup. Existing project? <a href="/ship">Add owned ship workflow</a>.</p>
                 </div>
             </section>
 

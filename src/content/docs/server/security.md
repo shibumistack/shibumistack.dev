@@ -20,9 +20,13 @@ Interactive setup explains privileged change before sudo handles password direct
 
 Helper never accepts arbitrary Caddy text, shell commands, file paths, or upstream hosts.
 
+## Image trust boundary
+
+Local Ship builds only committed `HEAD` and labels image with app ID, repository, full revision, Git source tree, and platform. Server fetches webhook commit, resolves tree independently, and verifies labels, exact tag, and platform before Compose starts with `--no-build`.
+
 ## Resource isolation
 
-Preflight memory and disk floors protect host before build. Build deadline kills process group. systemd applies memory, swap, CPU, and task ceilings to receiver and direct children. Rootless Podman isolates app containers; Compose should set per-app limits.
+Preflight memory and disk floors protect host before deployment. Client builds keep production CPU and memory free. Fallback server builds retain cancellable deadline. systemd applies memory, swap, CPU, and task ceilings to receiver and direct children. Rootless Podman isolates app containers; Compose should set per-app limits and bind app ports to loopback.
 
 ## Remaining limits
 

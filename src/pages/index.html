@@ -192,9 +192,9 @@
                 <div class="home-clack-output">
                     <span class="home-clack-rail" aria-hidden="true"></span>
                     <div class="cli-step home-clack-row home-clack-brand"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Checked Bun, Git, Podman, Caddy, and systemd</span></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Installed pinned system service</span></div>
-                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Server ready</strong><span class="home-clack-next"><b>Next:</b> connect from project root</span></div></div>
+                    <div class="cli-step home-clack-row home-clack-prompt"><svg class="home-clack-glyph home-clack-submit"><use href="#home-clack-diamond"/></svg><div><div class="cli-question">Install shibumi-server on this server?</div><div class="cli-selected cli-option"><span class="cli-dot">●</span> Yes</div></div></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Installed shibumi-server {{server-version}}</span></div>
+                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Launcher: ~/.local/bin/shis</strong><span class="home-clack-next"><b>Next:</b> connect from project root</span></div></div>
                 </div>
             </div>
             <p>Once configured, one command builds locally and deploys:</p>
@@ -202,14 +202,14 @@
                 <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                 <div class="home-clack-output">
                     <span class="home-clack-rail" aria-hidden="true"></span>
-                    <div class="cli-step home-clack-row home-clack-brand"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Built and uploaded exact commit image</span></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Verified signed GitHub webhook</span></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Validated image and Compose configuration</span></div>
-                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Deployment healthy</strong><span class="home-clack-next">https://myapp.com</span></div></div>
+                    <div class="cli-step home-clack-row home-clack-brand"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><strong>渋み&nbsp; ship</strong></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>test passed</span></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Built and uploaded a1b2c3d (45 MiB)</span></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Deployment complete</span></div>
+                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Shipped in 15 seconds</strong><span class="home-clack-next">https://myapp.com</span></div></div>
                 </div>
             </div>
-            <p>Ship builds committed code for the server's Linux architecture and uploads it through SSH before pushing Git. The service verifies the signed push and image, replaces the old container, confirms health, keeps one rollback image, and removes older ones. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
+            <p>Ship runs project checks, builds committed code on your computer for the server's Linux architecture, and uploads the labeled image through SSH before pushing Git. The service verifies the signed push and exact image, replaces the old container, confirms health, keeps one rollback image, and removes older ones. Before the next deployment, Ship can run reviewed client updates and save them only after success. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
         </div>
     </div>
 </section>
