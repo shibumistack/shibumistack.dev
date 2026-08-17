@@ -198,7 +198,8 @@ describe("routes", () => {
     expect(body).toContain("If no tracked Compose file exists");
     expect(body).toContain("bun run ship:logs");
     expect(body).toContain("bun run ship --rollback");
-    expect(body).toContain("detects non-interactive execution");
+    expect(body).toContain("bun run ship -y");
+    expect(body).toContain("no <code>--</code> separator is needed");
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");

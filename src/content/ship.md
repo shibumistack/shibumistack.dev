@@ -82,12 +82,14 @@ bun run ship --rollback
 
 Rollback confirms locally, refuses while a deployment is active, retags the retained image, recreates the service without a build, and checks health. If restoration fails, the current image is restored. Use `bun run ship --rollback -y` only for explicit automation.
 
-Agents use the same command:
+Agents can run without prompts:
 
 ```sh
-bun run ship
+bun run ship -y
 ```
 
-Ship detects agent and non-interactive execution, accepts routine confirmations, and uses inferred setup. When SSH, GitHub, domain, server registration, or existing-domain cutover needs user input, it exits with a direct request for the agent to ask the user. First installation assumes yes for routine setup confirmations.
+`-y` is the short form of `--yes`. Bun forwards arguments after the script name, so no `--` separator is needed. This accepts routine confirmations but keeps clean-tree checks, tests, image verification, and deployment failures intact.
+
+Ship detects agent and non-interactive execution and uses inferred setup. When SSH, GitHub, domain, server registration, or existing-domain cutover needs user input, it exits with a direct request for the agent to ask the user. First installation assumes yes for routine setup confirmations.
 
 The ship workflow is project code, not a hidden deployment runtime. Server behavior and security boundaries are documented on the [shibumi-server page](/server.md).

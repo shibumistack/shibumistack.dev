@@ -25,6 +25,7 @@ bun start        # run server
 bun test         # run route tests
 bun check        # TypeScript check
 bun run ship     # set up when needed, check, push if needed, and deploy
+bun run ship -y  # prompt-free agent run; Bun needs no -- separator
 bun run ship:setup # review or change deploy setup without pushing
 bun run ship:update # update only owned ship client source
 ```
