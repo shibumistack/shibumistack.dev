@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shouldCheckForShipUpdate, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -48,6 +48,8 @@ describe("ship configuration", () => {
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
+    expect(shouldCheckForShipUpdate(parseShipArgs(["-y"]))).toBeTrue();
+    expect(shouldCheckForShipUpdate(parseShipArgs(["--logs"]))).toBeFalse();
   });
 
   test("accepts only immutable reviewed ship source URLs", () => {
