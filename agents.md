@@ -36,7 +36,7 @@ bun dev      # hot reload server on http://localhost:9001
 bun start    # run server
 bun test     # route tests
 bun check    # TypeScript check without emitting files
-bun run ship # set up when needed, check, push, and follow deployment
+bun ship     # set up when needed, check, push, and follow deployment
 ```
 
 There is no lint or build script at the moment.
@@ -192,7 +192,8 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 - Native `<details>` close jumps because the browser hides content before CSS can collapse it. Keep the explicit height animation in `src/pages/server.js`.
 - `shibumi-server` installation requires Linux, Bun, Git, rootless Podman, Caddy, and systemd. The Bash bootstrap installs Bun when missing, then starts interactive setup. Its public endpoint stays pinned to a reviewed release script, while that script resolves the latest npm package. macOS and Windows visitors must copy the command to a Linux server over SSH; never imply local installation, browser-driven remote installation, or SSH credential collection.
 - `shibumi-server add <domain> --dry-run` follows the real DNS and Caddy detection, prompts, port selection, and validation but writes no config or secrets, never invokes sudo, and leaves Caddy and systemd unchanged. Real Caddy changes use a constrained root helper only after the user confirms and sudo handles its own password. Existing domains preserve their current upstream until a healthy first deployment and explicit cutover.
-- `bun run ship` auto-detects missing setup, keeps SSH targets in mode-`0600` `~/.config/shibumi/config.json` versus committed `shibumi-server.json`, runs confirmed setup over SSH, configures GitHub through `gh`, checks and pushes Git, then polls mode-restricted status over SSH. `bun run ship:setup` reconfigures without pushing. Never store or print the webhook secret during its SSH-to-`gh` handoff.
+- `bun ship` auto-detects missing setup, keeps SSH targets in mode-`0600` `~/.config/shibumi/config.json` versus committed `shibumi-server.json`, runs confirmed setup over SSH, configures GitHub through `gh`, checks and pushes Git, then polls mode-restricted status over SSH. `bun ship:setup` reconfigures without pushing. Never store or print the webhook secret during its SSH-to-`gh` handoff.
+- Ship-client updates require immutable `public/ship/vN.ts` snapshots. `bun ship` may run reviewed latest source temporarily, then replace tracked `scripts/ship.ts` only after successful deployment; leave update unstaged for review.
 - User-run commands check npm for newer releases and suggest `shibumi-server update`; registry failures must never block local work. Explicit update validates one stable version, installs that exact npm release through Bun, and preserves config and secrets. The `serve` process skips network checks.
 - `shibumi-server uninstall` preserves config, secrets, app checkouts, containers, Caddy, and GitHub settings. Only `--purge` removes config and secrets, after confirmation; automation must pass `--purge --yes` explicitly.
 
