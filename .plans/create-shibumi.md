@@ -73,7 +73,7 @@ Every static project exposes:
 ```sh
 bun dev
 bun run build
-bun run preview
+bun preview
 ```
 
 `bun run build` writes complete deployable output to `dist/`. Build must not require network access unless project explicitly fetches remote content.
@@ -94,7 +94,7 @@ Keep build and upload visible as separate package scripts:
 
 ```sh
 bun run build
-bun run deploy
+bun deploy
 ```
 
 `deploy` uploads existing `dist/`. It validates that output exists and records source commit and build metadata in `dist/.shibumi-build.json`. A stale artifact must fail with an exact next action instead of uploading unrelated output.
@@ -245,9 +245,9 @@ Native mode requires bounded archive extraction, exact commit identity, atomic s
 bun create shibumi@latest example --template static --deploy files --yes
 cd example
 bun test
-bun run check
+bun check
 bun run build
-bun run preview
+bun preview
 ```
 
 Must produce:
@@ -268,4 +268,4 @@ Provider acceptance adds successful local artifact upload and live preview verif
 - native static mode in shibumi-server
 - extension registry and updates
 - migration tools
-- SPA and AI templates
+- ##### SPA and AI templates

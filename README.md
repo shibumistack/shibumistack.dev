@@ -24,10 +24,10 @@ Open <http://localhost:9001>.
 bun start        # run server
 bun test         # run route tests
 bun check        # TypeScript check
-bun ship     # set up when needed, check, push if needed, and deploy
-bun ship -y  # prompt-free agent run; Bun needs no -- separator
-bun ship:setup # review or change deploy setup without pushing
-bun ship:update # update only owned ship client source
+bun ship         # build locally, upload, push if needed, and deploy
+bun ship -y      # prompt-free agent run; Bun needs no -- separator
+bun ship:setup   # review or change deploy setup without pushing
+bun ship:update  # update only owned ship client source
 ```
 
 ## Project structure
@@ -64,7 +64,7 @@ bun ship:update # update only owned ship client source
 
 ## Related projects
 
-- [`shibumi-server`](https://shibumistack.dev/server) is the experimental, open-source webhook deploy service for rootless Podman behind Caddy. It builds exact commit images locally, uploads them through SSH, and checks server memory/disk headroom before cutover. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
+- [`shibumi-server`](https://shibumistack.dev/server) is the released, open-source webhook deploy service for rootless Podman behind Caddy. It builds exact commit images locally, uploads them through SSH, and checks server memory/disk headroom before cutover. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
 
 ## Status
 
