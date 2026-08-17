@@ -1,8 +1,8 @@
 # Ship an existing project
 
-Connect any Bun project to `shibumi-server` from your local project root. One installer handles server registration through SSH, GitHub webhook setup, and owned project source. You do not need to add the app from a server shell first.
+Connect any Bun project to `shibumi-server` from your local project root. One installer handles server registration through SSH, deployment setup, and owned project source. You do not need to add the app from a server shell first.
 
-Requirements: Bun, Git, Docker Desktop or compatible Docker Engine, GitHub CLI, and SSH access to your Linux server.
+Requirements: Bun, Git, Docker Desktop or compatible Docker Engine, and SSH access to your Linux server. Deploy-on-push also uses GitHub CLI.
 
 ## 1. Connect
 
@@ -14,7 +14,7 @@ curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 
 The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to `scripts/ship.ts` are never overwritten.
 
-Setup suggests the domain from your package name or Compose `SITE_URL`, asks once for your normal `user@server` target or SSH alias, and registers the current branch. It stores that target by resolved server hostname in mode-`0600` `~/.config/shibumi/config.json` (or `$XDG_CONFIG_HOME/shibumi/config.json`) and shows which target it uses. New projects reuse the only saved server automatically or show a server picker when several are saved. It installs or upgrades `shibumi-server` through confirmed SSH when needed. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
+Setup suggests the domain from your package name or Compose `SITE_URL`, asks once for your normal `user@server` target or SSH alias, and registers the current branch. Choose **Run bun ship** (recommended) or **Deploy every GitHub push**. It stores the selected trigger in committed `shibumi-server.json`. It stores your server target by resolved hostname in mode-`0600` `~/.config/shibumi/config.json` (or `$XDG_CONFIG_HOME/shibumi/config.json`) and shows which target it uses. New projects reuse the only saved server automatically or show a server picker when several are saved. It installs or upgrades `shibumi-server` through confirmed SSH when needed. Password login works: enter it once per run, then Shibumi reuses that temporary SSH connection.
 
 If no tracked Compose file exists, setup offers to generate a bounded Bun `Dockerfile`, loopback-only `compose.yaml`, and secret-safe `.dockerignore`. It never overwrites existing files. Review the generated files, verify the app binds to `0.0.0.0` and reads `PORT`, then commit and push them before resuming:
 
@@ -27,9 +27,16 @@ bun ship:setup
 
 Generation requires a `start` package script when no `Dockerfile` exists. A `build` step is included only when the package has a `build` script. Existing untracked Compose files must be reviewed and committed instead.
 
-DNS and webhook checks can depend on changes outside Shibumi. If either is not ready, setup keeps the owned files and prints the exact action to complete. Resume without reinstalling with `bun ship:setup`.
+DNS checks can depend on changes outside Shibumi. Deploy-on-push also creates, enables, disables, repairs, and tests the matching GitHub webhook. If setup cannot finish, it keeps the owned files and prints the exact action. Resume without reinstalling with `bun ship:setup`.
 
-**Cloudflare:** For proxied domains, set SSL/TLS encryption mode to **Full (strict)**. Flexible mode sends HTTP to Caddy, causing an HTTPS redirect loop. GitHub reports `stopped after 10 redirects`, and webhook setup cannot finish.
+Automation can switch explicitly:
+
+```sh
+bun ship:setup --trigger ship
+bun ship:setup --trigger github-push
+```
+
+**Cloudflare:** Deploy-on-push requires **Full (strict)** SSL/TLS mode for proxied domains. Flexible mode causes an HTTPS redirect loop.
 
 ## 2. Review owned source
 
@@ -52,9 +59,9 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 `bun dev` uses the remote app port from `shibumi-server.json`, preserving the original dev command as `dev:app`. If that loopback port is occupied, it shows the owning process and asks before sending `SIGTERM`.
 
-Run `bun ship:setup` later to refresh project configuration and webhook setup. Run `bun ship:update` to update only the owned ship client, without changing server setup, webhooks, or `shibumi-server.json`.
+Run `bun ship:setup` later to refresh project configuration or change the deployment trigger. Choosing **Run bun ship** switches the server to prebuilt mode and disables the matching webhook when GitHub CLI is already authenticated. GitHub failures do not block direct setup or shipping; Ship prints the manual cleanup link instead. Choosing **Deploy every GitHub push** switches the server to build mode and creates, enables, or repairs the webhook. Run `bun ship:update` to update only owned ship client source.
 
-Source: <https://shibumistack.dev/ship/v28.ts>
+Source: <https://shibumistack.dev/ship/v29.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
@@ -70,7 +77,7 @@ bun ship
 
 Before tests or builds, Ship checks the mutable latest pointer against its own immutable versioned source. When a reviewed update exists, it offers to use that version for the current deployment. Only after a successful deployment does it update tracked `scripts/ship.ts`, leaving it unstaged for review and commit. `-y` accepts this update; network failures keep the current client. Owned local changes are never overwritten.
 
-Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git and follow deployment status. When `HEAD` is already pushed, it uploads and redeploys that exact commit.
+Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git. In recommended ship-trigger mode, it tells the server over SSH to deploy that exact commit and follows status. Deploy-on-push leaves the trigger to GitHub after a new push. When `HEAD` is already pushed, either mode redeploys it directly.
 
 Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. A generic Compose override labels every image with repository, app ID, full revision, Git source tree, and platform identity. The server independently resolves the webhook commit tree and verifies every identity label, tag, and platform before starting with `--no-build`.
 
@@ -100,6 +107,6 @@ bun ship -y
 
 `-y` is the short form of `--yes`. Bun forwards arguments after the script name, so no `--` separator is needed. This accepts routine confirmations but keeps clean-tree checks, tests, image verification, and deployment failures intact.
 
-Ship detects agent and non-interactive execution and uses inferred setup. When SSH, GitHub, domain, server registration, or existing-domain cutover needs user input, it exits with a direct request for the agent to ask the user. First installation assumes yes for routine setup confirmations.
+Ship detects agent and non-interactive execution and uses inferred setup. When SSH, domain, server registration, or existing-domain cutover needs user input, it exits with a direct request for the agent to ask the user. GitHub input is needed only for deploy-on-push. First installation assumes yes for routine setup confirmations.
 
 The ship workflow is project code, not a hidden deployment runtime. Server behavior and security boundaries are documented on the [shibumi-server page](/server.md).

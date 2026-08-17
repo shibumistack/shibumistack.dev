@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shipConfirmation, shouldCheckForShipUpdate, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -17,6 +17,7 @@ const config = {
   port: 9100,
   healthPath: "/healthz",
   deploymentMode: "prebuilt",
+  trigger: "ship",
   platform: "linux/arm64",
   cutoverRequired: false,
 } as const;
@@ -42,12 +43,16 @@ describe("ship configuration", () => {
     });
     expect(parseShipArgs(["--rollback", "-y"])).toMatchObject({ rollback: true, yes: true });
     expect(parseShipArgs(["--rebuild", "-y"])).toMatchObject({ rebuild: true, yes: true });
+    expect(parseShipArgs(["--setup", "--trigger", "ship"])).toMatchObject({ setup: true, trigger: "ship" });
+    expect(parseShipArgs(["--setup", "--trigger", "github-push"])).toMatchObject({ setup: true, trigger: "github-push" });
     expect(parseShipArgs(["--logs"])).toMatchObject({ logs: true });
     expect(parseShipArgs(["--dev"])).toMatchObject({ dev: true });
     expect(() => parseShipArgs(["--yes", "--server"])).toThrow("--server requires a value");
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
+    expect(() => parseShipArgs(["--trigger", "ship"])).toThrow("requires --setup");
+    expect(() => parseShipArgs(["--setup", "--trigger", "other"])).toThrow("ship or github-push");
     expect(shouldCheckForShipUpdate(parseShipArgs(["-y"]))).toBeTrue();
     expect(shouldCheckForShipUpdate(parseShipArgs(["--logs"]))).toBeFalse();
   });
@@ -83,17 +88,23 @@ describe("ship configuration", () => {
     expect(domainFromProject("app", "    SITE_URL: http://localhost:3000\n")).toBeUndefined();
   });
 
-  test("describes prebuilt image upload before Git push", () => {
+  test("describes prebuilt shipping and chooses its deployment trigger", () => {
     expect(shipConfirmation("prebuilt", 1, "main", "example.com")).toBe("Build and upload image, then push main to deploy example.com?");
     expect(shipConfirmation("prebuilt", 0, "main", "example.com")).toBe("Build and upload image, then redeploy current main commit to example.com?");
     expect(shipConfirmation("build", 1, "main", "example.com")).toBe("Push main and deploy example.com?");
+    expect(shouldTriggerRedeploy("ship", 1)).toBeTrue();
+    expect(shouldTriggerRedeploy("github-push", 1)).toBeFalse();
+    expect(shouldTriggerRedeploy("github-push", 0)).toBeTrue();
+    expect(deploymentModeForTrigger("ship")).toBe("prebuilt");
+    expect(deploymentModeForTrigger("github-push")).toBe("build");
   });
 
   test("distinguishes healthy and failed matching webhooks", () => {
     const hook = { id: 42, active: true, config: { url: config.webhookUrl }, last_response: { code: 401 } };
-    expect(matchingWebhook([hook], config.webhookUrl)).toEqual({ id: 42, needsRepair: true });
-    expect(matchingWebhook([{ ...hook, last_response: { code: 200 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
-    expect(matchingWebhook([{ ...hook, last_response: { code: 0 } }], config.webhookUrl)).toEqual({ id: 42, needsRepair: false });
+    expect(matchingWebhook([hook], config.webhookUrl)).toEqual({ id: 42, active: true, needsRepair: true });
+    expect(matchingWebhook([{ ...hook, last_response: { code: 200 } }], config.webhookUrl)).toEqual({ id: 42, active: true, needsRepair: false });
+    expect(matchingWebhook([{ ...hook, last_response: { code: 0 } }], config.webhookUrl)).toEqual({ id: 42, active: true, needsRepair: false });
+    expect(matchingWebhook([{ ...hook, active: false }], config.webhookUrl)).toEqual({ id: 42, active: false, needsRepair: true });
     expect(matchingWebhook([hook], "https://example.com/other")).toBeUndefined();
   });
 
@@ -178,8 +189,12 @@ describe("ship configuration", () => {
     expect(() => prebuiltImage("../bad", commit)).toThrow("invalid");
   });
 
-  test("accepts server client config and rejects mismatched webhook URLs", () => {
+  test("accepts deployment triggers and rejects mismatched webhook URLs", () => {
+    const { trigger: _trigger, ...legacy } = config;
     expect(validateConfig(config)).toEqual(config);
+    expect(validateConfig(legacy)).toEqual(config);
+    expect(validateConfig({ ...config, trigger: "github-push" })).toMatchObject({ trigger: "github-push" });
+    expect(() => validateConfig({ ...config, trigger: "other" })).toThrow("invalid");
     expect(() => validateConfig({ ...config, webhookUrl: "https://attacker.example/hook" })).toThrow("invalid");
   });
 });

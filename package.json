@@ -1,6 +1,6 @@
 {
   "name": "shibumistack.dev",
-  "shibumiServerVersion": "0.7.11",
+  "shibumiServerVersion": "0.8.1",
   "siteYear": 2026,
   "scripts": {
     "dev": "bun --hot serve.ts",

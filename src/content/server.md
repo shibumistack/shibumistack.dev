@@ -19,7 +19,7 @@ Shipped in 15 seconds
 https://example.com
 ```
 
-`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. GitHub then sends a signed webhook. Your current app keeps running while `shibumi-server` verifies the push, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
+`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode asks the server over SSH to deploy exact commit. Your current app keeps running while `shibumi-server` verifies commit, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
 
 The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
 
@@ -87,7 +87,7 @@ Self-hosted projects own a small ship script:
 bun ship
 ```
 
-The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates and tests the webhook without printing or storing its secret.
+The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. Setup recommends explicit `bun ship` deployment and can enable deploy-on-push through GitHub CLI. Rerun `bun ship:setup` to switch; the matching webhook is enabled or disabled without printing or storing its secret.
 
 Later runs check Git state, run project tests and type checks, create a build context from committed `HEAD`, and build for the server's Linux platform on your computer. Ship labels the image with app, repository, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git and follow deployment status over SSH. The server resolves the commit tree independently and rejects any mismatched image.
 

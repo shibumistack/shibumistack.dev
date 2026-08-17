@@ -53,7 +53,7 @@
             <section class="server-intro" aria-labelledby="small-title">
                 <p class="eyebrow">Small on purpose</p>
                 <h2 id="small-title">No dashboard.<br>No cloud deploy service.</h2>
-                <p><code>bun ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Your current app keeps running while shibumi-server verifies the signed push, checkout, image, and Compose setup. Healthy deployments keep one previous image for rollback.</p>
+                <p><code>bun ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode triggers deployment over SSH. Your current app keeps running while shibumi-server verifies commit, checkout, image, and Compose identity. Healthy deployments keep one previous image for rollback.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">
@@ -103,7 +103,7 @@
                     <h2 id="apps-title">Connect from<br>your project.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>Run one installer from local project root. It infers project settings, connects through SSH, registers app, and configures GitHub. Missing container files can be generated as a bounded Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and secret-safe <code>.dockerignore</code> before server registration.</p>
+                    <p>Run one installer from local project root. It infers project settings, connects through SSH, registers app, and asks whether <code>bun ship</code> or every GitHub push should deploy. Missing container files can be generated as a bounded Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and secret-safe <code>.dockerignore</code> before server registration.</p>
                     <div class="install-terminal setup-cli" data-app-cli aria-label="Simulated local project connection">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                         <div class="setup-output clack-output">

@@ -42,7 +42,7 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 shibumi-server add example.com
 ```
 
-Once configured, `bun ship` runs project checks, builds committed code on your computer for the server's Linux architecture, and uploads the labeled image through SSH before pushing Git. The service verifies the signed push and exact image, keeps the current app running through checks, then replaces it, confirms health, keeps one rollback image, and removes older ones. Before the next deployment, Ship can run reviewed client updates and save them only after success. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
+Once configured, `bun ship` runs project checks, builds committed code on your computer for the server's Linux architecture, and uploads the labeled image through SSH before pushing Git. Recommended mode triggers exact deployment over SSH. The service verifies commit and image identity, keeps the current app running through checks, then replaces it, confirms health, keeps one rollback image, and removes older ones. Before the next deployment, Ship can run reviewed client updates and save them only after success. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
 
 ## Start
 

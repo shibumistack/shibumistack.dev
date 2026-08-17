@@ -5,8 +5,8 @@
                 </div>
                 <div class="ship-intro">
                     <p class="dek">Connect any Bun project to shibumi-server from your local project root.</p>
-                    <p>One installer handles server registration through SSH, GitHub webhook setup, and owned project source. You do not need to add the app from a server shell first.</p>
-                    <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>Docker</span><span>GitHub CLI</span><span>SSH</span></div>
+                    <p>One installer handles server registration through SSH, deployment setup, and owned project source. You do not need to add the app from a server shell first.</p>
+                    <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>Docker</span><span>SSH</span></div>
                 </div>
             </section>
 
@@ -17,10 +17,10 @@
                     <p>Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.</p>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
                     <p>The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
-                    <p>Setup suggests the domain, asks once for your normal <code>user@server</code> target or SSH alias, and registers the current branch. It saves server targets in mode-<code>0600</code> local settings, reuses them for later projects, and installs or upgrades <code>shibumi-server</code> through confirmed SSH when needed.</p>
+                    <p>Setup suggests the domain, asks once for your normal <code>user@server</code> target or SSH alias, and registers the current branch. Choose <strong>Run bun ship</strong> (recommended) or <strong>Deploy every GitHub push</strong>. Rerun <code>bun ship:setup</code> anytime to switch.</p>
                     <p>If no tracked Compose file exists, setup offers to generate a bounded Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and secret-safe <code>.dockerignore</code>. Review, commit, and push them, then resume with <code>bun ship:setup</code>. Existing files are never overwritten.</p>
-                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files. Complete the printed action, then resume with <code>bun ship:setup</code>. No reinstall needed.</p>
-                    <p><strong>Cloudflare:</strong> For proxied domains, set SSL/TLS encryption mode to <strong>Full (strict)</strong>. Flexible mode sends HTTP to Caddy, causing an HTTPS redirect loop. GitHub reports <code>stopped after 10 redirects</code>, and webhook setup cannot finish.</p>
+                    <p>Choosing <strong>Run bun ship</strong> disables the matching webhook and deploys over SSH. Choosing <strong>Deploy every GitHub push</strong> creates, enables, or repairs it. Setup keeps owned files when DNS or another external prerequisite is pending.</p>
+                    <p><strong>Cloudflare:</strong> Deploy-on-push requires <strong>Full (strict)</strong> SSL/TLS mode for proxied domains.</p>
                 </div>
             </section>
 
@@ -62,7 +62,7 @@
                     <h2>Push when ready.</h2>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code>bun ship</code></pre>
                     <p>Ship checks for a reviewed client update before tests or builds. It can use the latest immutable version immediately, then updates tracked <code>scripts/ship.ts</code> only after deployment succeeds. The change stays unstaged for review and commit.</p>
-                    <p>Ship requires committed work on the configured branch. It runs project tests and checks, builds the server's Linux image from exact <code>HEAD</code>, labels it with repository, app, revision, source tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Server independently verifies every label before deployment. Ship never stages or commits files for you.</p>
+                    <p>Ship requires committed work on the configured branch. It runs project tests and checks, builds the server's Linux image from exact <code>HEAD</code>, labels it with repository, app, revision, source tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode then triggers the exact deployment over SSH. Server independently verifies every label before deployment. Ship never stages or commits files for you.</p>
                     <p>Docker cache stays enabled by default. Use <code>bun ship --rebuild</code> to pass <code>--no-cache</code> for suspected cache or mutable-input problems.</p>
                     <p>Existing domains keep their current Caddy upstream until first Shibumi deployment passes health checks and you approve cutover. Use <code>bun ship:logs</code> for latest deployment log or <code>bun ship --rollback</code> to restore previous retained image.</p>
                     <p>Agents can use <code>bun ship -y</code> for a prompt-free run. <code>-y</code> is short for <code>--yes</code>. Bun forwards it directly, so no <code>--</code> separator is needed. Safety checks and failures remain active.</p>
