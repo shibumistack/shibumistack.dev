@@ -987,7 +987,7 @@ async function followStatus(config: ClientConfig, target: string, commit: string
     const width = Math.max(24, (process.stdout.columns ?? 80) - 8);
     return value.length > width ? `${value.slice(0, width - 1)}…` : value;
   };
-  progress.start(estimateMs ? `Waiting for webhook (ETA: ${formatDuration(estimateMs)})` : "Waiting for webhook");
+  progress.start(estimateMs ? `Waiting for deployment (ETA: ${formatDuration(estimateMs)})` : "Waiting for deployment");
   const startedAt = Date.now();
   const deadline = startedAt + 12 * 60_000;
   const webhookDeadline = startedAt + 45_000;
