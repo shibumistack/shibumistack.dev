@@ -2,7 +2,7 @@
 
 Connect any Bun project to `shibumi-server` from your local project root. One installer handles server registration through SSH, GitHub webhook setup, and owned project source. You do not need to add the app from a server shell first.
 
-Requirements: Bun, Git, GitHub CLI, and SSH access to your Linux server.
+Requirements: Bun, Git, Docker Desktop or compatible Docker Engine, GitHub CLI, and SSH access to your Linux server.
 
 ## 1. Connect
 
@@ -54,7 +54,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun run ship:setup` later to refresh project configuration and webhook setup. Run `bun run ship:update` to update only the owned ship client, without changing server setup, webhooks, or `shibumi-server.json`.
 
-Source: <https://shibumistack.dev/ship/v21.ts>
+Source: <https://shibumistack.dev/ship/v22.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
@@ -68,7 +68,9 @@ bun run ship
 
 `bun run ship:logs` prints the latest bounded deployment log from the server.
 
-Ship requires a clean tree on the configured branch. It runs your project test and check scripts, verifies origin state, pushes when commits are ahead, then follows deployment status over SSH. When `HEAD` is already pushed, it redeploys that exact commit instead of stopping.
+Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git and follow deployment status. When `HEAD` is already pushed, it uploads and redeploys that exact commit.
+
+Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. The server verifies the image tag and platform, skips its own build, and starts with `--no-build` only after the signed webhook matches the same commit.
 
 Existing domains keep their current Caddy upstream until the first Shibumi deployment passes health checks and you approve cutover. Ship uses the latest successful server deployment duration as the next ETA, then reports total elapsed client time.
 

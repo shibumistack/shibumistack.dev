@@ -6,7 +6,7 @@
                 <div class="ship-intro">
                     <p class="dek">Connect any Bun project to shibumi-server from your local project root.</p>
                     <p>One installer handles server registration through SSH, GitHub webhook setup, and owned project source. You do not need to add the app from a server shell first.</p>
-                    <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>GitHub CLI</span><span>SSH</span></div>
+                    <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>Docker</span><span>GitHub CLI</span><span>SSH</span></div>
                 </div>
             </section>
 
@@ -61,7 +61,7 @@
                 <div class="ship-step-body">
                     <h2>Push when ready.</h2>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code>bun run ship</code></pre>
-                    <p>Ship requires a clean tree on the configured branch. It runs project tests and checks, verifies origin state, pushes when needed, then follows deployment status over SSH with an ETA based on latest successful deployment.</p>
+                    <p>Ship requires committed work on the configured branch. It runs project tests and checks, builds the server's Linux image from exact <code>HEAD</code>, and uploads it through SSH. Only then does it push Git and follow deployment status. It never stages or commits files for you.</p>
                     <p>Existing domains keep their current Caddy upstream until first Shibumi deployment passes health checks and you approve cutover. Use <code>bun run ship:logs</code> for latest deployment log or <code>bun run ship --rollback</code> to restore previous retained image.</p>
                     <p>Agents use the same <code>bun run ship</code> command. Ship detects non-interactive execution, accepts routine confirmations, and tells the agent exactly what to ask when user input is required.</p>
                 </div>

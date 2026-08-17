@@ -9,20 +9,20 @@ No dashboard or cloud deploy service.
 ## A deployment
 
 ```clack
-git push origin main
-渋み  shis (shibumi-server)
+bun run ship
+Built linux/arm64 image from committed code
+Uploaded and verified image through SSH
 Received GitHub push
 Verified webhook, repo, branch, and commit
 Checked memory and disk
 Validated Compose configuration
-Built with rootless Podman
 Replaced container and passed health check
-Kept two rollback images and cleaned older ones
+Kept active and rollback images, cleaned older ones
 Deployment complete
 https://example.com
 ```
 
-GitHub sends a signed webhook when you push. Your current app keeps running while `shibumi-server` verifies the push, checks the host, validates the setup, and builds the new image. If those steps pass, it replaces the old container, checks the new one's health behind Caddy, keeps the previous two images for quick rollbacks, and removes older ones.
+`bun run ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. GitHub then sends a signed webhook. Your current app keeps running while `shibumi-server` verifies the push, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
 
 The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
 
@@ -33,14 +33,14 @@ Every deploy runs the same checks. You do not need to write tests for them.
 1. Verify the webhook, repository, branch, and commit.
 2. Check free memory and disk space.
 3. Validate the Compose configuration.
-4. Build the image and run any optional app tests in a temporary container.
+4. Verify the uploaded image and run any optional app tests in a temporary container.
 5. Replace the old container, check the new one's local health endpoint, keep the previous two successful images for rollbacks, and remove older images.
 
 App tests are optional. Add a command such as `bun test` only when the project has its own test suite.
 
 ## Built for small servers
 
-Before building, `shibumi-server` checks free memory and disk space. A build that runs too long is stopped. The defaults require 2 GiB of available memory and 4 GiB of free space.
+Images build on your computer, so running apps do not compete with production builds. Before deployment, `shibumi-server` still checks free memory and disk space. Prebuilt apps require 512 MiB of available memory by default; fallback server builds require 2 GiB. Both can be tuned per app.
 
 Caddy or the host firewall handles rate limits before requests reach `shibumi-server`.
 
@@ -48,7 +48,7 @@ Caddy or the host firewall handles rate limits before requests reach `shibumi-se
 
 I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.
 
-The first build exhausted the server's memory. That failure led directly to pre-build memory and disk checks, plus a timeout for builds that run too long.
+The first build exhausted the server's memory. That failure led to resource checks, bounded fallback builds, and the current local-build flow.
 
 ## Prepare a server
 
@@ -72,7 +72,7 @@ Run one installer from your local project root:
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, registers the app, configures and tests the GitHub webhook, then writes owned project source.
+It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, enables prebuilt images, registers the app, configures and tests the GitHub webhook, then writes owned project source. Local shipping requires Docker Desktop or another compatible Docker Engine.
 
 DNS and webhook delivery may depend on external changes. If either is not ready, setup keeps the owned files and prints the exact next action. Resume with:
 

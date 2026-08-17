@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -16,6 +16,8 @@ const config = {
   service: "app",
   port: 9100,
   healthPath: "/healthz",
+  deploymentMode: "prebuilt",
+  platform: "linux/arm64",
   cutoverRequired: false,
 } as const;
 
@@ -143,6 +145,11 @@ describe("ship configuration", () => {
       { commit, state: "succeeded" },
       { commit: "b".repeat(40), state: "running" },
     ], commit)).toEqual({ commit, state: "succeeded" });
+  });
+
+  test("uses exact commit tags for uploaded images", () => {
+    expect(prebuiltImage("example-com", "a".repeat(40))).toBe(`localhost/shibumi-server/upload/example-com:${"a".repeat(40)}`);
+    expect(() => prebuiltImage("../bad", "a".repeat(40))).toThrow("invalid");
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {

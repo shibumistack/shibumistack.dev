@@ -42,7 +42,7 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 shibumi-server add example.com
 ```
 
-Once configured, a normal `git push` sends a signed GitHub webhook. The service verifies the push and keeps the current app running while the next version is checked and built. Once ready, it replaces the old container, confirms the new one is healthy, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
+Once configured, `bun run ship` builds committed code for the server's Linux architecture and uploads it through SSH before pushing Git. The service verifies the signed push and exact image, keeps the current app running through checks, then replaces it, confirms health, keeps one rollback image, and removes older ones. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
 
 ## Start
 

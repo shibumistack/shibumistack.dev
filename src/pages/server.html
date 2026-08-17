@@ -21,14 +21,15 @@
                     </svg>
                     <div class="deploy-output clack-output" aria-live="polite">
                         <span class="clack-rail" aria-hidden="true"></span>
-                        <div class="deploy-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
+                        <div class="deploy-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; ship</strong></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Built and uploaded exact commit image</span></div>
                         <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Received GitHub push</span></div>
                         <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Verified webhook, repo, branch, and commit</span></div>
                         <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Checked memory and disk</span></div>
                         <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Validated Compose configuration</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Built with rootless Podman</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Verified uploaded linux/arm64 image</span></div>
                         <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Replaced container and passed health check</span></div>
-                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Kept two rollback images and cleaned older ones</span></div>
+                        <div class="deploy-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Kept active and rollback images, cleaned older ones</span></div>
                         <div class="deploy-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span class="deploy-result-message"><strong>Deployment complete</strong><a href="https://example.com">https://example.com</a></span></div>
                     </div>
                     <details class="deploy-details">
@@ -41,7 +42,7 @@
                                         <li>Verify the webhook, repository, branch, and commit.</li>
                                         <li>Check free memory and disk space.</li>
                                         <li>Validate the Compose configuration.</li>
-                                        <li>Build the image and run any optional app tests in a temporary container.</li>
+                                        <li>Verify the uploaded image and run any optional app tests in a temporary container.</li>
                                         <li>Replace the old container, check the new one's local health endpoint, keep the previous two successful images for rollbacks, and remove older images.</li>
                                     </ol>
                                     <p>App tests are optional. Add a command such as <code>bun test</code> only when the project has its own test suite.</p>
@@ -55,13 +56,13 @@
             <section class="server-intro" aria-labelledby="small-title">
                 <p class="eyebrow">Small on purpose</p>
                 <h2 id="small-title">No dashboard.<br>No cloud deploy service.</h2>
-                <p>GitHub sends a webhook when you push. Your current app keeps running while shibumi-server verifies the push, checks the host, validates the setup, and builds the new image. If those steps pass, it replaces the old container, checks the new one's health behind Caddy, keeps the previous two images for quick rollbacks, and removes older ones.</p>
+                <p><code>bun run ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Your current app keeps running while shibumi-server verifies the signed push, checkout, image, and Compose setup. Healthy deployments keep one previous image for rollback.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">
                 <article><span>01</span><h3>Verify every push.</h3><p>The webhook must match the secret, repository, branch, and commit. Bad or repeated requests do not deploy.</p></article>
-                <article><span>02</span><h3>Built for small servers.</h3><p>Before building, shibumi-server checks free memory and disk space. A build that runs too long is stopped.</p></article>
-                <article><span>03</span><h3>Bad builds don't go live.</h3><p>Only one deploy runs at a time. Invalid configuration or a failed build stops before startup.</p></article>
+                <article><span>02</span><h3>Built for small servers.</h3><p>Images build locally. The server checks free memory and disk before deployment.</p></article>
+                <article><span>03</span><h3>Bad images don't go live.</h3><p>Only one deploy runs at a time. Invalid configuration, image, or tests stop before startup.</p></article>
             </section>
 
             <section class="dogfood-section" aria-labelledby="dogfood-title">
@@ -71,7 +72,7 @@
                 </div>
                 <div class="section-copy">
                     <p>I also maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.</p>
-                    <p>The first build exhausted the server's memory. That failure led directly to pre-build memory and disk checks, plus a timeout for builds that run too long.</p>
+                    <p>The first build exhausted the server's memory. That failure led to resource checks, bounded fallback builds, and the current local-build flow.</p>
                     <a class="text-link" href="https://mcpvault.org">Visit MCPVault →</a>
                 </div>
             </section>

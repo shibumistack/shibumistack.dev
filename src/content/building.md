@@ -52,4 +52,4 @@ Each extension can merge named guidance such as `agents/auth.md` into root `agen
 
 ### [shibumi-server](/server.md)
 
-A VPS deploy service that verifies signed GitHub pushes, checks host capacity, validates the deployment config, builds with rootless Podman, replaces the old container, checks the new one's health, keeps the previous two images for quick rollbacks, and removes older ones. App-owned tests are optional. Public code and templates stay in Git; secrets and machine inventory stay on the server.
+A VPS deploy service that accepts exact commit-tagged images over SSH, verifies signed GitHub pushes, checks host capacity, validates deployment config and image platform, replaces the old container, checks health, keeps one rollback image, and removes older ones. Images build locally; app-owned tests remain optional. Public code and templates stay in Git; secrets and machine inventory stay on the server.

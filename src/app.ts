@@ -102,7 +102,7 @@ const pageMeta: Record<string, PageMeta> = {
   },
   server: {
     title: "shibumi-server: deploy your app to your own server",
-    description: "A small Bun service that validates, builds, and deploys your app to your own server with rootless Podman behind Caddy.",
+    description: "A small Bun service that verifies and deploys locally built images to your own server with rootless Podman behind Caddy.",
     path: "/server",
   },
   ship: {
@@ -721,9 +721,9 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v19.ts", 302));
-app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v12.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v21.ts"), 200, {
+app.get("/install/ship", (c) => c.redirect("/ship/install-v20.ts", 302));
+app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v13.sh", 302));
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v22.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",
