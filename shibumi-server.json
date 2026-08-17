@@ -13,7 +13,7 @@
   "port": 9002,
   "healthPath": "/",
   "deploymentMode": "prebuilt",
-  "trigger": "ship",
   "platform": "linux/arm64",
-  "cutoverRequired": false
+  "cutoverRequired": false,
+  "trigger": "ship"
 }
