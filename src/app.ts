@@ -56,7 +56,7 @@ const fileStemPattern = new RegExp(`^${safeNameSource}$`);
 const iconTokenPattern = new RegExp(`{{icon\\((${safeNameSource})\\)}}`, "g");
 const activeTokenPattern = new RegExp(`{{active\\((${safeNameSource})\\)}}`, "g");
 const pageRoutePattern = new RegExp(`^\\/(${safeNameSource})\\/?$`);
-const blogPostPattern = new RegExp(`^\\/blog\\/(${safeNameSource})$`);
+const blogPostPattern = new RegExp(`^\\/blog\\/(${safeNameSource})\\/?$`);
 const docsRoutePattern = /^\/docs(?:\/([a-z0-9][a-z0-9/-]*))?\/?$/;
 const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
 const unresolvedTokenPattern = /{{[^}]+}}/;
@@ -361,11 +361,15 @@ async function nav(active?: ActivePage): Promise<string> {
   return part("nav", {}, active);
 }
 
+function canonicalPath(path: string): string {
+  return path === "/" ? path : `${path.replace(/\/$/, "")}/`;
+}
+
 async function metaTags(meta?: PageMeta): Promise<string> {
   if (!meta) return "";
 
   return part("meta", {
-    url: `https://shibumistack.dev${meta.path}`,
+    url: `https://shibumistack.dev${canonicalPath(meta.path)}`,
     title: meta.title,
     description: meta.description,
   });
@@ -391,7 +395,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: meta?.title ?? "Shibumi Stack",
     description: meta?.description ?? "A lean, opinionated web stack for building calm, durable apps.",
-    canonical: `https://shibumistack.dev${meta?.path ?? files.routePath}`,
+    canonical: `https://shibumistack.dev${canonicalPath(meta?.path ?? files.routePath)}`,
     "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
@@ -630,7 +634,7 @@ async function renderDocs(path: string): Promise<string | undefined> {
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: meta.title,
     description: meta.description,
-    canonical: `https://shibumistack.dev${meta.path}`,
+    canonical: `https://shibumistack.dev${canonicalPath(meta.path)}`,
     "asset-version": assetVersion,
   });
   layout = insert(layout, "meta", await metaTags(meta));
@@ -658,7 +662,7 @@ async function renderBlogList(): Promise<string> {
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: "Blog: Shibumi Stack",
     description: "Notes on building calm, durable web apps.",
-    canonical: "https://shibumistack.dev/blog",
+    canonical: "https://shibumistack.dev/blog/",
     "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
@@ -711,7 +715,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: `${escapeHtml(title)}: Shibumi Stack`,
     description: "Notes on building calm, durable web apps.",
-    canonical: `https://shibumistack.dev/blog/${slug}`,
+    canonical: `https://shibumistack.dev/blog/${slug}/`,
     "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });

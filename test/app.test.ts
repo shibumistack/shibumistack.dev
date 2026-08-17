@@ -155,6 +155,8 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Dogfooding Shibumi");
     expect(body).toContain("owned source");
+    expect(body).toContain('<link rel="canonical" href="https://shibumistack.dev/blog/dogfooding/">');
+    expect((await app.request("/blog/dogfooding/")).status).toBe(200);
   });
 
   test("returns 404 for unknown blog posts", async () => {

@@ -49,10 +49,8 @@ bun ship:update  # update only owned ship client source
   from `src/pages/{page}.html` and optional `src/content/{page}.md`.
 - `/docs` and nested `/docs/*` routes use a shared documentation shell with Markdown sources under `src/content/docs/`; `/docs/decisions` retains original technical-decision content.
 - Markdown-only pages such as `/dx` serve Markdown directly.
-- Requests with `Accept: text/markdown` receive Markdown when a page has a
-  Markdown alternate.
-- Direct Markdown links such as `/docs.md` and `/README.md` are served inline as
-  plain text.
+- Development rendering supports `Accept: text/markdown`; static production exposes the same sources through explicit Markdown paths.
+- Direct Markdown links such as `/docs.md` and `/README.md` are served inline as plain text.
 
 ## Deployment
 
