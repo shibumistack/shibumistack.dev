@@ -54,7 +54,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun ship:setup` later to refresh project configuration and webhook setup. Run `bun ship:update` to update only the owned ship client, without changing server setup, webhooks, or `shibumi-server.json`.
 
-Source: <https://shibumistack.dev/ship/v25.ts>
+Source: <https://shibumistack.dev/ship/v26.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
@@ -67,6 +67,8 @@ bun ship
 ```
 
 `bun ship:logs` prints the latest bounded deployment log from the server.
+
+Before tests or builds, Ship checks the mutable latest pointer against its own immutable versioned source. When a reviewed update exists, it offers to use that version for the current deployment. Only after a successful deployment does it update tracked `scripts/ship.ts`, leaving it unstaged for review and commit. `-y` accepts this update; network failures keep the current client. Owned local changes are never overwritten.
 
 Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git and follow deployment status. When `HEAD` is already pushed, it uploads and redeploys that exact commit.
 

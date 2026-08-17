@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -48,6 +48,12 @@ describe("ship configuration", () => {
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
+  });
+
+  test("accepts only immutable reviewed ship source URLs", () => {
+    expect(immutableShipSource('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v26.ts";')).toBe("https://shibumistack.dev/ship/v26.ts");
+    expect(immutableShipSource('const CURRENT_SOURCE = "https://attacker.example/ship/v26.ts";')).toBeUndefined();
+    expect(immutableShipSource('const CURRENT_SOURCE = "https://shibumistack.dev/ship/latest.ts";')).toBeUndefined();
   });
 
   test("formats ship duration and resolves local client config", () => {
