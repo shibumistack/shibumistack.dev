@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -35,16 +35,19 @@ describe("ship configuration", () => {
       rollback: false,
       logs: false,
       dev: false,
+      rebuild: false,
       yes: true,
       server: "deploy@example-vps",
       domain: "app.example.com",
     });
     expect(parseShipArgs(["--rollback", "-y"])).toMatchObject({ rollback: true, yes: true });
+    expect(parseShipArgs(["--rebuild", "-y"])).toMatchObject({ rebuild: true, yes: true });
     expect(parseShipArgs(["--logs"])).toMatchObject({ logs: true });
     expect(parseShipArgs(["--dev"])).toMatchObject({ dev: true });
     expect(() => parseShipArgs(["--yes", "--server"])).toThrow("--server requires a value");
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
+    expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
   });
 
   test("formats ship duration and resolves local client config", () => {
@@ -147,9 +150,18 @@ describe("ship configuration", () => {
     ], commit)).toEqual({ commit, state: "succeeded" });
   });
 
-  test("uses exact commit tags for uploaded images", () => {
-    expect(prebuiltImage("example-com", "a".repeat(40))).toBe(`localhost/shibumi-server/upload/example-com:${"a".repeat(40)}`);
-    expect(() => prebuiltImage("../bad", "a".repeat(40))).toThrow("invalid");
+  test("uses exact commit tags and identity labels for uploaded images", () => {
+    const commit = "a".repeat(40);
+    const tree = "b".repeat(40);
+    expect(prebuiltImage("example-com", commit)).toBe(`localhost/shibumi-server/upload/example-com:${commit}`);
+    expect(prebuiltLabels("example-com", commit, "owner/repo", tree, "1.2.3")).toEqual({
+      "dev.shibumistack.app-id": "example-com",
+      "dev.shibumistack.source-tree": tree,
+      "org.opencontainers.image.revision": commit,
+      "org.opencontainers.image.source": "https://github.com/owner/repo",
+      "org.opencontainers.image.version": "1.2.3",
+    });
+    expect(() => prebuiltImage("../bad", commit)).toThrow("invalid");
   });
 
   test("accepts server client config and rejects mismatched webhook URLs", () => {

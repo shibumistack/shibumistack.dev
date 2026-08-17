@@ -54,7 +54,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun ship:setup` later to refresh project configuration and webhook setup. Run `bun ship:update` to update only the owned ship client, without changing server setup, webhooks, or `shibumi-server.json`.
 
-Source: <https://shibumistack.dev/ship/v23.ts>
+Source: <https://shibumistack.dev/ship/v24.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
@@ -70,7 +70,15 @@ bun ship
 
 Ship requires a clean tree on the configured branch. It runs project tests and checks, creates a build context from committed `HEAD`, builds for the server's Linux architecture, and uploads the exact commit-tagged image through SSH. Only then does it push Git and follow deployment status. When `HEAD` is already pushed, it uploads and redeploys that exact commit.
 
-Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. The server verifies the image tag and platform, skips its own build, and starts with `--no-build` only after the signed webhook matches the same commit.
+Uncommitted work fails with `git status` output and a concrete next step. Ship never stages or commits files for you. A generic Compose override labels every image with repository, app ID, full revision, and Git source tree. The server independently resolves the webhook commit tree and verifies every identity label, tag, and platform before starting with `--no-build`.
+
+Docker's content-addressed cache stays enabled by default. To diagnose mutable build inputs or suspected cache trouble, force every Dockerfile step to run again:
+
+```sh
+bun ship --rebuild
+```
+
+`--rebuild` passes `--no-cache` to Compose. It still builds only committed `HEAD` and replaces the exact uploaded commit tag.
 
 Existing domains keep their current Caddy upstream until the first Shibumi deployment passes health checks and you approve cutover. Ship uses the latest successful server deployment duration as the next ETA, then reports total elapsed client time.
 
