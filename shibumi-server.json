@@ -14,5 +14,5 @@
   "healthPath": "/",
   "deploymentMode": "prebuilt",
   "platform": "linux/arm64",
-  "cutoverRequired": true
+  "cutoverRequired": false
 }
