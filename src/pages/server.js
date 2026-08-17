@@ -88,7 +88,7 @@
     const replay = terminal?.querySelector(".terminal-replay");
     if (!terminal || !typed || !cursor || !steps) return;
 
-    const command = "bun run ship";
+    const command = "bun ship";
     let generation = 0;
 
     function run(delay = 0) {

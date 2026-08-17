@@ -9,7 +9,7 @@ No dashboard or cloud deploy service.
 ## A deployment
 
 ```clack
-bun run ship
+bun ship
 Built linux/arm64 image from committed code
 Uploaded and verified image through SSH
 Received GitHub push
@@ -22,7 +22,7 @@ Deployment complete
 https://example.com
 ```
 
-`bun run ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. GitHub then sends a signed webhook. Your current app keeps running while `shibumi-server` verifies the push, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
+`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. GitHub then sends a signed webhook. Your current app keeps running while `shibumi-server` verifies the push, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
 
 The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
 
@@ -77,7 +77,7 @@ It infers the domain, repository, branch, Compose file, service, and health path
 DNS and webhook delivery may depend on external changes. If either is not ready, setup keeps the owned files and prints the exact next action. Resume with:
 
 ```sh
-bun run ship:setup
+bun ship:setup
 ```
 
 `shis add sub.example.com` remains available for server operators and automation. Use `--dry-run` to follow the same detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add ends with the exact local installer command instead of sending you through a webpage.
@@ -87,14 +87,14 @@ bun run ship:setup
 Self-hosted projects own a small ship script:
 
 ```sh
-bun run ship
+bun ship
 ```
 
 The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. GitHub CLI creates and tests the webhook without printing or storing its secret.
 
 Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
 
-Run `bun run ship:setup` whenever you want to review or change deployment setup. For an existing project, [add the owned ship workflow](/ship.md).
+Run `bun ship:setup` whenever you want to review or change deployment setup. For an existing project, [add the owned ship workflow](/ship.md).
 
 ## Install on your server
 

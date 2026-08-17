@@ -56,7 +56,7 @@
             <section class="server-intro" aria-labelledby="small-title">
                 <p class="eyebrow">Small on purpose</p>
                 <h2 id="small-title">No dashboard.<br>No cloud deploy service.</h2>
-                <p><code>bun run ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Your current app keeps running while shibumi-server verifies the signed push, checkout, image, and Compose setup. Healthy deployments keep one previous image for rollback.</p>
+                <p><code>bun ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Your current app keeps running while shibumi-server verifies the signed push, checkout, image, and Compose setup. Healthy deployments keep one previous image for rollback.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">
@@ -120,7 +120,7 @@
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files and prints the exact next action. Resume with <code>bun run ship:setup</code>. No reinstall needed.</p>
+                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files and prints the exact next action. Resume with <code>bun ship:setup</code>. No reinstall needed.</p>
                     <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>
                 </div>
             </section>
@@ -132,10 +132,10 @@
                 </div>
                 <div class="section-copy">
                     <p>Self-hosted projects own a small ship script:</p>
-                    <pre class="ship-command"><code>bun run ship</code></pre>
+                    <pre class="ship-command"><code>bun ship</code></pre>
                     <p>The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates and tests the webhook without printing or storing its secret.</p>
                     <p>Later runs check Git state, run project tests and type checks, push, then follow deployment status over SSH with an ETA. Existing domains keep their current upstream until first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
-                    <p>Use <code>bun run ship:logs</code> for latest deployment log and <code>bun run ship --rollback</code> to restore previous retained image. Run <code>bun run ship:setup</code> whenever you want to review or change setup. Existing project? <a href="/ship">Add owned ship workflow</a>.</p>
+                    <p>Use <code>bun ship:logs</code> for latest deployment log and <code>bun ship --rollback</code> to restore previous retained image. Run <code>bun ship:setup</code> whenever you want to review or change setup. Existing project? <a href="/ship">Add owned ship workflow</a>.</p>
                 </div>
             </section>
 
