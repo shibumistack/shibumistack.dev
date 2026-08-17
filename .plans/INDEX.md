@@ -2,6 +2,7 @@
 
 ## Active
 
+- [ ] Plan and dogfood `create-shibumi` static output across Netlify, Cloudflare, and Vercel (`.plans/create-shibumi.md`).
 - [ ] Add protected-branch PR flow to owned ship client, including exact merged-SHA handoff.
 - [ ] Bootstrap Vibetoolbox and MCPVault owned clients to v28; verify automatic update on next release.
 
