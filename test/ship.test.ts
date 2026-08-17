@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedBranch, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -81,6 +81,12 @@ describe("ship configuration", () => {
     expect(repositoryFromRemote("https://github.com/owner/repo.git")).toBe("owner/repo");
   });
 
+  test("reuses configured domain before inferring it", () => {
+    expect(setupDomain(undefined, "configured.example.com", "inferred.example.com")).toBe("configured.example.com");
+    expect(setupDomain("explicit.example.com", "configured.example.com", undefined)).toBe("explicit.example.com");
+    expect(setupDomain(undefined, undefined, "inferred.example.com")).toBe("inferred.example.com");
+  });
+
   test("infers a domain from project name or Compose SITE_URL", () => {
     expect(domainFromProject("example.com", "")).toBe("example.com");
     expect(domainFromProject("vibetoolbox", "    SITE_URL: https://vibetoolbox.dev\n")).toBe("vibetoolbox.dev");
@@ -97,6 +103,12 @@ describe("ship configuration", () => {
     expect(shouldTriggerRedeploy("github-push", 0)).toBeTrue();
     expect(deploymentModeForTrigger("ship")).toBe("prebuilt");
     expect(deploymentModeForTrigger("github-push")).toBe("build");
+  });
+
+  test("reads GitHub branch protection without trusting malformed API data", () => {
+    expect(protectedBranch({ protected: true })).toBeTrue();
+    expect(protectedBranch({ protected: false })).toBeFalse();
+    expect(protectedBranch({ protected: "true" })).toBeUndefined();
   });
 
   test("distinguishes healthy and failed matching webhooks", () => {
