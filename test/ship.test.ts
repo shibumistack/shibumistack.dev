@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shouldCheckForShipUpdate, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, repositoryFromRemote, shipConfirmation, shouldCheckForShipUpdate, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -81,6 +81,12 @@ describe("ship configuration", () => {
     expect(domainFromProject("vibetoolbox", "    SITE_URL: https://vibetoolbox.dev\n")).toBe("vibetoolbox.dev");
     expect(domainFromProject("app", "    - SITE_URL=https://preview.example.com/path\n")).toBe("preview.example.com");
     expect(domainFromProject("app", "    SITE_URL: http://localhost:3000\n")).toBeUndefined();
+  });
+
+  test("describes prebuilt image upload before Git push", () => {
+    expect(shipConfirmation("prebuilt", 1, "main", "example.com")).toBe("Build and upload image, then push main to deploy example.com?");
+    expect(shipConfirmation("prebuilt", 0, "main", "example.com")).toBe("Build and upload image, then redeploy current main commit to example.com?");
+    expect(shipConfirmation("build", 1, "main", "example.com")).toBe("Push main and deploy example.com?");
   });
 
   test("distinguishes healthy and failed matching webhooks", () => {

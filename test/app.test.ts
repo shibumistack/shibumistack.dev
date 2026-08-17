@@ -204,7 +204,7 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v27.ts")');
+    expect(body).toContain('fetch("/ship/v28.ts")');
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
@@ -213,7 +213,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v27.ts");
+    const source = await app.request("/ship/v28.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -256,6 +256,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v25.ts")).status).toBe(200);
     expect((await app.request("/ship/v26.ts")).status).toBe(200);
     expect((await app.request("/ship/v27.ts")).status).toBe(200);
+    expect((await app.request("/ship/v28.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -263,8 +264,8 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v25.ts");
-    const installer = await app.request("/ship/install-v25.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v26.ts");
+    const installer = await app.request("/ship/install-v26.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
@@ -280,12 +281,12 @@ describe("routes", () => {
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v18.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v18.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v19.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v19.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
     const bootstrapBody = await bootstrap.text();
-    expect(bootstrapBody).toContain("ship/install-v25.ts");
+    expect(bootstrapBody).toContain("ship/install-v26.ts");
     expect(bootstrapBody).toContain('bun "$temporary" "$@"');
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v2.sh")).status).toBe(200);
