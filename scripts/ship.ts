@@ -25,7 +25,7 @@ const SERVER_HOSTNAME = /^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$/;
 const COMMIT = /^[a-f0-9]{40}$/;
 const SERVER_CLI = "~/.local/bin/shibumi-server";
 const LATEST_SOURCE = "https://shibumistack.dev/ship/latest.ts";
-const CURRENT_SOURCE = "https://shibumistack.dev/ship/v30.ts";
+const CURRENT_SOURCE = "https://shibumistack.dev/ship/v31.ts";
 let sshControlDirectory: string | undefined;
 let sshControlTarget: string | undefined;
 const accent = (value: string) => process.stdout.isTTY && !("NO_COLOR" in process.env) && process.env.TERM !== "dumb"
@@ -292,9 +292,20 @@ export function shouldTriggerRedeploy(trigger: ClientConfig["trigger"], ahead: n
   return trigger === "ship" || ahead === 0;
 }
 
-export function protectedBranch(value: unknown): boolean | undefined {
-  if (!value || typeof value !== "object" || typeof (value as { protected?: unknown }).protected !== "boolean") return undefined;
-  return (value as { protected: boolean }).protected;
+export function protectedPushBlocked(value: unknown, login?: string, admin = false): boolean | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const protection = value as {
+    enforce_admins?: { enabled?: unknown };
+    required_pull_request_reviews?: {
+      bypass_pull_request_allowances?: { users?: Array<{ login?: unknown }> };
+    } | null;
+  };
+  const reviews = protection.required_pull_request_reviews;
+  if (!reviews) return false;
+  const bypassed = login && reviews.bypass_pull_request_allowances?.users
+    ?.some((user) => user.login === login);
+  if (bypassed || (admin && protection.enforce_admins?.enabled === false)) return false;
+  return true;
 }
 
 const branchProtection = new Map<string, boolean | undefined>();
@@ -303,12 +314,33 @@ async function githubBranchIsProtected(config: ClientConfig): Promise<boolean> {
   const repository = config.repository.slice("github:".length);
   const key = `${repository}#${config.branch}`;
   if (!branchProtection.has(key)) {
+    const endpoint = `repos/${repository}/branches/${encodeURIComponent(config.branch)}/protection`;
     try {
-      const response = await fetch(`https://api.github.com/repos/${repository}/branches/${encodeURIComponent(config.branch)}`, {
-        headers: { Accept: "application/vnd.github+json", "User-Agent": "shibumi-ship" },
-        signal: AbortSignal.timeout(5_000),
-      });
-      branchProtection.set(key, response.ok ? protectedBranch(await response.json()) : undefined);
+      if (Bun.which("gh")) {
+        const details = await run(["gh", "api", endpoint], { allowFailure: true });
+        if (details.exitCode === 0) {
+          const protection: unknown = JSON.parse(details.stdout);
+          if (protectedPushBlocked(protection) === false) branchProtection.set(key, false);
+          else {
+            const [viewer, repo] = await Promise.all([
+              run(["gh", "api", "user", "--jq", ".login"], { allowFailure: true }),
+              run(["gh", "api", `repos/${repository}`, "--jq", ".permissions.admin"], { allowFailure: true }),
+            ]);
+            branchProtection.set(key, protectedPushBlocked(
+              protection,
+              viewer.exitCode === 0 ? viewer.stdout.trim() : undefined,
+              repo.exitCode === 0 && repo.stdout.trim() === "true",
+            ));
+          }
+        }
+      }
+      if (!branchProtection.has(key)) {
+        const response = await fetch(`https://api.github.com/${endpoint}`, {
+          headers: { Accept: "application/vnd.github+json", "User-Agent": "shibumi-ship" },
+          signal: AbortSignal.timeout(5_000),
+        });
+        branchProtection.set(key, response.status === 404 ? false : response.ok ? protectedPushBlocked(await response.json()) : undefined);
+      }
     } catch {
       branchProtection.set(key, undefined);
     }
@@ -943,13 +975,23 @@ export function prebuiltLabels(appId: string, commit: string, repository: string
   };
 }
 
+export function composeFrontend(plugin: boolean, standalone: boolean): string[] | undefined {
+  if (plugin) return ["docker", "compose"];
+  if (standalone) return ["docker-compose"];
+  return undefined;
+}
+
 async function buildAndUpload(config: ClientConfig, target: string, commit: string): Promise<void> {
   if (config.deploymentMode !== "prebuilt") return;
   if (!config.platform) throw new Error("server image platform is missing.\n\nNext: run bun ship:setup.");
   const docker = await run(["docker", "info"], { allowFailure: true });
-  if (docker.exitCode !== 0) throw new Error("Docker is not running.\n\nNext: start Docker Desktop, then run bun ship.");
-  const composeVersion = await run(["docker", "compose", "version"], { allowFailure: true });
-  if (composeVersion.exitCode !== 0) throw new Error("Docker Compose is unavailable.\n\nNext: install or update Docker Desktop, then run bun ship.");
+  if (docker.exitCode !== 0) throw new Error("Docker-compatible engine is unavailable.\n\nNext: start Colima with colima start, or start another configured engine; verify docker info, then run bun ship.");
+  const plugin = await run(["docker", "compose", "version"], { allowFailure: true });
+  const standalone = plugin.exitCode === 0
+    ? undefined
+    : await run(["docker-compose", "version"], { allowFailure: true });
+  const compose = composeFrontend(plugin.exitCode === 0, standalone?.exitCode === 0);
+  if (!compose) throw new Error("Docker Compose is unavailable.\n\nNext: install docker compose or docker-compose, verify its version, then run bun ship.");
   const submodules = (await git("ls-files", "--stage")).split("\n").filter((line) => line.startsWith("160000 "));
   if (submodules.length > 0) throw new Error("Prebuilt shipping does not support Git submodules yet.\n\nNext: remove the submodule dependency or use server build mode.");
 
@@ -975,7 +1017,7 @@ async function buildAndUpload(config: ClientConfig, target: string, commit: stri
     // BuildKit layer cache remains available unless --rebuild was requested.
     await run(["docker", "image", "rm", image], { allowFailure: true });
     await run([
-      "docker", "compose",
+      ...compose,
       "--project-name", `shibumi-build-${config.appId}`,
       "--file", join(context, project.composeFile),
       "--file", override,
