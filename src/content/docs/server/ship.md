@@ -28,11 +28,21 @@ Committed `shibumi-server.json` contains deployment trigger, app identity, repos
 
 ## Ship
 
+Local prebuilt shipping requires Colima with Docker CLI, Docker Compose, and Buildx. Recommended macOS setup:
+
+```sh
+brew install colima docker docker-compose docker-buildx
+colima start
+docker info
+docker compose version
+docker buildx version
+```
+
 ```sh
 bun ship
 ```
 
-Ship checks Git state and runs configured project checks. It creates build context from committed `HEAD`, builds for server's Linux platform, labels image with repository, app, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode asks the server over SSH to deploy exact commit, then polls status. Deploy-on-push waits for GitHub after a new push. If `HEAD` is already pushed, either mode redeploys it directly.
+Ship checks local build tools before project tests or confirmation, then checks Git state and runs configured project checks. If Docker config names an unavailable credential helper, Ship offers to remove only stale references after writing a mode-`0600` backup. Declining or running non-interactively prints manual recovery steps. It creates build context from committed `HEAD`, builds for server's Linux platform, labels image with repository, app, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode asks the server over SSH to deploy exact commit, then polls status. Deploy-on-push waits for GitHub after a new push. If `HEAD` is already pushed, either mode redeploys it directly.
 
 Docker layer cache stays enabled. Use `bun ship --rebuild` for a no-cache build. Git submodules are currently refused because `git archive` cannot prove their nested content identity.
 

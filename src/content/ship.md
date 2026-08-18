@@ -2,7 +2,19 @@
 
 Connect any Bun project to `shibumi-server` from your local project root. One installer handles server registration through SSH, deployment setup, and owned project source. You do not need to add the app from a server shell first.
 
-Requirements: Bun, Git, Colima with Docker CLI, Docker Compose, Buildx, and SSH access to your Linux server. Ship offers to remove stale unavailable Docker credential-helper entries after saving a mode-restricted backup. Deploy-on-push also uses GitHub CLI.
+Requirements: Bun, Git, Colima with Docker CLI, Docker Compose, Buildx, and SSH access to your Linux server. Deploy-on-push also uses GitHub CLI.
+
+Recommended macOS setup:
+
+```sh
+brew install colima docker docker-compose docker-buildx
+colima start
+docker info
+docker compose version
+docker buildx version
+```
+
+Ship validates this local toolchain before project tests or deployment confirmation. If Docker config names an unavailable credential helper, Ship offers to remove only stale helper references after saving a mode-`0600` backup. Declining or running non-interactively prints manual recovery steps.
 
 ## 1. Connect
 

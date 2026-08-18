@@ -54,6 +54,18 @@ bun ship:update  # update only owned ship client source
 
 ## Deployment
 
+Local prebuilt shipping uses Colima with Docker CLI, Docker Compose, and Buildx:
+
+```sh
+brew install colima docker docker-compose docker-buildx
+colima start
+docker info
+docker compose version
+docker buildx version
+```
+
+`bun ship` checks these tools before tests or confirmation. When Docker config names an unavailable credential helper, Ship offers to remove only stale helper references after saving a mode-`0600` backup. Declining prints manual recovery steps.
+
 Production runs a scratch container containing only a static BusyBox binary and generated `dist/`. Host Caddy owns HTTPS, compression, headers, and public routing. Shibumi retains image identity, health checks, and rollback without shipping Bun or application dependencies in the runtime image.
 
 ## Stack
