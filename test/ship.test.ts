@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -65,7 +65,10 @@ describe("ship configuration", () => {
 
   test("cleans Docker output and finds configured credential helpers", () => {
     expect(stripDockerDesktopLinks("build failed\nView build details: docker-desktop://dashboard/build/id\nretry")).toBe("build failed\nretry");
-    expect(dockerCredentialHelpers({ credsStore: "desktop", credHelpers: { registry: "osxkeychain", duplicate: "desktop" } })).toEqual(["desktop", "osxkeychain"]);
+    const config: Record<string, unknown> = { credsStore: "desktop", credHelpers: { registry: "osxkeychain", duplicate: "desktop" } };
+    expect(dockerCredentialHelpers(config)).toEqual(["desktop", "osxkeychain"]);
+    removeDockerCredentialHelper(config, "desktop");
+    expect(config).toEqual({ credHelpers: { registry: "osxkeychain" } });
     expect(dockerCredentialHelpers(undefined)).toEqual([]);
   });
 
