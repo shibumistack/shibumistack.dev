@@ -61,7 +61,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun ship:setup` later to refresh project configuration or change the deployment trigger. Choosing **Run bun ship** switches the server to prebuilt mode and disables the matching webhook when GitHub CLI is already authenticated. GitHub failures do not block direct setup or shipping; Ship prints the manual cleanup link instead. Choosing **Deploy every GitHub push** switches the server to build mode and creates, enables, or repairs the webhook. Run `bun ship:update` to update only owned ship client source.
 
-Source: <https://shibumistack.dev/ship/v33.ts>
+Source: <https://shibumistack.dev/ship/v34.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
