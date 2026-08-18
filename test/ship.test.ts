@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedBranch, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -94,6 +94,12 @@ describe("ship configuration", () => {
     expect(domainFromProject("app", "    SITE_URL: http://localhost:3000\n")).toBeUndefined();
   });
 
+  test("selects Docker Compose plugin before standalone Compose", () => {
+    expect(composeFrontend(true, true)).toEqual(["docker", "compose"]);
+    expect(composeFrontend(false, true)).toEqual(["docker-compose"]);
+    expect(composeFrontend(false, false)).toBeUndefined();
+  });
+
   test("describes prebuilt shipping and chooses its deployment trigger", () => {
     expect(shipConfirmation("prebuilt", 1, "main", "example.com")).toBe("Build and upload image, then push main to deploy example.com?");
     expect(shipConfirmation("prebuilt", 0, "main", "example.com")).toBe("Build and upload image, then redeploy current main commit to example.com?");
@@ -105,10 +111,13 @@ describe("ship configuration", () => {
     expect(deploymentModeForTrigger("github-push")).toBe("build");
   });
 
-  test("reads GitHub branch protection without trusting malformed API data", () => {
-    expect(protectedBranch({ protected: true })).toBeTrue();
-    expect(protectedBranch({ protected: false })).toBeFalse();
-    expect(protectedBranch({ protected: "true" })).toBeUndefined();
+  test("blocks only pull-request rules the current GitHub user cannot bypass", () => {
+    const reviews = { bypass_pull_request_allowances: { users: [{ login: "bitbonsai" }] } };
+    expect(protectedPushBlocked({ enforce_admins: { enabled: true } })).toBeFalse();
+    expect(protectedPushBlocked({ enforce_admins: { enabled: true }, required_pull_request_reviews: reviews }, "bitbonsai")).toBeFalse();
+    expect(protectedPushBlocked({ enforce_admins: { enabled: false }, required_pull_request_reviews: {} }, "admin", true)).toBeFalse();
+    expect(protectedPushBlocked({ enforce_admins: { enabled: true }, required_pull_request_reviews: {} }, "writer", false)).toBeTrue();
+    expect(protectedPushBlocked("protected")).toBeUndefined();
   });
 
   test("distinguishes healthy and failed matching webhooks", () => {

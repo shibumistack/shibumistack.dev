@@ -69,7 +69,7 @@ Run one installer from your local project root:
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, enables prebuilt images, registers the app, configures and tests the GitHub webhook, then writes owned project source. Local shipping requires Docker Desktop or another compatible Docker Engine.
+It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, enables prebuilt images, registers the app, configures and tests the GitHub webhook, then writes owned project source. Local shipping recommends Colima and supports another Docker-compatible engine.
 
 DNS and webhook delivery may depend on external changes. If either is not ready, setup keeps the owned files and prints the exact next action. Resume with:
 

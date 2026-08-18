@@ -224,7 +224,7 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v30.ts")');
+    expect(body).toContain('fetch("/ship/v31.ts")');
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
@@ -233,7 +233,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v30.ts");
+    const source = await app.request("/ship/v31.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -246,6 +246,8 @@ describe("routes", () => {
     expect(sourceBody).toContain("dev.shibumistack.source-tree");
     expect(sourceBody).toContain('"--no-cache"');
     expect(sourceBody).toContain('["docker", "image", "rm", image]');
+    expect(sourceBody).toContain('["docker-compose"]');
+    expect(sourceBody).not.toContain("Docker Desktop");
     expect(sourceBody).toContain("runLatestShipClient");
     expect(sourceBody).toContain("save it after a successful deployment");
     expect(sourceBody).toContain("How do you want to deploy?");
@@ -283,6 +285,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v28.ts")).status).toBe(200);
     expect((await app.request("/ship/v29.ts")).status).toBe(200);
     expect((await app.request("/ship/v30.ts")).status).toBe(200);
+    expect((await app.request("/ship/v31.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -290,13 +293,13 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v28.ts");
-    const installer = await app.request("/ship/install-v28.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v29.ts");
+    const installer = await app.request("/ship/install-v29.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v30.ts");
+    expect(installerBody).toContain("ship/v31.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
@@ -307,20 +310,22 @@ describe("routes", () => {
     expect((await app.request("/ship/install-v2.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v27.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v28.ts")).status).toBe(200);
+    expect((await app.request("/ship/install-v29.ts")).status).toBe(200);
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v21.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v21.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v22.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v22.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
     const bootstrapBody = await bootstrap.text();
-    expect(bootstrapBody).toContain("ship/install-v28.ts");
+    expect(bootstrapBody).toContain("ship/install-v29.ts");
     expect(bootstrapBody).toContain('bun "$temporary" "$@"');
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v2.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v20.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v21.sh")).status).toBe(200);
+    expect((await app.request("/ship/bootstrap-v22.sh")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {
