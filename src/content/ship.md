@@ -2,7 +2,7 @@
 
 Connect any Bun project to `shibumi-server` from your local project root. One installer handles server registration through SSH, deployment setup, and owned project source. You do not need to add the app from a server shell first.
 
-Requirements: Bun, Git, Colima or another Docker-compatible engine, Docker Compose, Buildx, and SSH access to your Linux server. Deploy-on-push also uses GitHub CLI.
+Requirements: Bun, Git, Colima with Docker CLI, Docker Compose, Buildx, and SSH access to your Linux server. Deploy-on-push also uses GitHub CLI.
 
 ## 1. Connect
 
@@ -61,7 +61,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun ship:setup` later to refresh project configuration or change the deployment trigger. Choosing **Run bun ship** switches the server to prebuilt mode and disables the matching webhook when GitHub CLI is already authenticated. GitHub failures do not block direct setup or shipping; Ship prints the manual cleanup link instead. Choosing **Deploy every GitHub push** switches the server to build mode and creates, enables, or repairs the webhook. Run `bun ship:update` to update only owned ship client source.
 
-Source: <https://shibumistack.dev/ship/v32.ts>
+Source: <https://shibumistack.dev/ship/v33.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.

@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -61,6 +61,10 @@ describe("ship configuration", () => {
     expect(immutableShipSource('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v26.ts";')).toBe("https://shibumistack.dev/ship/v26.ts");
     expect(immutableShipSource('const CURRENT_SOURCE = "https://attacker.example/ship/v26.ts";')).toBeUndefined();
     expect(immutableShipSource('const CURRENT_SOURCE = "https://shibumistack.dev/ship/latest.ts";')).toBeUndefined();
+  });
+
+  test("removes Docker Desktop links from command failures", () => {
+    expect(stripDockerDesktopLinks("build failed\nView build details: docker-desktop://dashboard/build/id\nretry")).toBe("build failed\nretry");
   });
 
   test("formats ship duration and resolves local client config", () => {
