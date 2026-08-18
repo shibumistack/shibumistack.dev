@@ -37,6 +37,15 @@ Duplicate verified deliveries are acknowledged without deploying twice. One depl
 
 Current app remains running through validation and optional tests. Cutover happens only after those steps pass.
 
+## Runtime deployment metadata
+
+Every started app service receives two environment variables without Compose configuration:
+
+- `SHIBUMI_COMMIT`: full commit SHA for running image.
+- `SHIBUMI_DEPLOYED_AT`: deployment timestamp in ISO 8601 format.
+
+Rollback updates `SHIBUMI_COMMIT` to retained image's commit. Apps can expose this metadata in version or health responses while apps that ignore it remain unchanged.
+
 ## Failed cutover
 
 If startup or health fails, Shibumi retags previous running image under Compose image name, recreates service without building, and checks restored health. Attempted deployment remains failed in status and history.
