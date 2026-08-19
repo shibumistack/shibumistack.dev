@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shipConfirmation, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shipConfirmation, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -27,6 +27,9 @@ describe("ship configuration", () => {
     expect(isAgentExecution({ PI_CODING_AGENT: "true" }, true, true)).toBeTrue();
     expect(isAgentExecution({}, false, true)).toBeTrue();
     expect(isAgentExecution({}, true, true)).toBeFalse();
+    expect(shouldAnimateProgress(true, true)).toBeFalse();
+    expect(shouldAnimateProgress(false, false)).toBeFalse();
+    expect(shouldAnimateProgress(false, true)).toBeTrue();
   });
 
   test("parses explicit automation options", () => {
