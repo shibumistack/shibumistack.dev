@@ -116,6 +116,11 @@ const pageMeta: Record<string, PageMeta> = {
     description: "What ships first, what comes next, and where the design is still open.",
     path: "/building",
   },
+  getnotified: {
+    title: "You're on the list: Shibumi Stack",
+    description: "Get notified when create-shibumi is ready.",
+    path: "/getnotified",
+  },
 };
 
 function parseAccept(accept: string): MediaRange[] {

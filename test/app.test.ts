@@ -21,6 +21,22 @@ describe("routes", () => {
     expect(body).toContain(`pinned v${packageJson.shibumiServerVersion} installer`);
   });
 
+  test("collects launch notifications and serves confirmation", async () => {
+    const home = await app.request("/");
+    const homeBody = await home.text();
+
+    expect(homeBody).toContain('<button class="nav-cta" type="button" data-dialog="install-dialog">Get notified</button>');
+    expect(homeBody).toContain('action="https://forms.shibumistack.dev/f/GQKyC2Dno2EEm3fdBkBYsik7BLssoSKLPRmAUp78Dx8"');
+    expect(homeBody).toContain('name="email" type="email"');
+    expect(homeBody).toContain('name="website"');
+
+    const confirmation = await app.request("/getnotified");
+    const confirmationBody = await confirmation.text();
+    expect(confirmation.status).toBe(200);
+    expect(confirmationBody).toContain("We'll keep you posted");
+    expect(confirmationBody).toContain("create-shibumi");
+  });
+
   test("negotiates Markdown only when preferred", async () => {
     const res = await app.request("/", {
       headers: { accept: "text/markdown" },
