@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "provider": "shibumi-server",
+  "server": { "hostname": "fixture.invalid" },
+  "domain": "fixture.invalid",
+  "appId": "fixture-invalid",
+  "repository": "github:fixture/shibumi-ship-eval",
+  "branch": "main",
+  "webhookUrl": "https://fixture.invalid/hooks/github/fixture-invalid",
+  "service": "app",
+  "port": 9100,
+  "healthPath": "/healthz",
+  "deploymentMode": "prebuilt",
+  "trigger": "ship",
+  "platform": "linux/amd64",
+  "cutoverRequired": false
+}

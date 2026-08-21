@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+git_dir="$(git rev-parse --git-dir)"
+printf '%s\n' "$*" >> "$git_dir/ship-eval-curl-calls"
+printf '200'

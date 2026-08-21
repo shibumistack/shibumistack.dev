@@ -61,7 +61,9 @@ Your project receives `scripts/ship.ts` and these package keys:
     "dev:app": "<original dev command>",
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
-    "ship:logs": "bun scripts/ship.ts --logs"
+    "ship:update": "bun scripts/ship.ts --update",
+    "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:status": "bun scripts/ship.ts --status"
   },
   "devDependencies": {
     "@clack/prompts": "^0.7.0"
@@ -73,7 +75,7 @@ Your project receives `scripts/ship.ts` and these package keys:
 
 Run `bun ship:setup` later to refresh project configuration or change the deployment trigger. Choosing **Run bun ship** switches the server to prebuilt mode and disables the matching webhook when GitHub CLI is already authenticated. GitHub failures do not block direct setup or shipping; Ship prints the manual cleanup link instead. Choosing **Deploy every GitHub push** switches the server to build mode and creates, enables, or repairs the webhook. Run `bun ship:update` to update only owned ship client source.
 
-Source: <https://shibumistack.dev/ship/v37.ts>
+Source: <https://shibumistack.dev/ship/v38.ts>
 
 - Committed: `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Local only: SSH targets in `~/.config/shibumi/config.json`.
@@ -85,7 +87,7 @@ Source: <https://shibumistack.dev/ship/v37.ts>
 bun ship
 ```
 
-`bun ship:logs` prints the latest bounded deployment log from the server.
+`bun ship:status` shows latest deployment commit, state, and stage without deploying. `bun ship:logs` prints latest bounded deployment log.
 
 Before tests or builds, Ship checks the mutable latest pointer against its own immutable versioned source. When a reviewed update exists, it offers to use that version for the current deployment. Only after a successful deployment does it update tracked `scripts/ship.ts`, leaving it unstaged for review and commit. `-y` accepts this update; network failures keep the current client. Owned local changes are never overwritten.
 

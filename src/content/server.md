@@ -19,7 +19,7 @@ Shipped in 15 seconds
 https://example.com
 ```
 
-`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode asks the server over SSH to deploy exact commit. Your current app keeps running while `shibumi-server` verifies commit, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones.
+`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode asks the server over SSH to deploy exact commit. Your current app keeps running while `shibumi-server` verifies commit, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones. Caddy waits and retries for up to five seconds while the loopback port restarts. Deployment logs show health readiness against that budget. After a server update, `shis caddy-refresh <app-id>` adds retry budget to existing managed apps without replacing their other Caddy settings.
 
 The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
 

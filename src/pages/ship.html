@@ -36,7 +36,8 @@
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
     "ship:update": "bun scripts/ship.ts --update",
-    "ship:logs": "bun scripts/ship.ts --logs"
+    "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:status": "bun scripts/ship.ts --status"
   },
   "devDependencies": {
     "@clack/prompts": "^0.7.0"
@@ -64,7 +65,7 @@
                     <p>Ship checks for a reviewed client update before tests or builds. It can use the latest immutable version immediately, then updates tracked <code>scripts/ship.ts</code> only after deployment succeeds. The change stays unstaged for review and commit.</p>
                     <p>Ship requires committed work on the configured branch. It runs project tests and checks, builds the server's Linux image from exact <code>HEAD</code>, labels it with repository, app, revision, source tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode then triggers the exact deployment over SSH. Server independently verifies every label before deployment. Ship never stages or commits files for you.</p>
                     <p>Docker cache stays enabled by default. Use <code>bun ship --rebuild</code> to pass <code>--no-cache</code> for suspected cache or mutable-input problems.</p>
-                    <p>Existing domains keep their current Caddy upstream until first Shibumi deployment passes health checks and you approve cutover. Use <code>bun ship:logs</code> for latest deployment log or <code>bun ship --rollback</code> to restore previous retained image.</p>
+                    <p>Existing domains keep their current Caddy upstream until first Shibumi deployment passes health checks and you approve cutover. Use <code>bun ship:status</code> for latest deployment state, <code>bun ship:logs</code> for its log, or <code>bun ship --rollback</code> to restore previous retained image.</p>
                     <p>Agents can use <code>bun ship -y</code> for a prompt-free run. <code>-y</code> is short for <code>--yes</code>. Bun forwards it directly, so no <code>--</code> separator is needed. Safety checks and failures remain active.</p>
                 </div>
             </section>

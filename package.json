@@ -11,7 +11,9 @@
     "sync:server": "bun scripts/sync-server-version.ts",
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
-    "ship:update": "bun scripts/ship.ts --update"
+    "ship:update": "bun scripts/ship.ts --update",
+    "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:status": "bun scripts/ship.ts --status"
   },
   "dependencies": {
     "hono": "^4"

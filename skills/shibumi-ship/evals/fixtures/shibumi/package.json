@@ -1,0 +1,9 @@
+{
+  "name": "shibumi-ship-eval",
+  "private": true,
+  "scripts": {
+    "ship": "bun scripts/ship.ts",
+    "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:status": "bun scripts/ship.ts --status"
+  }
+}

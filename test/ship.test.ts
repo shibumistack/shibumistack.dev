@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, deploymentStatusSummary, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseDeployStatus, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -38,6 +38,7 @@ describe("ship configuration", () => {
       update: false,
       rollback: false,
       logs: false,
+      status: false,
       dev: false,
       rebuild: false,
       yes: true,
@@ -49,15 +50,33 @@ describe("ship configuration", () => {
     expect(parseShipArgs(["--setup", "--trigger", "ship"])).toMatchObject({ setup: true, trigger: "ship" });
     expect(parseShipArgs(["--setup", "--trigger", "github-push"])).toMatchObject({ setup: true, trigger: "github-push" });
     expect(parseShipArgs(["--logs"])).toMatchObject({ logs: true });
+    expect(parseShipArgs(["--status"])).toMatchObject({ status: true });
     expect(parseShipArgs(["--dev"])).toMatchObject({ dev: true });
     expect(() => parseShipArgs(["--yes", "--server"])).toThrow("--server requires a value");
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
+    expect(() => parseShipArgs(["--status", "--logs"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
     expect(() => parseShipArgs(["--trigger", "ship"])).toThrow("requires --setup");
     expect(() => parseShipArgs(["--setup", "--trigger", "other"])).toThrow("ship or github-push");
     expect(shouldCheckForShipUpdate(parseShipArgs(["-y"]))).toBeTrue();
     expect(shouldCheckForShipUpdate(parseShipArgs(["--logs"]))).toBeFalse();
+    expect(shouldCheckForShipUpdate(parseShipArgs(["--status"]))).toBeFalse();
+  });
+
+  test("validates and summarizes deployment status", () => {
+    const commit = "a".repeat(40);
+    const status = parseDeployStatus({
+      commit,
+      state: "succeeded",
+      stage: "complete",
+      updatedAt: "2026-08-21T10:00:00.000Z",
+      url: "https://example.com",
+    });
+    expect(deploymentStatusSummary(status, commit, config)).toContain(`Commit  ${commit} (matches HEAD)`);
+    expect(deploymentStatusSummary(status, "b".repeat(40), config)).toContain(`HEAD    ${"b".repeat(40)}`);
+    expect(deploymentStatusSummary(undefined, commit, config)).toBe("No deployment status for https://example.com");
+    expect(() => parseDeployStatus({ commit: "bad", state: "succeeded", stage: "complete", updatedAt: "now" })).toThrow("deployment status is invalid");
   });
 
   test("accepts only immutable reviewed ship source URLs", () => {

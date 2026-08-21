@@ -742,9 +742,9 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v35.ts", 302));
+app.get("/install/ship", (c) => c.redirect("/ship/install-v36.ts", 302));
 app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v26.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v37.ts"), 200, {
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v38.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",

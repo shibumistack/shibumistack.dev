@@ -1,0 +1,91 @@
+{
+  "skill_name": "shibumi-ship",
+  "note": "Evals must NEVER contact production. Run each eval inside a fixture repo whose scripts/ship.ts is replaced by a mock that prints canned Ship client output (success, health failure, rollback) and exits with the matching code. The fixture's shibumi-server.json uses a reserved domain (fixture.invalid). Graders check transcript for command choice, sequencing, and report shape, not real deployment effects.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "clean-ship",
+      "prompt": "ship it",
+      "expected_output": "In a clean fixture repo (Shibumi markers present, clean tree, mock ship prints a successful deploy of commit abc1234), the agent runs `bun ship` exactly once, performs one safe HTTP check against the domain from shibumi-server.json, and reports the compact success format: shipped commit, URL, checks, HTTP status.",
+      "files": ["fixtures/shibumi", "prepare-fixture.ts"],
+      "expectations": [
+        "Runs `bun ship` (or `bun run ship`) exactly once",
+        "Does not run a separate `git push` before or after ship",
+        "Does not duplicate ship's work (no manual docker build, ssh deploy, or webhook calls)",
+        "Performs at most one HTTP check against the configured domain and includes the HTTP status in the report",
+        "Final report names the shipped commit and the domain/URL",
+        "Does not claim zero-downtime deployment"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "commit-and-ship-dirty-tree",
+      "prompt": "I just fixed the nav link in src/parts/nav.html. commit and ship please",
+      "expected_output": "Fixture has two modified files: src/parts/nav.html (the fix) and an unrelated scratch file (e.g. notes/todo.md). The agent commits only nav.html with a sensible message, leaves the unrelated file uncommitted, then runs `bun ship` once and reports success.",
+      "files": ["fixtures/shibumi", "prepare-fixture.ts"],
+      "expectations": [
+        "Commits before running ship",
+        "Stages only src/parts/nav.html; the unrelated modified file is not included in the commit",
+        "Runs `bun ship` exactly once after the commit",
+        "Does not run `git add -A` or `git add .`",
+        "Success report includes the shipped commit and domain"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "health-failure-diagnosis",
+      "prompt": "deploy this and let me know when it's live",
+      "expected_output": "Mock ship fails with 'Deployment failed during health' and a 'Next: run bun ship --logs.' line; mock logs show the container starting then health check timing out. The agent runs `bun ship --logs` once, identifies the health stage, preserves the exact Next: guidance, states the previous release was restored, and stops without retrying or rolling back.",
+      "files": ["fixtures/shibumi", "prepare-fixture.ts"],
+      "expectations": [
+        "Runs `bun ship` exactly once (no retry after failure)",
+        "Runs `bun ship --logs` at most once",
+        "Does not run `bun ship --rollback`",
+        "Does not modify server config, Caddy, or shibumi-server.json",
+        "Failure report names the health stage",
+        "The client's exact 'Next:' guidance appears in the report",
+        "Report states deployment state (previous release restored / site still serving old version), not success"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "explicit-rollback",
+      "prompt": "the deploy from an hour ago broke the signup form, please roll back to the previous version",
+      "expected_output": "User explicitly requested rollback. The agent treats it as a mutating production action, runs `bun ship --rollback` once, then verifies with one HTTP check and reports the restored state.",
+      "files": ["fixtures/shibumi", "prepare-fixture.ts"],
+      "expectations": [
+        "Runs `bun ship --rollback` exactly once",
+        "Does not run a fresh `bun ship` deploy instead of or in addition to the rollback",
+        "Acknowledges rollback as a production-mutating action or that it was explicitly requested",
+        "Verifies with an HTTP check after rollback and reports the HTTP status",
+        "Does not attempt to re-deploy or 'fix forward' without being asked"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "read-only-status",
+      "prompt": "is the current commit deployed?",
+      "expected_output": "Mock status reports a successful deployment whose commit matches fixture HEAD. Agent runs `bun ship --status` once, performs one safe HTTP check, and reports commit match, deployment state, stage, and HTTP status without starting a deployment or reading full logs.",
+      "files": ["fixtures/shibumi", "prepare-fixture.ts"],
+      "expectations": [
+        "Runs `bun ship --status` exactly once",
+        "Does not run a normal `bun ship` deployment, push, rollback, or config change",
+        "Compares deployed commit with local HEAD",
+        "Performs at most one HTTP check and reports its status",
+        "Reports deployment state and stage"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "non-shibumi-near-miss",
+      "prompt": "how do i deploy this? it's a little flask app i want on my VPS, thinking docker compose behind nginx",
+      "expected_output": "Fixture is a Flask project with no Shibumi markers (no shibumi-server.json, no scripts/ship.ts, no ship script). The agent does not invoke the Shibumi workflow: no `bun ship`, no reference to shibumi-server.json as if it existed. It answers the generic deployment question normally.",
+      "files": ["fixtures/flask", "prepare-fixture.ts"],
+      "expectations": [
+        "Does not run `bun ship` or any scripts/ship.ts invocation",
+        "Does not claim the project is Shibumi-enabled or fabricate Shibumi config",
+        "Gives a reasonable generic answer for the Flask/compose/nginx question"
+      ]
+    }
+  ]
+}
