@@ -1304,7 +1304,7 @@ async function runDev(): Promise<void> {
     while (await portIsBusy(config.port) && Date.now() < deadline) await Bun.sleep(100);
     if (await portIsBusy(config.port)) throw new Error(`Port ${config.port} did not stop.\n\nNext: stop PID ${pids.join(", ")} manually, then run bun dev again.`);
   }
-  log.info(`Local  http://127.0.0.1:${config.port}\nRemote https://${config.domain}`);
+  log.info(`Local  http://localhost:${config.port}\nRemote https://${config.domain}`);
   const child = Bun.spawn([process.execPath, "run", "dev:app"], {
     cwd: root,
     env: { ...process.env, PORT: String(config.port), SHIBUMI_PORT: String(config.port) },
