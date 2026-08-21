@@ -25,10 +25,15 @@ const SERVER_HOSTNAME = /^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$/;
 const COMMIT = /^[a-f0-9]{40}$/;
 const SERVER_CLI = "~/.local/bin/shibumi-server";
 const LATEST_SOURCE = "https://shibumistack.dev/ship/latest.ts";
-const CURRENT_SOURCE = "https://shibumistack.dev/ship/v38.ts";
+const CURRENT_SOURCE = "https://shibumistack.dev/ship/v39.ts";
 let sshControlDirectory: string | undefined;
 let sshControlTarget: string | undefined;
-const accent = (value: string) => process.stdout.isTTY && !("NO_COLOR" in process.env) && process.env.TERM !== "dumb"
+
+export function supportsTerminalColor(env: NodeJS.ProcessEnv = process.env, isTTY = Boolean(process.stdout.isTTY)): boolean {
+  return isTTY && !("NO_COLOR" in env) && env.TERM !== "dumb";
+}
+
+const accent = (value: string) => supportsTerminalColor()
   ? `\x1b[38;5;208m${value}\x1b[0m`
   : value;
 
@@ -1333,6 +1338,21 @@ function portIsBusy(port: number): Promise<boolean> {
   });
 }
 
+export function formatDevStartup(port: number, domain: string, time: string, color = false): string {
+  const paint = (code: string, value: string) => color ? `\x1b[${code}m${value}\x1b[0m` : value;
+  const row = (label: string, url: string) => `${paint("2", "┃")} ${label.padEnd(8)} ${paint("34", url)}`;
+  return [
+    `${paint("38;5;208", "渋み")}  ship dev`,
+    row("Local", `http://localhost:${port}/`),
+    row("Remote", `https://${domain}`),
+    `${paint("2", time)} starting app dev server...`,
+  ].join("\n");
+}
+
+function localTime(date = new Date()): string {
+  return [date.getHours(), date.getMinutes(), date.getSeconds()].map((value) => String(value).padStart(2, "0")).join(":");
+}
+
 async function runDev(): Promise<void> {
   const config = await readConfig();
   if (!config) throw new Error("Shibumi setup is missing.\n\nNext: run bun ship:setup.");
@@ -1354,7 +1374,7 @@ async function runDev(): Promise<void> {
     while (await portIsBusy(config.port) && Date.now() < deadline) await Bun.sleep(100);
     if (await portIsBusy(config.port)) throw new Error(`Port ${config.port} did not stop.\n\nNext: stop PID ${pids.join(", ")} manually, then run bun dev again.`);
   }
-  log.info(`Local  http://localhost:${config.port}\nRemote https://${config.domain}`);
+  process.stdout.write(`${formatDevStartup(config.port, config.domain, localTime(), supportsTerminalColor())}\n`);
   const child = Bun.spawn([process.execPath, "run", "dev:app"], {
     cwd: root,
     env: { ...process.env, PORT: String(config.port), SHIBUMI_PORT: String(config.port) },

@@ -3,7 +3,8 @@
   "shibumiServerVersion": "0.10.4",
   "siteYear": 2026,
   "scripts": {
-    "dev": "bun --hot serve.ts",
+    "dev": "bun scripts/ship.ts --dev",
+    "dev:app": "bun --hot serve.ts",
     "start": "bun run serve.ts",
     "build": "bun scripts/build.ts",
     "test": "bun test test/app.test.ts test/static.test.ts",
