@@ -203,7 +203,7 @@ describe("routes", () => {
     expect(htmlBody).toContain("Missing container files can be generated");
     expect(htmlBody).toContain("bun ship:logs");
     expect(htmlBody).toContain("shis caddy-refresh &lt;app-id&gt;");
-    expect(htmlBody).toContain("retries for up to five seconds");
+    expect(htmlBody).toContain("retries for up to 20 seconds");
     expect(htmlBody).toContain("bun ship");
     expect(htmlBody).toContain("shibumi-server.json");
     expect(htmlBody).toContain('"curl -fsSL https://shibumistack.dev/install/server | bash"');

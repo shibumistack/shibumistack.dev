@@ -134,7 +134,7 @@ Describe deploys honestly:
 
 - A regular deploy is **not blue-green**. Compose recreates same service on
   same host port. Managed Caddy routes wait and retry unavailable upstream for
-  up to five seconds, masking normal restart gap with brief latency. Existing
+  up to 20 seconds, masking normal restart gap with brief latency. Existing
   in-flight or long-lived connections can still fail. If startup or health
   fails, previous release is restored.
 - Existing-domain onboarding is different: the old upstream keeps serving
