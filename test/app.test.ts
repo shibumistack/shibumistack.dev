@@ -240,7 +240,7 @@ describe("routes", () => {
     expect(body).toContain("shibumi-server.json");
     expect(body).toContain("data-ship-source");
     expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v36.ts")');
+    expect(body).toContain('fetch("/ship/v37.ts")');
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
@@ -249,7 +249,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v36.ts");
+    const source = await app.request("/ship/v37.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -310,6 +310,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v34.ts")).status).toBe(200);
     expect((await app.request("/ship/v35.ts")).status).toBe(200);
     expect((await app.request("/ship/v36.ts")).status).toBe(200);
+    expect((await app.request("/ship/v37.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -317,13 +318,13 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v34.ts");
-    const installer = await app.request("/ship/install-v34.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v35.ts");
+    const installer = await app.request("/ship/install-v35.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v36.ts");
+    expect(installerBody).toContain("ship/v37.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
@@ -340,6 +341,7 @@ describe("routes", () => {
     expect((await app.request("/ship/install-v32.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v33.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v34.ts")).status).toBe(200);
+    expect((await app.request("/ship/install-v35.ts")).status).toBe(200);
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);

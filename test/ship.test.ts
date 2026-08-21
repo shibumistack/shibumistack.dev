@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shipConfirmation, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -112,10 +112,7 @@ describe("ship configuration", () => {
     expect(composeFrontend(false, false)).toBeUndefined();
   });
 
-  test("describes prebuilt shipping and chooses its deployment trigger", () => {
-    expect(shipConfirmation("prebuilt", 1, "main", "example.com")).toBe("Build and upload image, then push main to deploy example.com?");
-    expect(shipConfirmation("prebuilt", 0, "main", "example.com")).toBe("Build and upload image, then redeploy current main commit to example.com?");
-    expect(shipConfirmation("build", 1, "main", "example.com")).toBe("Push main and deploy example.com?");
+  test("chooses deployment mode and trigger behavior", () => {
     expect(shouldTriggerRedeploy("ship", 1)).toBeTrue();
     expect(shouldTriggerRedeploy("github-push", 1)).toBeFalse();
     expect(shouldTriggerRedeploy("github-push", 0)).toBeTrue();
