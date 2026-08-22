@@ -111,7 +111,16 @@ sync unless the difference is deliberate.
 
 ## Frontend
 
-Shared styles live in `public/shared.css`. Page-specific styles such as
+`public/shibumi.css` is the canonical shared design layer for all three Shibumi
+sites (this repo, `../shibumi-server`, `../shibumi-forms`): palette tokens (both
+`--paper`/`--ink` and `--bg`/`--text` naming schemes plus `--fs-*` aliases),
+typescale, body + noise texture, serif headings, header/nav/mark, stack
+popovers, theme toggle, footer, eyebrows, and the copy-button glow. Edit it
+here only; the other repos vendor a copy and re-pull it with their
+`scripts/sync-shibumi-css.sh`. Never edit a vendored copy.
+
+`public/shared.css` holds shibumistack.dev-specific styles layered after the
+canonical file. Page-specific styles such as
 `src/pages/docs.css` and `src/pages/server.css` are inlined by the renderer.
 Optional page CSS files in `src/pages/` are inlined as
 page-local `<style data-page>` blocks by the renderer.
@@ -147,10 +156,25 @@ terminal layout that is specific to that page.
 
 The brand direction is restrained and editorial:
 
-- Warm off-white/light and warm near-black/dark palettes.
+- Warm off-white/light and warm near-black/dark palettes (paper `#f5f0e4`/`#1b130f`, orange `#e95f19`/`#ff8648`).
 - Persimmon/terracotta accent used sparingly.
 - Type-led layout with calm spacing.
 - Avoid loud marketing patterns, heavy animation, gradients, large decorative illustrations, and unnecessary cards.
+
+Typography rules (hard):
+
+- Typescale in rem only: 12 tiny (`--text-xs`), 14 small (`--text-sm`), 16 UI/nav (`--text-md`), 18 body (`--text-base`), 21 (`--text-lg`), 25 (`--text-xl`), ~31 (`--text-2xl`). Never below 12px, never off-scale values (no 13px, ever).
+- Body is system-ui sans; serif (`--font-serif`) only for `h1`/`h2`/`h3` and the 渋み name-meaning aside.
+- Mono stack must lead with `ui-monospace`; `SFMono-Regular` is a single-weight face and silently breaks `font-weight`.
+- Eyebrow labels: 1rem mono, weight 300, 0.14em tracking, accent color (canonical `.eyebrow`).
+- Content links: underline at 30% accent at rest, 100% on hover, `0.18em` offset.
+
+Cross-site conventions:
+
+- Nav grammar on every site: local pages first, the "Shibumi Stack" popover last among text links, then CTA + GitHub + theme toggle.
+- One `theme-color` meta per page, updated by JS whenever the theme is applied. Never use `media="(prefers-color-scheme)"` theme-color variants; they track the system preference and fight the manual toggle.
+- Install/create commands live inline on the page with a copy button, never gated behind a dialog alone.
+- Copy for landing pages reads like explaining to a dev friend: prose over feature grids, /unslop applied, no €-price in the hero dek (price lands in the Ship section).
 
 The strongest source for design decisions is `.plans/design.md`. The existing
 site has evolved beyond some early "single-column only" notes, but the core
@@ -188,6 +212,9 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 `test/app.test.ts`.
 
 ## Gotchas
+
+- Theme choice is per-origin `localStorage`, so a visitor's light/dark pick does not follow them between shibumistack.dev and the server/forms subdomains. Sharing it would need a cookie on `.shibumistack.dev`.
+- After editing `public/shibumi.css`, re-run the sync scripts in `../shibumi-server` and `../shibumi-forms` (or `cp` directly); vendored copies drift silently otherwise.
 
 - Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
 - Native `<details>` close jumps because the browser hides content before CSS can collapse it. Keep the explicit height animation in `src/pages/server.js`.
