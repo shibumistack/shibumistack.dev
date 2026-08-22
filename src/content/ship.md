@@ -77,7 +77,7 @@ The installer adds `scripts/ship.ts` and these package entries:
 
 `bun ship:setup` refreshes project config or changes the trigger. Direct Ship mode uses prebuilt images and disables the matching webhook when GitHub CLI is available. Deploy-on-push uses server builds and creates or repairs the webhook. GitHub access is optional for direct shipping.
 
-Source: <https://shibumistack.dev/ship/v40.ts>
+Source: <https://shibumistack.dev/ship/v41.ts>
 
 - Commit `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Keep SSH targets in local Shibumi config.
