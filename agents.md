@@ -214,6 +214,7 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 ## Gotchas
 
 - Theme choice is per-origin `localStorage`, so a visitor's light/dark pick does not follow them between shibumistack.dev and the server/forms subdomains. Sharing it would need a cookie on `.shibumistack.dev`.
+- `shibumi.css` must never style bare element selectors that page content can contain: a bare `header` rule pinned card/section headers in consuming apps as fixed blurred bars that swallowed clicks. Scope shared components (`.shell > header`, `.site-header`).
 - After editing `public/shibumi.css`, re-run the sync scripts in `../shibumi-server` and `../shibumi-forms` (or `cp` directly); vendored copies drift silently otherwise.
 
 - Framework-heavy VPS builds can exhaust small hosts before health checks run. Keep `shibumi-server` memory/disk preflight, build timeout, systemd ceilings, and per-app Compose limits intact; use the tiny fixture rather than a heavy production app for VPS dogfooding.
