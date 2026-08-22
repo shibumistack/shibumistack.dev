@@ -6,7 +6,7 @@ This repo is the current public site for Shibumi Stack at `shibumistack.dev`.
 It is also the first dogfood artifact for the product idea: a small, Bun-first
 web stack built around Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
-An unreleased scaffolder prototype lives under `shibumi-cli/`; the public `create-shibumi` repository and npm package remain placeholders without an executable. Do not present CLI as released. First release is scoped to three paths: framework-agnostic static output, a Bun/Hono/Alpine web app, and a Bun/Hono/Alpine/Drizzle/SQLite full-stack app. VPS deployment through `shibumi-server` is the only initial target; other providers and extensions remain planned. The experimental `shibumi-server` implementation lives in the separate public `shibumi-server` repository.
+An unreleased scaffolder prototype lives under `shibumi-cli/`; the public `create-shibumi` repository and npm package remain placeholders without an executable. Site copy deliberately presents the CLI as released ahead of the actual release (owner decision, 2026-08-22); the npm package is still a placeholder and shipping it is the top item in `.plans/INDEX.md`. Do not walk the site copy back; do close the gap by releasing. First release is scoped to three paths: framework-agnostic static output, a Bun/Hono/Alpine web app, and a Bun/Hono/Alpine/Drizzle/SQLite full-stack app. VPS deployment through `shibumi-server` is the only initial target; other providers and extensions remain planned. The experimental `shibumi-server` implementation lives in the separate public `shibumi-server` repository.
 
 ## Stack
 
