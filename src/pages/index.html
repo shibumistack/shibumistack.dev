@@ -70,41 +70,30 @@
     </div>
 </section>
 
-<section class="intro" aria-label="What Shibumi is">
+<section class="intro" aria-label="Why Shibumi exists">
     <div class="intro-copy">
-        <p>The whole stack fits in your head, and in your agent's context window.</p>
+        <p>There's a new reason to build small: coding agents. A stack that fits in your head also fits in your agent's context window, so both of you can reason about the whole thing.</p>
+        <p>Shibumi keeps it that way: one curated library per job, every feature as readable source, and a deploy path you own end to end. Simplicity, patience, humility.</p>
     </div>
 </section>
 
-<section class="why" aria-label="What Shibumi is and how it works">
-    <article class="card">
-        <span>What it is</span>
-        <p>Three tools. <a href="/docs/cli"><code>create-shibumi</code></a> writes a Bun app with tests and deploy config. <a href="https://server.shibumistack.dev"><code>shibumi-server</code></a> turns a €5 VPS or your homelab into a host for all your apps. <a href="/forms">Shibumi Forms</a> gives static sites a working form.</p>
-    </article>
-    <article class="card">
-        <span>Principles</span>
-        <p>Simplicity, patience, humility. Every job gets one curated library. Features arrive as source, and instructions for your coding agents arrive with them. If a file lands in your repo, you can read it.</p>
-    </article>
-</section>
-
-
-
-<section class="feature-section" aria-labelledby="agents-title">
+<section class="feature-section" aria-labelledby="create-title">
     <div class="feature-grid">
-        <h2 id="agents-title">Your coding agent gets a manual</h2>
+        <h2 id="create-title">One command, a whole app</h2>
         <div class="feature-copy">
-            <p>Every generated project includes a root <span class="accent-word">agents.md</span>: route locations, data rules, available checks, and files that need extra care.</p>
-            <p>Install the auth extension and <code>agents/auth.md</code> arrives with it, so your coding agent learns the rules at the same moment the code does.</p>
+            <p><code>bun create shibumi</code> writes a complete project from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Zod for validation, SQLite and Drizzle when you need data.</p>
+            <p>Pick a size: static output, web app, or full stack. What lands in your repo is plain source: routes, styles, tests, a Dockerfile, a deploy script, and an <code>agents.md</code> with the house rules for your coding agent.</p>
         </div>
     </div>
 </section>
 
+
+
 <section class="feature-section" aria-labelledby="extensions-title">
     <div class="feature-grid">
-        <h2 id="extensions-title">Extensions write source into your repo</h2>
+        <h2 id="extensions-title">Add features as source</h2>
         <div class="feature-copy">
-            <p>Add auth, email, or uploads as plain <code>.ts</code> files: routes, config, migrations, tests, and agent instructions you can edit.</p>
-            <p>Add auth:</p>
+            <p>When you need auth, email, or uploads, <code>bun run shibumi add</code> copies readable <code>.ts</code> files, migrations, and tests into your repo instead of adding a dependency. There's no framework underneath to outgrow.</p>
             <div class="feature-terminal" data-home-terminal data-command="bun run shibumi add auth" aria-label="Extension installation">
                 <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                 <div class="home-clack-output">
@@ -117,18 +106,17 @@
                     <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>4 files written</strong><span class="home-clack-next">bun test</span></div></div>
                 </div>
             </div>
-            <p>The installer previews every file write and stops when an existing file does not match the expected source.</p>
+            <p>Each extension also writes its rules: <code>agents/auth.md</code> merges into the root <code>agents.md</code>, so your coding agent learns the feature the moment the code lands. The installer previews every write and stops on conflicts.</p>
         </div>
     </div>
 </section>
 
 <section class="feature-section" aria-labelledby="deploy-title">
     <div class="feature-grid">
-        <h2 id="deploy-title">Deploy to your VPS or homelab</h2>
+        <h2 id="deploy-title">Ship to a server you own</h2>
         <div class="feature-copy">
-            <p>Static, web, and full-stack projects use the same VPS deployment path.</p>
-            <p><a href="https://server.shibumistack.dev"><span class="accent-word">shibumi-server</span></a> verifies signed requests, host capacity, image identity, and health. Install pinned v{{server-version}} on the Linux host with <code>curl -fsSL https://shibumistack.dev/install/server | bash</code>.</p>
-            <p>With the server installed, run <code>bun ship</code>, included in every generated project. It builds committed code locally and deploys it:</p>
+            <p>Rent a €5 VPS or use your homelab: <a href="https://server.shibumistack.dev"><span class="accent-word">shibumi-server</span></a> hosts every app you build. Install pinned v{{server-version}} on the Linux host with <code>curl -fsSL https://shibumistack.dev/install/server | bash</code>.</p>
+            <p>Then run <code>bun ship</code>, included in every generated project. It builds the exact committed code on your machine and deploys it:</p>
             <div class="feature-terminal" data-home-terminal data-command="bun ship" aria-label="Simulated server deployment">
                 <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                 <div class="home-clack-output">
@@ -140,13 +128,18 @@
                     <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Shipped in 15 seconds</strong><span class="home-clack-next">https://myapp.com</span></div></div>
                 </div>
             </div>
-            <p>Ship uploads the exact commit-tagged image before it pushes Git. The server checks commit, image labels, platform, Compose config, optional app tests, and health. It retains one previous image for up to 12 hours. Existing projects get the same command from <a href="/ship">one installer</a>. <a href="https://server.shibumistack.dev">Read the deployment flow →</a></p>
+            <p>The server verifies commit, image identity, and health before swapping behind Caddy, and keeps a rollback image for 12 hours. Existing projects get the same command from <a href="/ship">one installer</a>. <a href="https://server.shibumistack.dev">Read the deployment flow →</a></p>
         </div>
     </div>
+</section>
+
+<section class="forms-aside" aria-label="Forms for static sites">
+    <p>One small thing on the side: static Shibumi sites can still have working forms. Point a plain HTML form at <a href="/forms">Shibumi Forms</a> and submissions work, without a clunky embed or another paid service. It runs today at <a href="https://forms.shibumistack.dev">forms.shibumistack.dev</a>.</p>
 </section>
 
 <section class="final-cta" aria-labelledby="final-cta-title">
     <h2 id="final-cta-title">Create a project<span class="dot">.</span></h2>
     <p class="final-cta-copy">Choose static output, a Bun web app, or a SQLite full-stack app. All three ship the same way.</p>
     <button class="btn btn-primary" type="button" data-dialog="install-dialog">Show create command</button>
+    <p class="final-cta-links"><a href="https://github.com/shibumistack">Star on GitHub</a> · <a href="/getnotified">Get release updates</a></p>
 </section>
