@@ -1,6 +1,6 @@
 # Brand
 
-Assets and guidelines for referencing Shibumi Stack. Use them as-is. Give the logo room to breathe.
+Use these files without redrawing or recoloring the mark. Keep clear space around it.
 
 ## Logos
 
@@ -15,12 +15,14 @@ Assets and guidelines for referencing Shibumi Stack. Use them as-is. Give the lo
 ## Colors
 
 ### Light palette
+
 - Kozo: #f7f3e8 (background)
 - Walnut: #252116 (text)
 - Earth: #7a6f5d (muted text)
 - Oranje: #ff6600 (accent)
 
 ### Dark palette
+
 - Walnut: #1e1510 (background)
 - Parchment: #e4ddd0 (text)
 - Ash: #b0a898 (muted text)
@@ -32,18 +34,10 @@ JSON: /brand/tokens/colors.json
 
 ## Usage
 
-### Do
-- Use the SVG logos provided here
-- Keep clear space around the logo (at least its own height)
-- Write "Shibumi Stack" with both words capitalized
-- Use on solid backgrounds, light or dark
+Use the supplied SVG files and leave clear space equal to at least the logo's height. Write the name as "Shibumi Stack". Place light and dark variants on solid backgrounds with enough contrast.
 
-### Don't
-- Alter, rotate, or distort the logo
-- Place on busy backgrounds
-- Write as "shibumi stack", "ShibumiStack", or "SHIBUMI STACK"
-- Use the logo to imply endorsement
+Do not stretch, rotate, recolor, or redraw the logo. Avoid detailed backgrounds, altered capitalization, and any use that implies endorsement.
 
 ## Contact
 
-Need something specific? Reach out at gh@bitbonsai.com.
+For another file format or brand question, email gh@bitbonsai.com.

@@ -2,7 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, deploymentStatusSummary, dockerCredentialHelpers, domainFromProject, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseDeployStatus, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, terminalHistory, validateConfig } from "../scripts/ship";
+import packageJson from "../package.json";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, deploymentStatusSummary, dockerCredentialHelpers, domainFromProject, formatDevStartup, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseDeployStatus, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, supportsTerminalColor, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -30,6 +31,31 @@ describe("ship configuration", () => {
     expect(shouldAnimateProgress(true, true)).toBeFalse();
     expect(shouldAnimateProgress(false, false)).toBeFalse();
     expect(shouldAnimateProgress(false, true)).toBeTrue();
+  });
+
+  test("formats compact dev startup output in colored and plain terminals", () => {
+    expect(packageJson.scripts.dev).toBe("bun scripts/ship.ts --dev");
+    expect(packageJson.scripts["dev:app"]).toBe("bun --hot serve.ts");
+
+    const plain = [
+      "渋み  ship dev",
+      "┃ Local    http://localhost:9100/",
+      "┃ Remote   https://example.com",
+      "19:47:45 starting app dev server...",
+    ].join("\n");
+    expect(formatDevStartup(9100, "example.com", "19:47:45")).toBe(plain);
+
+    const colored = formatDevStartup(9100, "example.com", "19:47:45", true);
+    expect(colored).toContain("\x1b[38;5;208m渋み\x1b[0m");
+    expect(colored).toContain("\x1b[2m┃\x1b[0m");
+    expect(colored).toContain("\x1b[34mhttp://localhost:9100/\x1b[0m");
+    expect(colored).toContain("\x1b[2m19:47:45\x1b[0m");
+    expect(colored.replace(/\x1b\[[0-9;]*m/g, "")).toBe(plain);
+
+    expect(supportsTerminalColor({}, true)).toBeTrue();
+    expect(supportsTerminalColor({}, false)).toBeFalse();
+    expect(supportsTerminalColor({ NO_COLOR: "" }, true)).toBeFalse();
+    expect(supportsTerminalColor({ TERM: "dumb" }, true)).toBeFalse();
   });
 
   test("parses explicit automation options", () => {

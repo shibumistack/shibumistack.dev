@@ -1,26 +1,24 @@
 <section class="hero" aria-labelledby="hero-title">
     <div>
-        <p class="eyebrow">A tech stack to keep</p>
+        <p class="eyebrow">Shibumi Stack</p>
         <h1 id="hero-title">
-            <span>Simple.</span><br /><span class="line-2"
-                >Yours<span class="dot">.</span></span
+            <span>Simple apps,</span><br /><span class="line-2"
+                >whole stack<span class="dot">.</span></span
             >
         </h1>
         <p class="dek">
-            A small web stack for apps you can understand and keep:
-            Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
+            Build any web app without React, islands, or 600 MB of <code>node_modules</code>. A CLI writes it from curated parts; a server hosts them all on one €5 VPS or your homelab.
         </p>
-        <p class="status-badge">Coming soon</p>
+        <p class="status-badge">Bun + Hono + Alpine.js + (SQLite + Drizzle + Zod)</p>
         <aside class="name-meaning">
             <span class="name-meaning-seal" aria-hidden="true" lang="ja">渋み</span>
             <p>
-                <span>Shibumi (<span lang="ja">渋み</span>)</span> is a Japanese concept meaning understated
-                elegance, refined simplicity, or subtle beauty.
+                <span>Shibumi (<span lang="ja">渋み</span>)</span> is a Japanese idea associated with quiet, understated beauty. Here it means fewer layers and code you can inspect.
             </p>
         </aside>
     </div>
 
-    <div class="cli" id="install" aria-label="Shibumi CLI preview">
+    <div class="cli" id="install" aria-label="Shibumi CLI">
         <div class="install-command">
             <span class="prompt-mark">›</span>
             <code
@@ -52,16 +50,16 @@
             <div class="cli-step home-clack-row home-clack-prompt home-clack-select">
                 <svg class="home-clack-glyph home-clack-active home-clack-filled"><use href="#home-clack-diamond"/></svg>
                 <div>
-                    <div class="cli-question">Choose a template</div>
-                    <div class="cli-muted cli-option">○ Minimal: smallest useful app</div>
-                    <div class="cli-selected cli-option"><span class="cli-dot">●</span> Full-stack: routes, data, validation</div>
-                    <div class="cli-muted cli-option">○ Static: content site, zero server</div>
+                    <div class="cli-question">What are you shipping?</div>
+                    <div class="cli-muted cli-option">○ Static output: any framework or plain files</div>
+                    <div class="cli-selected cli-option"><span class="cli-dot">●</span> Bun web: Hono, HTML, Alpine</div>
+                    <div class="cli-muted cli-option">○ Full-stack: SQLite, Drizzle, validation</div>
                 </div>
             </div>
 
             <div class="cli-step home-clack-row">
                 <svg class="home-clack-glyph home-clack-info home-clack-filled"><use href="#home-clack-circle"/></svg>
-                <div>Installing Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores</div>
+                <div>Writing Bun, Hono, Alpine, tests, and VPS deployment source</div>
             </div>
 
             <div class="cli-step home-clack-row home-clack-done">
@@ -74,130 +72,63 @@
 
 <section class="intro" aria-label="What Shibumi is">
     <div class="intro-copy">
-        <p>
-            You install a small and elegant new framework. Then, one day you
-            realize you're debugging 600MB of dependencies you never wanted.
-        </p>
-        <p>
-            Shibumi is a
-            <span class="accent-word">frameworkless framework</span>. Every file
-            is something you can open, read, and understand. Extensions ship
-            with an <span class="accent-word">agents.md</span> so your coding
-            agent knows how they work. Nothing runs unless you can own it.
-        </p>
+        <p>The whole stack fits in your head, and in your agent's context window.</p>
     </div>
 </section>
 
-<section class="why" aria-label="Why this stack">
+<section class="why" aria-label="What Shibumi is and how it works">
     <article class="card">
-        <span>Create</span>
-        <h3>Themes, not boilerplate</h3>
-        <p>
-            Choose a theme for the thing you are building. Minimal, Blog,
-            Landing, SPA, Fullstack, AI app... Shibumi writes the minimal amount
-            of code for you.
-        </p>
+        <span>What it is</span>
+        <p>Three tools. <a href="/docs/cli"><code>create-shibumi</code></a> writes a Bun app with tests and deploy config. <a href="https://server.shibumistack.dev"><code>shibumi-server</code></a> turns a €5 VPS or your homelab into a host for all your apps. <a href="/forms">Shibumi Forms</a> gives static sites a working form.</p>
     </article>
     <article class="card">
-        <span>Add</span>
-        <h3>Born with extensions</h3>
-        <p>
-            Auth, email, uploads, payments, or admin. Add and source code is
-            added. For humans and agents.
-        </p>
-    </article>
-    <article class="card">
-        <span>Ship</span>
-        <h3>Deploy anywhere</h3>
-        <p>
-            Static, edge, or self-hosted deploys with clear config and little
-            ceremony. Just the necessary bits.
-        </p>
+        <span>Principles</span>
+        <p>Simplicity, patience, humility. Every job gets one curated library. Features arrive as source, and instructions for your coding agents arrive with them. If a file lands in your repo, you can read it.</p>
     </article>
 </section>
 
 
-
-<section class="themes" aria-labelledby="themes-title">
-    <h2 id="themes-title">Start with a theme.</h2>
-    <div class="theme-grid">
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(circle)}}</span> Minimal</h3>
-            <p>Smallest useful app. Routes, layout, styles, and tests.</p>
-        </article>
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(book-open)}}</span> Blog</h3>
-            <p>Markdown-driven content, RSS, and permalinks.</p>
-        </article>
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(rocket)}}</span> Landing</h3>
-            <p>Marketing page with waitlist or signup form.</p>
-        </article>
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(refresh-cw)}}</span> SPA</h3>
-            <p>Client-side routing and shared state with Alpine and Nanostores.</p>
-        </article>
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(layers)}}</span> Fullstack</h3>
-            <p>SSR, API routes, SQLite, Drizzle, Zod, and Alpine.</p>
-        </article>
-        <article class="theme-card">
-            <h3><span class="theme-icon">{{icon(brain)}}</span> AI app</h3>
-            <p>Streaming responses, prompt templates, model integration.</p>
-        </article>
-    </div>
-</section>
 
 <section class="feature-section" aria-labelledby="agents-title">
     <div class="feature-grid">
-        <h2 id="agents-title">Your agent knows the project</h2>
+        <h2 id="agents-title">Your coding agent gets a manual</h2>
         <div class="feature-copy">
-            <p>Every Shibumi project ships with an <span class="accent-word">agents.md</span> file. It tells your coding agent the rules: where routes live, how data flows, what tests exist, and where the boundaries are.</p>
-            <p>Extensions add their own fragments. Install auth, and the agent learns the session model. Add payments, and it knows the webhook flow. The more you build, the smarter it gets.</p>
+            <p>Every generated project includes a root <span class="accent-word">agents.md</span>: route locations, data rules, available checks, and files that need extra care.</p>
+            <p>Install the auth extension and <code>agents/auth.md</code> arrives with it, so your coding agent learns the rules at the same moment the code does.</p>
         </div>
     </div>
 </section>
 
 <section class="feature-section" aria-labelledby="extensions-title">
     <div class="feature-grid">
-        <h2 id="extensions-title">Extensions</h2>
+        <h2 id="extensions-title">Extensions write source into your repo</h2>
         <div class="feature-copy">
-            <p>Auth, email, uploads, payments, and admin arrive as source files copied into your project instead of dependencies. You own them from the moment they land.</p>
-            <p>Run <code>shi add auth</code> and watch the terminal:</p>
-            <div class="feature-terminal" data-home-terminal data-command="shi add auth" aria-label="Simulated extension installation">
+            <p>Add auth, email, or uploads as plain <code>.ts</code> files: routes, config, migrations, tests, and agent instructions you can edit.</p>
+            <p>Add auth:</p>
+            <div class="feature-terminal" data-home-terminal data-command="bun run shibumi add auth" aria-label="Extension installation">
                 <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                 <div class="home-clack-output">
                     <span class="home-clack-rail" aria-hidden="true"></span>
                     <div class="cli-step home-clack-row home-clack-brand"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><strong>渋み&nbsp; shi <span>(shibumi)</span></strong></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created src/auth/index.ts</span></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created src/auth/session.ts</span></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created src/auth/agents.md</span></div>
-                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>3 files written</strong><span class="home-clack-next">./my-app/src/auth/</span></div></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created src/lib/auth.ts</span></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created src/routes/auth.ts</span></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created migrations/0001_auth.sql</span></div>
+                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Created agents/auth.md</span></div>
+                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>4 files written</strong><span class="home-clack-next">bun test</span></div></div>
                 </div>
             </div>
-            <p>Every extension includes an <span class="accent-word">agents.md</span> fragment. Your coding agent reads it and understands how the code works without guessing or hidden behavior.</p>
-            <p>Extensions are plain TypeScript. Read them, change them, or delete them. They're yours now.</p>
+            <p>The installer previews every file write and stops when an existing file does not match the expected source.</p>
         </div>
     </div>
 </section>
 
 <section class="feature-section" aria-labelledby="deploy-title">
     <div class="feature-grid">
-        <h2 id="deploy-title">Deploy anywhere</h2>
+        <h2 id="deploy-title">Deploy to your VPS or homelab</h2>
         <div class="feature-copy">
-            <p>Cloudflare, Vercel, Railway, Fly.io, a static CDN, or your own VPS. Shibumi generates the config for the path you choose.</p>
-            <p>For self-hosted deploys, <a href="/server"><span class="accent-word">shibumi-server</span></a> has a signed receiver, resource guards, and a pinned v{{server-version}} installer:</p>
-            <div class="feature-terminal" data-home-terminal data-command="curl -fsSL https://shibumistack.dev/install/server | bash" aria-label="Simulated server installation">
-                <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
-                <div class="home-clack-output">
-                    <span class="home-clack-rail" aria-hidden="true"></span>
-                    <div class="cli-step home-clack-row home-clack-brand"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><strong>渋み&nbsp; shis <span>(shibumi-server)</span></strong></div>
-                    <div class="cli-step home-clack-row home-clack-prompt"><svg class="home-clack-glyph home-clack-submit"><use href="#home-clack-diamond"/></svg><div><div class="cli-question">Install shibumi-server on this server?</div><div class="cli-selected cli-option"><span class="cli-dot">●</span> Yes</div></div></div>
-                    <div class="cli-step home-clack-row"><svg class="home-clack-glyph home-clack-submit home-clack-filled"><use href="#home-clack-diamond"/></svg><span>Installed shibumi-server {{server-version}}</span></div>
-                    <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Launcher: ~/.local/bin/shis</strong><span class="home-clack-next"><b>Next:</b> connect from project root</span></div></div>
-                </div>
-            </div>
-            <p>Once configured, one command builds locally and deploys:</p>
+            <p>Static, web, and full-stack projects use the same VPS deployment path.</p>
+            <p><a href="https://server.shibumistack.dev"><span class="accent-word">shibumi-server</span></a> verifies signed requests, host capacity, image identity, and health. Install pinned v{{server-version}} on the Linux host with <code>curl -fsSL https://shibumistack.dev/install/server | bash</code>.</p>
+            <p>With the server installed, run <code>bun ship</code>, included in every generated project. It builds committed code locally and deploys it:</p>
             <div class="feature-terminal" data-home-terminal data-command="bun ship" aria-label="Simulated server deployment">
                 <div class="feature-terminal-command"><span class="prompt-mark">›</span><code><span data-home-typed></span><span class="typing-cursor" data-home-cursor></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                 <div class="home-clack-output">
@@ -209,25 +140,13 @@
                     <div class="cli-step home-clack-row home-clack-done"><svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg><div><strong>Shipped in 15 seconds</strong><span class="home-clack-next">https://myapp.com</span></div></div>
                 </div>
             </div>
-            <p>Ship runs project checks, builds committed code on your computer for the server's Linux architecture, and uploads the labeled image through SSH before pushing Git. Recommended mode triggers exact deployment over SSH. The service verifies commit and image identity, replaces the old container, confirms health, keeps one rollback image, and removes older ones. Before the next deployment, Ship can run reviewed client updates and save them only after success. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. <a href="/server">See how it works →</a></p>
+            <p>Ship uploads the exact commit-tagged image before it pushes Git. The server checks commit, image labels, platform, Compose config, optional app tests, and health. It retains one previous image for up to 12 hours. Existing projects get the same command from <a href="/ship">one installer</a>. <a href="https://server.shibumistack.dev">Read the deployment flow →</a></p>
         </div>
     </div>
 </section>
 
 <section class="final-cta" aria-labelledby="final-cta-title">
-    <h2 id="final-cta-title">
-        The frameworkless framework<span class="dot">.</span>
-    </h2>
-    <div class="install-command">
-        <span class="prompt-mark">›</span>
-        <code>bun create shibumi@latest</code>
-        <button
-            class="copy-command"
-            type="button"
-            data-copy="bun create shibumi@latest"
-            aria-label="Copy install command"
-        >
-            {{icon(copy)}}{{icon(check)}}
-        </button>
-    </div>
+    <h2 id="final-cta-title">Create a project<span class="dot">.</span></h2>
+    <p class="final-cta-copy">Choose static output, a Bun web app, or a SQLite full-stack app. All three ship the same way.</p>
+    <button class="btn btn-primary" type="button" data-dialog="install-dialog">Show create command</button>
 </section>

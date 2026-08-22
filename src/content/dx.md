@@ -1,399 +1,190 @@
-# Shibumi Stack DX Plan
+# create-shibumi design and acceptance
 
-## The Seven Pieces
+This document describes CLI behavior, generated files, and release checks.
 
-- **Bun**: runtime, bundler, test runner, package manager
-- **Hono**: routes, middleware, SSR
-- **Zod**: validate input at the boundary
-- **Drizzle**: schema, queries, migrations
-- **SQLite**: durable local data with no service to run
-- **Alpine**: interaction close to the HTML
-- **Nanostores**: shared browser state when local state is not enough
+## Product rule
 
-Seven tools. Clear jobs. No extra layer.
+Shibumi writes files into a project. Generated apps run on their chosen libraries without a Shibumi runtime.
 
-Shibumi is a scaffolder. It writes source files and deploy config for your target, then stays out of the way. Projects have plain files, base.css, and CSRF. Everything else is an extension.
+The package supports one deploy target, a Linux VPS running `shibumi-server`. It offers three starting points:
 
-## Core Principle
+- static output from any framework or plain files
+- a Bun, Hono, Zod, and Alpine web app
+- the web app plus Drizzle and SQLite
 
-Every command is just Bun. Shibumi sets up the right defaults then gets out of the way. No wrapper runtime, no magic CLI that hides what's happening.
+Nanostores joins only when separate browser components need shared state.
 
-## 1. Create
+## Create
 
-```
-npm create shibumi@latest myapp
-bun create shibumi@latest myapp
+```sh
+bun create shibumi@latest my-app
 ```
 
-Package: `create-shibumi` (already claimed on npm).
+The CLI asks only what changes generated files:
 
-### CLI Design
+```text
+What are you shipping?
 
-Dependencies: `@clack/prompts`, `ora` (spinners), `chalk` (colors).
+● Static output
+  Bun web app
+  Bun full-stack app
 
-Color palette:
-- Kanji (渋み): bold, orange (#ff6600)
-- "shibumi": bold white
-- "Refined simplicity": dim gray
-- Step pills (dir, tmpl, deploy, git, deps): Moss green (#64b464) bg, bold dark text
-- "next" pill: dark orange (#e55a00) bg, non-bold white text
-- Selected radio (●): Moss green
-- Unselected options: ANSI dim (adapts to terminal theme)
-- "✓ Project ready": Moss green
-- Final command: orange, && in white
-- Docs link: dim
+Deploy to a VPS now?
 
-Default project name: random zen-themed (quiet-bamboo, still-water, bare-stone).
-All prompts skippable with `--yes` for CI.
-
-### Prompt Flow
-
-```
-  渋み shibumi Refined simplicity
-
-     dir   Where should we create your project?
-              ./quiet-bamboo
-
-    tmpl   How would you like to start?
-              ○ Bare: minimal, start from scratch
-              ○ Blog: markdown posts, RSS feed, SEO ready
-              ● SSR: full stack with API routes
-              ○ Static: pre-built, outputs to dist/
-
-  deploy   Where will you deploy?
-              ● Self-hosted (Bun + Docker)
-              ○ Cloudflare Workers/Pages
-              ○ Vercel
-              ○ Fly.io
-              ○ Static CDN
-
-     git   Initialize a repository?
-              Yes
-
-    deps   Install dependencies?
-              Yes
-
-              ✓  Project ready
-              ■ Template copied
-              ■ Dependencies installed
-
-    next   cd quiet-bamboo && bun dev
-
-              Docs: shibumistack.dev/docs
+● Yes
+  Later
 ```
 
-Preview script: `/tmp/shibumi-cli-preview.sh`
+Project creation must be atomic. It writes into a temporary sibling directory, runs generation checks, then renames the directory into place. Cancellation or failure leaves the destination absent. An existing path is never overwritten.
 
-## 2. Develop
+Git initialization is optional. The CLI never stages or commits user files.
 
-```
-cd myapp
-bun dev
-```
+## Static output
 
-Hot reload, SQLite locally, zero config. Works immediately.
+Static publishing uses an artifact contract instead of framework adapters. The user supplies an optional build command and a relative output directory such as `dist`, `public`, `build`, or `out`.
 
-## 3. Build
+Before packaging, Shibumi verifies that:
 
-```
-bun run build
-```
+- the path stays inside the project root
+- the directory exists after the build
+- the directory is not empty
+- `index.html` exists
+- symlinks do not escape the output directory
 
-SSG outputs `dist/`. SSR outputs optimized bundle. Same command either way.
+Normal file routing and `404.html` are the default. SPA fallback requires an explicit choice.
 
-## 4. Deploy
+The deployment image contains only the verified output and a pinned static server. Health checks request `/`.
 
-Push to GitHub. Platform picks it up. No deploy CLI needed.
+## Bun web app
 
-Templates ship with the right config already in place based on the deploy target chosen during create:
+The Bun web project contains:
 
-### Self-hosted (Bun + Docker)
-- `Dockerfile` (Bun alpine image, minimal)
-- `docker-compose.yml` (app + Caddy)
-- `Caddyfile` (auto-HTTPS, reverse proxy)
-- SQLite data as volume mount
-
-### Cloudflare Workers / Pages
-- `wrangler.toml`
-- Entry point uses `export default { fetch: app.fetch }`
-
-### Vercel
-- `vercel.json`
-- Entry point uses `hono/vercel` adapter
-
-### Fly.io
-- `fly.toml`
-- Same Dockerfile as self-hosted
-- Volume for SQLite persistence
-
-### Static (CDN)
-- Build command + output dir in `package.json`
-- Works on Cloudflare Pages, Netlify, Vercel, any static host
-
-## 5. Hono as the Universal Layer
-
-Hono is the secret weapon. App code, routes, templates stay identical across all deploy targets. Only three things change per target:
-
-1. Entry point adapter
-2. Deploy config file
-3. `devDependencies`
-
-```ts
-// self-hosted (Bun)
-import { serve } from 'bun'
-serve({ fetch: app.fetch, port: 3000 })
-
-// cloudflare workers
-export default { fetch: app.fetch }
-
-// vercel
-import { handle } from 'hono/vercel'
-export default handle(app)
+```text
+agents.md
+package.json
+tsconfig.json
+Dockerfile
+compose.yaml
+scripts/ship.ts
+src/app.ts
+src/server.ts
+public/
+test/app.test.ts
 ```
 
-## 6. Data Layer
+The generated server uses Bun and Hono. Zod validates environment values and request input. Alpine handles behavior close to the HTML. Response headers include the security baseline used by the templates. The process handles shutdown and exposes `/healthz`.
 
-Drizzle owns schema, queries, and migrations. Same schema everywhere, different driver per target:
+The build produces `dist/server.js`, and the container starts that file. A packed-fixture test must catch source paths that were not copied into the image.
 
-```ts
-// schema.ts: shared, always the same
-export const posts = sqliteTable('posts', {
-  id: integer('id').primaryKey(),
-  title: text('title'),
-})
+## SQLite full stack
 
-// db.ts: generated by create-shibumi per deploy target
-// self-hosted: local file
-export const db = drizzle(new Database('data/app.db'))
-// cloudflare: D1 binding
-export const db = drizzle(env.DB)
-// vercel: Turso
-export const db = drizzle(createClient({ url, authToken }))
+The full-stack project adds Drizzle and `bun:sqlite`. Runtime data lives under persistent `/data`, outside the image.
+
+SQLite setup enables:
+
+```text
+journal_mode = WAL
+foreign_keys = ON
+busy_timeout = <bounded milliseconds>
 ```
 
-Default per platform (no prompt, just the right answer):
-- Self-hosted / Fly.io: SQLite file (volume mount)
-- Cloudflare: D1
-- Vercel: Turso
+The project owns schema and SQL migrations. Tests create a fresh database, apply every migration, and run representative queries.
 
-Dev is always local SQLite regardless of target. D1's `wrangler dev --local` also uses local SQLite under the hood.
+Deployment takes a SQLite backup before applying new migrations. Backups have a size and count limit, and the project includes an explicit restore command.
 
-Commands:
-```
-bun run db:generate    # migration SQL from schema diff
-bun run db:migrate     # apply locally or to target
-bun run db:seed        # seed data
-bun run db:studio      # local browser UI
-```
+Image rollback changes application code, not database state. Generated docs must say this plainly. Destructive migrations require a reviewed backup and restore plan; normal migrations should remain compatible with the previous app image during the rollback window.
 
-## 7. Deploy Targets at a Glance
+The generated project does not expose a public demo write endpoint. Database examples belong in tests until the user chooses an authentication model.
 
-| Target         | Runtime    | SSR | SSG | SQLite via       |
-|----------------|------------|-----|-----|------------------|
-| Self-hosted    | Bun        | yes | yes | file (volume)    |
-| Fly.io         | Bun        | yes | yes | file (volume)    |
-| Cloudflare     | Workers    | yes | yes | D1               |
-| Vercel         | Serverless | yes | yes | Turso / external |
-| Static CDN     | none       | no  | yes | n/a              |
+## Browser state
 
-## 8. Core: CSRF
+Alpine already provides local component state and a global store. Adding Nanostores to every app would duplicate that job.
 
-The only helper that ships with every project. Security shouldn't be opt-in.
+Use Nanostores when independent client islands share state or when state must live outside Alpine components. Until a generated app has that need, leave the dependency out.
 
-Hono middleware for token generation + validation:
+## Generated commands
 
-```ts
-import { csrf } from 'shibumistack'
-app.use(csrf())
-```
+Bun apps expose:
 
-## 9. Extensions Ecosystem
-
-Everything beyond the seven pieces + CSRF is an extension. Added explicitly, owned by the user.
-
-### Mechanism
-
-```
-bun run shibumi add auth
-bun run shibumi add flash
-bun run shibumi add html-helpers
-bun run shibumi add uploads
-bun run shibumi add email
+```json
+{
+  "scripts": {
+    "dev": "bun scripts/ship.ts --dev",
+    "dev:app": "bun --watch src/server.ts",
+    "start": "bun dist/server.js",
+    "build": "bun build src/server.ts --outdir dist --target bun",
+    "test": "bun test",
+    "check": "tsc --noEmit",
+    "ship": "bun scripts/ship.ts",
+    "ship:setup": "bun scripts/ship.ts --setup",
+    "ship:update": "bun scripts/ship.ts --update",
+    "ship:status": "bun scripts/ship.ts --status",
+    "ship:logs": "bun scripts/ship.ts --logs"
+  }
+}
 ```
 
-Extensions are **copy-paste, not dependencies** (like shadcn/ui):
-1. Source files copied into your project, not hidden in node_modules
-2. A migration if it needs DB tables
-3. Named guidance such as `agents/auth.md`, merged into the project's root `agents.md`
+Static projects get equivalent artifact, preview, and Ship commands without a Bun app server.
 
-You own the code. Modify it, delete it, fork it. No lock-in.
+## Agent instructions
 
-### Available Extensions (planned)
+Every project gets root `agents.md` with facts that tools need:
 
-| Extension        | What it adds                                          |
-|------------------|-------------------------------------------------------|
-| `auth`           | Cookie sessions, login/logout routes, session schema  |
-| `flash`          | Session-based one-time messages after redirects       |
-| `html-helpers`   | Tagged template literals, layouts, partials            |
-| `uploads`        | File upload handling, S3/local storage                |
-| `email`          | Transactional email via Resend/SMTP                   |
-| `stripe`         | Checkout, webhooks, subscription helpers              |
-| `admin`          | Auto-generated CRUD UI from Drizzle schema            |
+- commands that actually exist
+- route and template locations
+- trust boundaries and validation rules
+- database path and migration process
+- files generated by Ship
+- checks required before commit
 
-### agents.md: AI-Native DX
+An extension can add `agents/<extension>.md` and merge a named section into the root file. Keeping the named source makes later review and removal possible.
 
-Each extension ships named guidance such as `agents/auth.md`. When you `shibumi add auth`, Shibumi merges it into your project's discoverable root `agents.md`:
+## Extensions
 
-```markdown
-## Auth (added via shibumi add auth)
-- Sessions live in src/lib/session.ts
-- Use createSession()/destroySession(), never set cookies directly
-- Protected routes use the auth() middleware
-- Don't inline Alpine state for auth forms, use x-component="login-form"
-```
+Bundled extensions copy source, migrations, tests, dependencies, environment variable names, and agent instructions into the app.
 
-The base scaffolder also generates a root `agents.md` with stack conventions:
+Installation needs a dry run. It must show every file write and exact edit before changing the project. Hooks use unique source matches and stop when the expected text has changed.
 
-```markdown
-## Stack
-Bun + Hono + SQLite + Drizzle + Alpine + Nanostores + Zod. See .plans/dx.md for architecture.
+Auth, email, and uploads ship only when fixture installation, repeated installation, conflicts, and removal pass.
 
-## Conventions
-- Alpine: use x-component="name" pattern, not inline x-data blobs
-- Routes: file-based in src/routes/, each exports a Hono sub-app
-- Validation: Zod schemas in src/schemas/, use safeParse at boundaries
-- DB: Drizzle schema in src/db/schema.ts, never raw SQL
-```
+## VPS deployment
 
-AI agents read this file and know how to work with the project. The more extensions you add, the smarter agents get about your specific setup.
+[`shibumi-server`](https://server.shibumistack.dev) is the supported deployment target. Generated projects own `Dockerfile`, `compose.yaml`, `shibumi-server.json`, and `scripts/ship.ts`.
 
-### Community Extensions
+`bun ship`:
 
-Anyone can publish a Shibumi extension as an npm package (`@shibumi/auth`, `shibumi-ext-stripe`, etc.). The contract is simple:
+1. requires a clean configured branch
+2. runs project checks
+3. builds committed `HEAD` for the server's Linux platform
+4. labels the image with repository, app, commit, Git tree, and platform
+5. uploads the exact image through SSH
+6. pushes Git
+7. requests deployment of that commit
+8. follows status until success or failure
 
-1. Export a `files/` directory with source to copy
-2. Export named guidance under `agents/<extension>.md`
-3. Optionally export a `migration.sql`
+The server validates capacity, commit, Compose config, image identity, optional app tests, and health. Caddy retries the loopback upstream for up to 20 seconds during replacement. One previous image remains available for rollback for up to 12 hours.
 
-`shibumi add <name>` resolves from npm, copies files in, merges named guidance into root `agents.md`, and runs migration.
+## Release tests
 
-## Example Workflows
+Acceptance runs against the packed npm tarball, not source imports from the CLI repository.
 
-### Solo dev, new SaaS
-```
-npm create shibumi@latest invoicely
-  → template: SSR
-  → deploy: Self-hosted (Docker)
+For each starting point:
 
-cd invoicely && bun dev
-bun run shibumi add auth
-bun run shibumi add stripe
-bun run shibumi add email
-```
-Three extensions = login, payments, transactional email. Full SaaS skeleton in minutes. Docker + Caddy = auto-HTTPS on any $5 VPS.
+1. create a temporary project non-interactively
+2. check for unresolved placeholders and paths outside the fixture
+3. install with the lockfile
+4. run applicable tests, typecheck, build, and artifact validation
+5. build the container
+6. start on an assigned loopback port
+7. pass the configured health request
+8. verify generated Ship source matches the current immutable version
 
-### Content creator, blog
-```
-npm create shibumi@latest my-blog
-  → template: Blog
-  → deploy: Static CDN
+The SQLite fixture must also prove migration, persistence across container replacement, backup, and restore.
 
-bun dev              # write markdown posts
-bun run build        # outputs dist/
-```
-Markdown + frontmatter, RSS feed, SEO tags. No database, no server. Deploys anywhere static files go.
+One disposable VPS app per starting point must complete setup, upload, deployment, status, logs, and rollback before `create-shibumi@0.1.0` is published.
 
-### Agency shipping client projects
-```
-npm create shibumi@latest client-dashboard --yes
-  → defaults: SSR + Self-hosted
+## Deferred work
 
-bun run shibumi add auth
-bun run shibumi add admin
-```
-`--yes` skips prompts for CI/scripting. Admin extension gives instant CRUD UI from schema.
+Cloudflare, Vercel, Fly.io, framework-specific starts, background jobs, payments, admin, a public extension registry, and migration assistants remain unsupported.
 
-### Edge deploy on Cloudflare
-```
-npm create shibumi@latest edge-app
-  → template: SSR
-  → deploy: Cloudflare Workers
-
-bun dev              # local SQLite, same as always
-```
-Same Hono routes, same Drizzle schema. Dev is local SQLite, prod is D1. Zero code changes.
-
-### Team migrating off Next.js
-```
-bun run shibumi migrate --from next
-```
-Not a full auto-migration (Next surface area too large for that). Analysis + scaffolding tool:
-1. Scaffolds new shibumi project with matching deploy target
-2. Maps `pages/` or `app/` routes to `src/routes/` stubs
-3. Extracts API routes into Hono route files (translate cleanly)
-4. Generates migration report: what mapped, what needs manual work
-
-```
-  渋み migrate   Scanned 23 routes, 8 API endpoints
-
-  ✓ mapped    8 API routes → src/routes/api/
-  ✓ mapped    12 pages → src/routes/ (markup only)
-  ⚠ manual    3 pages use RSC server components
-  ⚠ manual    next/image → replace with <img> or extension
-  ⚠ manual    next-auth → run shibumi add auth
-
-  Report: migration-report.md
-```
-API routes are the real win (basically Hono handlers already). Pages become route stubs with TODOs. React interactivity flagged for Alpine rewrite. Priority: after core CLI + auth/admin extensions are solid. Could ship as `shibumi-ext-migrate-next`.
-
-### Extension author
-```
-mkdir shibumi-ext-comments && cd $_
-```
-Three exports, that's the whole contract:
-- `files/` directory with source to copy
-- `agents/<extension>.md` guidance fragment
-- `migration.sql` (optional)
-
-```
-npm publish
-# users install with: bun run shibumi add comments
-```
-
-## [shibumi-server](/server.md)
-
-Experimental self-hosted deploy service. One pinned Bun process behind the host's existing Caddy service; no dashboard and no privileged container socket.
-
-Public source defines behavior and templates. Machine-local config maps a domain-derived app ID to its repository, branch, checkout, Compose service, and loopback port. Literal hyphens are escaped before dots become separators, preventing dashed domains from colliding. Config references a webhook-secret environment variable but never stores the secret itself.
-
-The first GitHub flow:
-1. Verify `X-Hub-Signature-256`, repository, branch, full commit SHA, and reject replayed delivery IDs
-2. Reject a different request for an active app with `409`; do not queue it
-3. Check configured free-memory and free-disk floors before changing the checkout
-4. Fetch the exact commit into a clean deployment checkout
-5. Validate the Compose config and build with rootless Podman under a deadline and systemd resource ceilings; optionally run app-owned tests while the current container keeps running
-6. Replace the old container, check the new one's loopback health endpoint, retain the previous two successful images for rollbacks, and remove older images
-7. Let Caddy route the public domain to the app's explicit localhost port
-
-The v0.1 setup has separate install and app steps:
-```
-curl -fsSL https://shibumistack.dev/install/server | bash
-shibumi-server add example.com
-```
-
-Installation checks the host, pins the resolved release, writes the systemd user service, and adds a local command that uses the resolved Bun executable directly. User-run commands check npm with a short timeout and suggest `shibumi-server update` when a newer release exists; explicit update installs the exact stable npm release through Bun while preserving config and secrets, and registry failures never block local work. App setup accepts `github:owner/repo`, checks DNS and existing Caddy state, asks for the deployment directory, then assigns an available local port. `add --dry-run` follows the same prompts and validation but writes no config or secrets, does not invoke sudo, and leaves Caddy and systemd unchanged. Mode-restricted machine config and a unique per-app secret stay local. Restarts and app registration never download a package. Caddy changes require explicit confirmation and sudo; GitHub setup remains a client action through `gh`. App-owned tests are optional through explicit config or `add` arguments. Complete `init` and `add` flags remain available for automation. Uninstall removes the service and installed releases while preserving config and secrets unless the operator confirms `--purge`. `create-shibumi` can later wire up the operator steps when the user picks Self-hosted.
-
-Self-hosted templates include owned `ship` and `ship:setup` scripts. `bun ship` detects missing setup, discloses local versus committed configuration before saving, runs confirmed server setup through SSH, creates a missing GitHub webhook through `gh`, checks Git state and project scripts, pushes when needed or redeploys an already-pushed `HEAD`, and follows mode-restricted deployment status over SSH. Existing domains stage the webhook route against their current upstream and ask for explicit Caddy cutover only after the new app is healthy.
-
-GitHub is the first supported webhook format. Other git hosts, Caddy API changes, and automatic health-check rollback follow after dogfooding.
-
-Package: [`shibumi-server`](https://github.com/bitbonsai/shibumi-server).
-
-## Resolved Decisions
-
-- **GitHub Actions**: optional, not default. Default self-hosted deploy uses the [shibumi-server webhook](/server.md)
-- **Blog template**: Markdown with frontmatter, no MDX. Parsed at build time.
-- **base.css**: ships with every template. Delete if you don't want it.
-- **Extension registry**: npm-only. `@shibumi/*` for official, `shibumi-ext-*` for community. Listing page on shibumistack.dev.
-- **Extension updates**: don't auto-update. Ship a changelog, users diff manually. Same tradeoff as shadcn.
-- **`shibumi add --dry-run`**: yes. Shows files created or modified, dependencies added, and root `agents.md` changes.
+Each addition needs packed-fixture and deployment coverage before release.

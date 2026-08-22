@@ -1,12 +1,10 @@
 # shibumi-server
 
-`shibumi-server` runs verified application images on your VPS or homelab server. Builds happen on your computer.
+`shibumi-server` deploys application images to a Linux VPS or homelab server. `bun ship` builds the image on your computer and uploads it through SSH.
 
-No dashboard or cloud deploy service.
+> **Released now:** VPS and homelab deployment. Other deploy providers remain planned.
 
-> **Released now:** VPS and homelab deployment through `shibumi-server`. Other deployment targets remain planned.
-
-## A deployment
+## One deployment
 
 ```clack
 bun ship
@@ -19,92 +17,90 @@ Shipped in 15 seconds
 https://example.com
 ```
 
-`bun ship` builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode asks the server over SSH to deploy exact commit. Your current app keeps running while `shibumi-server` verifies commit, checkout, uploaded image, and Compose setup. If those checks pass, it replaces the old container, checks the new one's health behind Caddy, keeps one previous image for quick rollback, and removes older ones. Caddy waits and retries for up to 20 seconds while the loopback port restarts. Deployment logs show health readiness against that budget. After a server update, `shis caddy-refresh <app-id>` adds retry budget to existing managed apps without replacing their other Caddy settings.
+Ship builds committed `HEAD` for the server's Linux platform, uploads the tagged image, then pushes Git. In the recommended mode it asks the server over SSH to deploy that exact commit.
 
-The webhook must match the secret, repository, branch, and full commit. Bad or repeated requests do not deploy. Only one deploy runs per app. Invalid configuration or a failed build stops before startup.
+The running app stays up while the server checks the commit, checkout, image labels, platform, and Compose config. It then replaces the container and checks the configured loopback health endpoint. Caddy retries the upstream for up to 20 seconds during that restart. The server retains one previous image for up to 12 hours.
 
-### What these checks mean
+A deployment request must match the webhook secret, repository, branch, and full commit. Replayed requests do not deploy. Each app runs one deployment at a time. Invalid config, failed tests, or a mismatched image stops before replacement.
 
-Every deploy runs the same checks. You do not need to write tests for them.
+### Checks run by the server
 
 1. Verify the webhook, repository, branch, and commit.
 2. Check free memory and disk space.
-3. Validate the Compose configuration.
-4. Verify the uploaded image and run any optional app tests in a temporary container.
-5. Replace the old container, check the new one's local health endpoint, keep the previous successful image for rollback, and remove older images.
+3. Validate Compose config.
+4. Verify the uploaded image and run the app's optional test command in a temporary container.
+5. Replace the container, check health, retain one rollback image for up to 12 hours, and remove old tags.
 
-App tests are optional. Add a command such as `bun test` only when the project has its own test suite.
+App tests are optional. Configure `bun test` only when the project has tests of its own.
 
-## Built for small servers
+## Resource limits
 
-Images build on your computer, so running apps do not compete with production builds. Before deployment, `shibumi-server` still checks free memory and disk space. Prebuilt apps require 512 MiB of available memory by default; fallback server builds require 2 GiB. Both can be tuned per app.
+Client builds keep build CPU and memory off the production host. The server still checks available memory and disk before each deployment. Prebuilt apps require 512 MiB of available memory by default. A fallback server build requires 2 GiB. Operators can change both values per app.
 
-Caddy or the host firewall handles rate limits before requests reach `shibumi-server`.
+Caddy or the host firewall must rate-limit public requests before they reach the loopback webhook service.
 
-## Dogfooding with MCPVault
+## What MCPVault exposed
 
-I also maintain [MCPVault](https://github.com/bitbonsai/mcpvault), the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.
+I maintain [MCPVault](https://github.com/bitbonsai/mcpvault), an MCP bridge for Obsidian. I moved its Astro site toward Shibumi after Astro 7 changed the Cloudflare path from Pages to Workers.
 
-The first build exhausted the server's memory. That failure led to resource checks, bounded fallback builds, and the current local-build flow.
+The first VPS build exhausted available memory before health checks ran. That failure led to memory and disk preflight, build deadlines, systemd ceilings, and the current local-image upload flow.
 
 ## Prepare a server
 
-You need a Linux VPS or homelab server reachable through SSH. Setup uses Bun, Git, rootless Podman, Podman Compose, Caddy, and systemd, checking the host before it changes server configuration.
-
-The recommended app flow starts from your local project and installs the server component through confirmed SSH when needed. You can also prepare the server directly:
+Use a Linux VPS or homelab server reachable over SSH. Installation requires Git, rootless Podman, a Compose frontend, Caddy, and systemd. The bootstrap installs Bun when it is missing.
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-It stages the resolved release with lockfile-pinned production dependencies, then installs compatible `shis` and `shibumi-server` commands in `~/.local/bin`. The service keeps using that exact release. User-run commands check npm for a newer stable release and suggest `shis update`; `serve` performs no registry check. Update installs one exact version while preserving config and secrets. Timeouts and registry failures never block local work.
+The installer stages one npm release with lockfile-pinned production dependencies and installs `shis` and `shibumi-server` in `~/.local/bin`. The service starts from that local release. It does not fetch code during restart.
 
-`shibumi-server uninstall` removes the service and installed code while preserving config and secrets. Add `--purge` to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.
+Interactive commands check npm with a short timeout and suggest `shis update` when a newer stable release exists. Registry failures do not block local commands. `shis serve` skips the check.
 
-## Connect from your project
+`shis uninstall` removes the service and installed releases but keeps config, secrets, app checkouts, containers, Caddy, and GitHub settings. `--purge` removes config and secrets after a stronger confirmation.
 
-Run one installer from your local project root:
+## Connect a project
+
+Run this installer from the local Git project root:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-It infers the domain, repository, branch, Compose file, service, and health path. After you confirm an SSH target, it installs or upgrades `shibumi-server` when needed, enables prebuilt images, registers the app, configures and tests the GitHub webhook, then writes owned project source. Local shipping recommends Colima with Docker CLI, Docker Compose, and Buildx.
+It reads the domain, repository, branch, tracked Compose file, service, and health path. After SSH confirmation, it installs or updates the server component when needed, registers the app, configures the selected trigger, and writes owned project files.
 
-DNS and webhook delivery may depend on external changes. If either is not ready, setup keeps the owned files and prints the exact next action. Resume with:
+If DNS or webhook delivery is not ready, setup keeps those files and prints the next action. Resume with:
 
 ```sh
 bun ship:setup
 ```
 
-`shis add sub.example.com` remains available for server operators and automation. Use `--dry-run` to follow the same detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy or systemd. A real add ends with the exact local installer command instead of sending you through a webpage.
+Server operators can register directly with `shis add sub.example.com`. `--dry-run` follows DNS detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy and systemd.
 
-## Ship with one command
-
-Self-hosted projects own a small ship script:
+## Ship from the project
 
 ```sh
 bun ship
 ```
 
-The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe `shibumi-server.json`. Setup recommends explicit `bun ship` deployment and can enable deploy-on-push through GitHub CLI. Rerun `bun ship:setup` to switch; the matching webhook is enabled or disabled without printing or storing its secret.
+Setup recommends explicit Ship-triggered deployment. GitHub CLI can instead enable deploy-on-push. Switching modes only changes the matching webhook and committed trigger setting; webhook secrets remain on the server.
 
-Later runs check Git state, run project tests and type checks, create a build context from committed `HEAD`, and build for the server's Linux platform on your computer. Ship labels the image with app, repository, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git and follow deployment status over SSH. The server resolves the commit tree independently and rejects any mismatched image.
+A normal run checks Git, runs project tests and type checks, creates a build context from committed `HEAD`, and builds for the configured Linux platform. Ship labels the image with app, repository, commit, Git tree, and platform identity. It uploads through SSH before pushing Git. The server resolves the commit tree itself and rejects an image when any identity value differs.
 
-Docker layer cache stays enabled. `bun ship --rebuild` performs a no-cache build. Existing domains keep their current upstream until the first Shibumi deployment is healthy and you confirm Caddy cutover.
+Docker layer cache remains enabled. Use `bun ship --rebuild` to pass `--no-cache`. After a server update, `shis caddy-refresh <app-id>` adds the 20-second retry budget to an existing managed route without replacing its other Caddy settings. Existing domains keep their old upstream until the first Shibumi deployment passes health and you approve Caddy cutover.
 
-Before each deployment, Ship checks whether reviewed client source is newer. It can run that immutable version immediately, then saves it to tracked `scripts/ship.ts` only after deployment succeeds. Network errors keep the current version and owned local edits are never overwritten.
+Before deployment, Ship checks the mutable latest pointer against immutable reviewed source. It may run that source for the current deployment, then save it to tracked `scripts/ship.ts` only after success. Network errors keep the current client. Local edits are never overwritten.
 
-Run `bun ship:setup` whenever you want to review or change deployment setup. For an existing project, [add the owned ship workflow](/ship.md).
+Use `bun ship:setup` to review or change setup. Existing project instructions live on the [Ship page](/ship.md).
 
-## Install on your server
+## Install requirements
 
-`shibumi-server` requires Linux with Bun, Git, rootless Podman, a working `podman compose` or `podman-compose` frontend, Caddy, and systemd. If you're using macOS or Windows, SSH into your Linux VPS or homelab server first, then run this command there:
+`shibumi-server` requires Linux, Bun, Git, rootless Podman, `podman compose` or `podman-compose`, Caddy, and systemd. macOS and Windows users must SSH into the Linux host before running:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-The website only copies the command. It never connects to your server or asks for SSH credentials.
+The website copies this command. It never connects to a server or asks for SSH credentials.
 
 Source: <https://github.com/bitbonsai/shibumi-server>

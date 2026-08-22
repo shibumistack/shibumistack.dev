@@ -1,11 +1,11 @@
             <section class="ship-hero">
                 <div>
                     <p class="eyebrow">Existing projects</p>
-                    <h1>Own your<br><span class="accent-word">ship.</span></h1>
+                    <h1>Add Ship to<br><span class="accent-word">your project.</span></h1>
                 </div>
                 <div class="ship-intro">
-                    <p class="dek">Connect any Bun project to shibumi-server from your local project root.</p>
-                    <p>One installer handles server registration through SSH, deployment setup, and owned project source. You do not need to add the app from a server shell first.</p>
+                    <p class="dek">Run setup from the local Git root. Ship registers the app through SSH and adds tracked deployment files.</p>
+                    <p>Server operators can still use <code>shis add</code>, but project setup does not require it first.</p>
                     <div class="ship-prereqs" aria-label="Requirements"><span>Bun</span><span>Git</span><span>Docker</span><span>SSH</span></div>
                 </div>
             </section>
@@ -13,13 +13,13 @@
             <section class="ship-step" id="connect">
                 <div class="ship-step-label"><span>01</span><p>Connect</p></div>
                 <div class="ship-step-body">
-                    <h2>Run one installer.</h2>
+                    <h2>Run the installer from the Git root.</h2>
                     <p>Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.</p>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
-                    <p>The installer validates your Git project, adds owned ship source and package commands, then connects setup. Existing edits to <code>scripts/ship.ts</code> are never overwritten.</p>
-                    <p>Setup suggests the domain, asks once for your normal <code>user@server</code> target or SSH alias, and registers the current branch. Choose <strong>Run bun ship</strong> (recommended) or <strong>Deploy every GitHub push</strong>. Rerun <code>bun ship:setup</code> anytime to switch.</p>
-                    <p>If no tracked Compose file exists, setup offers to generate a bounded Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and secret-safe <code>.dockerignore</code>. Review, commit, and push them, then resume with <code>bun ship:setup</code>. Existing files are never overwritten.</p>
-                    <p>Choosing <strong>Run bun ship</strong> disables the matching webhook and deploys over SSH. Choosing <strong>Deploy every GitHub push</strong> creates, enables, or repairs it. Setup keeps owned files when DNS or another external prerequisite is pending.</p>
+                    <p>The installer checks the Git root, adds Ship source and package commands, and starts setup. It never replaces an edited <code>scripts/ship.ts</code>.</p>
+                    <p>Setup suggests a domain, asks for the SSH target you already use, and registers the current branch. Choose <strong>Run bun ship</strong> or <strong>Deploy every GitHub push</strong>. Run <code>bun ship:setup</code> again to switch.</p>
+                    <p>When no tracked Compose file exists, setup can generate a Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and <code>.dockerignore</code>. Review and commit them before resuming. Existing files are never replaced.</p>
+                    <p>Direct Ship mode deploys over SSH and can disable the matching webhook. Deploy-on-push creates or repairs that webhook. Pending DNS or GitHub changes leave generated files in place with a command to resume.</p>
                     <p><strong>Cloudflare:</strong> Deploy-on-push requires <strong>Full (strict)</strong> SSL/TLS mode for proxied domains.</p>
                 </div>
             </section>
@@ -27,8 +27,8 @@
             <section class="ship-step" id="owned-source">
                 <div class="ship-step-label"><span>02</span><p>Owned source</p></div>
                 <div class="ship-step-body">
-                    <h2>See what changed.</h2>
-                    <p>Your project receives owned ship commands and <code>scripts/ship.ts</code>. Original development command moves to <code>dev:app</code>; <code>bun dev</code> runs it on remote-assigned app port.</p>
+                    <h2>Review the files added.</h2>
+                    <p>The original development command moves to <code>dev:app</code>. <code>bun dev</code> runs it on the app port stored in <code>shibumi-server.json</code>.</p>
                     <pre class="ship-code ship-code-json"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy package.json example">{{icon(copy)}}{{icon(check)}}</button><code>{
   "scripts": {
     "dev": "bun scripts/ship.ts --dev",
@@ -60,18 +60,18 @@
             <section class="ship-step" id="ship">
                 <div class="ship-step-label"><span>03</span><p>Deploy</p></div>
                 <div class="ship-step-body">
-                    <h2>Push when ready.</h2>
+                    <h2>Build committed HEAD and upload it.</h2>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code>bun ship</code></pre>
-                    <p>Ship checks for a reviewed client update before tests or builds. It can use the latest immutable version immediately, then updates tracked <code>scripts/ship.ts</code> only after deployment succeeds. The change stays unstaged for review and commit.</p>
-                    <p>Ship requires committed work on the configured branch. It runs project tests and checks, builds the server's Linux image from exact <code>HEAD</code>, labels it with repository, app, revision, source tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode then triggers the exact deployment over SSH. Server independently verifies every label before deployment. Ship never stages or commits files for you.</p>
-                    <p>Docker cache stays enabled by default. Use <code>bun ship --rebuild</code> to pass <code>--no-cache</code> for suspected cache or mutable-input problems.</p>
-                    <p>Existing domains keep their current Caddy upstream until first Shibumi deployment passes health checks and you approve cutover. Use <code>bun ship:status</code> for latest deployment state, <code>bun ship:logs</code> for its log, or <code>bun ship --rollback</code> to restore previous retained image.</p>
-                    <p>Agents can use <code>bun ship -y</code> for a prompt-free run. <code>-y</code> is short for <code>--yes</code>. Bun forwards it directly, so no <code>--</code> separator is needed. Safety checks and failures remain active.</p>
+                    <p>Before tests and builds, Ship can run newer immutable reviewed source. It saves that source to tracked <code>scripts/ship.ts</code> only after a successful deployment and leaves the edit unstaged.</p>
+                    <p>Ship requires a clean configured branch. It runs project checks, builds exact <code>HEAD</code> for the server's Linux platform, labels the image with repository, app, revision, Git tree, and platform, then uploads it through SSH. Git pushes only after upload. The server verifies each identity value before deployment. Ship never stages or commits files.</p>
+                    <p>Docker cache stays enabled. <code>bun ship --rebuild</code> passes <code>--no-cache</code>.</p>
+                    <p>Existing domains keep their current Caddy upstream until the first deployment passes health and you approve cutover. Use <code>bun ship:status</code> for state, <code>bun ship:logs</code> for the latest log, or <code>bun ship --rollback</code> to restore the retained image.</p>
+                    <p>Agents can use <code>bun ship -y</code> for routine confirmations. Bun forwards <code>-y</code> directly, so no <code>--</code> separator is needed. Git, test, image, and deployment checks still run.</p>
                 </div>
             </section>
 
             <section class="ship-finish">
-                <p class="eyebrow">Keep the source</p>
-                <h2>Review it, change, delete if you leave</h2>
-                <p>The ship workflow is project code, not a hidden deployment runtime. Server behavior and security boundaries are documented on the <a href="/server">shibumi-server page</a>.</p>
+                <p class="eyebrow">Project-owned client</p>
+                <h2><code>scripts/ship.ts</code> stays in the repository</h2>
+                <p>Review it like other deployment code. The <a href="https://server.shibumistack.dev">shibumi-server page</a> documents server checks and trust boundaries.</p>
             </section>

@@ -1,59 +1,61 @@
 # Shibumi Stack
 
-Refined simplicity for shipping web apps.
+Simple apps, whole stack: build any web app without React, islands, or 600 MB of `node_modules`. A CLI writes it from curated parts; a server hosts them all on one €5 VPS or your homelab.
 
-Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores. Clear seams. Nothing hidden.
+Every generated project keeps its source, tests, and deployment config in your repository.
 
-Shibumi (渋み) is a Japanese concept meaning understated elegance, refined simplicity, or subtle beauty.
+Shibumi (渋み) is a Japanese idea associated with quiet, understated beauty. Here it means fewer layers and code you can inspect.
 
-## What Shibumi is
+## What Shibumi does
 
-You install a small and elegant new framework. Then, one day you realize you're debugging 600MB of dependencies you never wanted.
+The whole stack fits in your head, and in your agent's context window.
+Routes are Hono routes. Data uses SQLite and Drizzle when the app needs a database. Browser behavior starts with Alpine. Nanostores joins only when state must cross components.
+## Guidance for coding agents
 
-Shibumi is a **frameworkless framework**. Every file is something you can open, read, and understand. Extensions ship named agent guidance and merge it into root `agents.md`, so your coding agent knows how they work. Nothing runs unless you can own it.
+Generated projects include a root `agents.md`. It records route locations, data rules, available checks, and files that need extra care.
 
-## Your agent knows the project
+An extension adds a named file such as `agents/auth.md` and merges its rules into the root guide. The instructions grow with the code installed in the project.
 
-Every Shibumi project ships with an `agents.md` file. It tells your coding agent the rules: where routes live, how data flows, what tests exist, and where the boundaries are.
+## CLI
 
-Extensions add their own fragments. Install auth, and the agent learns the session model. Add payments, and it knows the webhook flow. The more you build, the smarter it gets.
+`create-shibumi` offers three starting points:
 
-## Why this
+1. **Static output**: publish a verified directory such as `dist`, `public`, `build`, or `out`, regardless of framework.
+2. **Bun web**: Hono, HTML, CSS, Alpine, Zod, tests, and a health endpoint.
+3. **SQLite full stack**: the Bun web project plus Drizzle, migrations, persistent data, backup, and restore.
 
-- **Calm defaults**: practical choices that fit together naturally.
-- **Open seams**: each layer stays visible, understandable, and replaceable.
-- **Long life**: SQLite by default, Bun commands throughout, and self-host-friendly deployment.
+All three deploy to a Linux VPS or homelab through `shibumi-server`. Other providers can wait until their generated projects pass the same artifact and deployment tests.
 
-## Start with a theme
+## VPS deployment
 
-1. **Minimal**: Smallest useful app. Routes, layout, styles, and tests.
-2. **Blog**: Markdown-driven content, RSS, and permalinks.
-3. **Landing**: Marketing page with waitlist or signup form.
-4. **SPA**: Client-side routing and shared state with Alpine and Nanostores.
-5. **Fullstack**: SSR, API routes, SQLite, Drizzle, Zod, and Alpine.
-6. **AI app**: Streaming responses, prompt templates, model integration.
-
-## Self-hosted deploys
-
-[shibumi-server](/server.md) has a signed receiver, replay protection, resource guards, and a pinned v{{server-version}} installer:
+[shibumi-server](https://server.shibumistack.dev) verifies the repository, branch, commit, image labels, platform, and health endpoint before it replaces a running container.
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
 shibumi-server add example.com
 ```
 
-Once configured, `bun ship` runs project checks, builds committed code on your computer for the server's Linux architecture, and uploads the labeled image through SSH before pushing Git. Recommended mode triggers exact deployment over SSH. The service verifies commit and image identity, keeps the current app running through checks, then replaces it, confirms health, keeps one rollback image, and removes older ones. Before the next deployment, Ship can run reviewed client updates and save them only after success. App-owned tests are optional. Secrets and machine configuration stay outside the public repository. [See how shibumi-server works.](/server.md)
+`bun ship` builds committed code on your computer, uploads the exact image through SSH, then pushes Git and asks the server to deploy that commit. Caddy retries the loopback upstream for up to 20 seconds during replacement. The server retains one previous image for up to 12 hours.
 
-## Start
+Project code stays in Git. SSH targets stay on your computer. Webhook secrets and machine paths stay on the server.
+
+## Forms
+
+[Shibumi Forms](/forms.md) gives a static page an HTML form endpoint. Hosted pre-alpha is running at <https://forms.shibumistack.dev>, and the [self-hosted source](https://github.com/bitbonsai/shibumi-forms) uses Bun, Hono, and SQLite.
+
+## Extensions
+
+From a generated project, install auth, email, or uploads as source:
 
 ```sh
-bun create shibumi@latest my-app
-cd my-app
-bun dev
+bun run shibumi add auth
 ```
+
+The installer previews file writes and stops on conflicts.
 
 ## Links
 
+- [Documentation](/docs/index.md)
 - [Roadmap](/building.md)
 - [Brand assets](/brand.md)
 - [Contributing](/CONTRIBUTING.md)

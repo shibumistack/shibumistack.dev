@@ -1,35 +1,34 @@
 # Shibumi docs
 
-> *Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.*
->
-> Antoine de Saint-Exupéry
+These pages describe Forms, Server, Ship, and CLI behavior.
 
 ## Start here
 
-Shibumi currently has two usable deployment pieces and one product direction under active construction:
+- [Shibumi Forms](/docs/forms) accepts static-site submissions through HTML. Hosted pre-alpha and self-hosted source are available.
+- [shibumi-server](/docs/server) verifies and deploys app images with rootless Podman behind Caddy.
+- [Ship](/docs/server/ship) connects a Bun project to the server through owned TypeScript and committed config.
+- [create-shibumi](/docs/cli) creates static output, a Bun web app, or a SQLite full-stack app and adds VPS deployment.
 
-- **[shibumi-server](/docs/server)** receives signed GitHub webhooks and deploys apps with rootless Podman behind Caddy.
-- **[Ship tooling](/docs/server/ship)** connects an existing Bun project to your server through project-owned source.
-- **[create-shibumi](/docs/cli)** will scaffold new apps and install source-owning extensions. Its command surface is still being built.
+Read [product and server choices](/docs/decisions) for boundaries and reasons behind the stack.
 
-For product rationale and stack choices, read [Technical decisions](/docs/decisions).
+## Libraries by job
 
-## Current stack
-
-| Piece | Responsibility |
+| Piece | Job |
 | --- | --- |
-| `Bun` | Runtime, packages, tests, and build tooling |
+| `Bun` | Runtime, packages, tests, and builds |
 | `Hono` | Routes and middleware |
-| `Zod` | Input validation at boundaries |
-| `Drizzle` | Typed schema, queries, and migrations |
-| `SQLite` | Local durable storage |
-| `Alpine` | Small behavior near HTML |
-| `Nanostores` | Shared browser state when needed |
+| `Zod` | Environment and request validation |
+| `Drizzle` | Schema, queries, and migrations |
+| `SQLite` | File-backed application data |
+| `Alpine` | Behavior inside HTML components |
+| `Nanostores` | Optional state shared across components |
 
-## Own the result
+A project includes only the libraries its selected starting point requires.
 
-Generated code should remain useful without a Shibumi runtime. Extensions copy reviewed source, configuration, tests, and local `agents.md` guidance into your app. Deployment scripts live in your repository. Server secrets remain on your server.
+## Project ownership
 
-## Documentation status
+Generated apps import their libraries directly. Shibumi adds source, config, tests, and `agents.md` guidance to the repository. Deployment secrets remain on the server, and SSH targets remain in local config.
 
-Server docs describe working release `{{server-version}}`. CLI docs clearly mark planned behavior until packages ship.
+## Markdown for agents
+
+Every docs page links its direct Markdown file beside the title. [`llms.txt`](/llms.txt) lists all agent-readable docs, including this page at [`/docs/index.md`](/docs/index.md).

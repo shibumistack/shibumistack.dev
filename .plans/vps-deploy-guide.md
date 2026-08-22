@@ -1,5 +1,7 @@
 # VPS Deploy Guide (Self-hosted)
 
+> Historical design notes. Current first-release path builds exact commit-tagged images locally, uploads them over SSH before Git push, and deploys through `shibumi-server`. Server-side builds remain fallback for deploy-on-push. Use `.plans/cli-vps-release.md`, `/ship`, and current server docs for implementation.
+
 When a user picks "Self-hosted (Bun + Docker)" during `create-shibumi`, we need
 docs that walk them through the full server setup. This is what shibumistack.dev/docs/deploy/vps
 should cover.

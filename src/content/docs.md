@@ -1,34 +1,38 @@
-# Shibumi Stack Docs
+# Shibumi Stack docs
 
-These notes record durable product decisions: what Shibumi generates, why each piece exists, and where ownership boundaries stay visible.
+This page records product choices that should survive implementation changes.
 
-## What Exists Now
+## What works now
 
-[`shibumi-server`](/docs/server) deploys apps to Linux VPS and homelab hosts through signed GitHub webhooks, rootless Podman, Compose, Caddy, and systemd. [Ship tooling](/docs/server/ship) adds committed deployment config and project-owned source to an existing Bun repository.
+[Shibumi Forms](/forms.md) accepts static-site form submissions through HTML. Hosted pre-alpha and self-hosted source are available.
 
-This site is another Shibumi artifact. It uses Bun and Hono, serves static HTML, and exposes source-shaped Markdown where useful.
+[`shibumi-server`](/docs/server) deploys apps to Linux VPS and homelab hosts with rootless Podman, Caddy, and systemd. [Ship](/docs/server/ship) adds committed deployment config and owned TypeScript to an existing Bun project.
 
-`create-shibumi`, app templates, and extensions remain under construction. Documentation marks planned behavior rather than presenting it as released.
+This website runs on Bun and Hono, builds static HTML, and publishes Markdown versions for agents.
 
-## The Seven Pieces
+`create-shibumi` creates static output, a Bun web app, or a SQLite full-stack app. All three include VPS deployment.
 
-- **Bun**: runtime, package manager, test runner, and build tool.
-- **Hono**: routes and middleware that run locally, on edge platforms, or behind Bun.
-- **Zod**: validate input where it enters the app.
-- **Drizzle**: schema, queries, and migrations. SQL stays visible.
-- **SQLite**: local durable storage with no separate service in development or on a self-hosted deploy.
-- **Alpine**: small browser behavior close to the HTML.
-- **Nanostores**: shared browser state when Alpine's local state is not enough.
+## Stack pieces
 
-## Design Decisions
+- **Bun** runs packages, tests, builds, and the server.
+- **Hono** handles routes and middleware.
+- **Zod** validates environment values and request input.
+- **Drizzle** defines schema, queries, and migrations.
+- **SQLite** stores app data without a separate database service.
+- **Alpine** handles behavior inside HTML components.
+- **Nanostores** is optional shared browser state.
 
-### Shibumi Is Glue, Not a Framework
+A project uses only the pieces it needs. Static output, for example, has no server or database runtime.
 
-Shibumi chooses files, conventions, and deploy config. The generated app is plain source code, not a runtime hidden behind a new abstraction.
+## Product choices
 
-### App Creation Starts With a Scaffolder
+### Generate files, not a runtime
 
-`create-shibumi` will ask what kind of app you are building, write owned source files, and then get out of the way.
+Shibumi writes source, tests, and deployment config into the project. The generated app imports Bun, Hono, and other chosen tools directly.
+
+### Offer three starting points
+
+`create-shibumi` asks what the user is shipping:
 
 ```sh
 bun create shibumi@latest my-app
@@ -36,60 +40,58 @@ cd my-app
 bun dev
 ```
 
-### Extensions Copy Source
+Static projects provide a build command and output directory. Bun web projects add Hono, Alpine, Zod, and a health endpoint. Full-stack projects add Drizzle, persistent SQLite, migrations, backup, and restore.
 
-Auth, email, uploads, payments, and admin should be added explicitly. If an extension creates tables or routes, those files live in the app where they can be changed or deleted.
+### Copy extension code
 
-### Conventions Should Be Legible To Tools
+An extension that adds auth, email, uploads, payments, or admin also copies its routes, config, migrations, tests, and agent instructions. The app can edit or delete those files.
 
-Generated projects will include an `agents.md` file. Extensions can append local guidance so coding agents know where sessions, routes, forms, and tests belong.
+### Record project rules for agents
 
-### CSRF Belongs In Core
+Generated projects include root `agents.md`. An extension can keep its own guide under `agents/<name>.md` and merge a discoverable section into the root file.
 
-Security defaults should not be something you remember after the app is live. The base template should include the helper every app needs.
+### Put security in generated code
 
-## Server Decisions
+Request validation, secure headers, CSRF checks, loopback port binding, and secret-safe config belong in each relevant generated project. They are not optional polish.
 
-`shibumi-server` is operations tooling around generated or existing apps. It does not require every piece in the application stack.
+## Server choices
 
-### Trust Starts At The Webhook Boundary
+### Verify requests before deployment
 
-Caddy terminates public HTTPS. The receiver listens only on loopback, verifies GitHub HMAC signatures, limits payload size, rejects repository or branch mismatches, and deploys the exact full commit SHA from the signed push. Delivery UUIDs use a bounded replay cache.
+Caddy terminates HTTPS. The receiver listens on loopback, limits request size, verifies GitHub HMAC signatures, and matches repository, branch, and full commit SHA. A bounded replay cache tracks delivery UUIDs.
 
-### Deployment Runs Without Root
+### Run deployment without root
 
-A dedicated user runs the receiver, Git checkout, builds, tests, and app containers. Rootless Podman isolates containers. systemd sets ceilings for the receiver and its direct children. Compose remains visible and app-owned, including per-app resource limits.
+A dedicated user owns the receiver, checkout, tests, and rootless containers. systemd limits the receiver and direct child processes. Compose remains in the project and sets app-specific limits.
 
-Caddy is the narrow privileged exception. A root-owned helper accepts schema-validated operations rather than arbitrary config or shell input. It backs up config, writes atomically, validates, reloads, and restores the backup on failure.
+Caddy changes use a root-owned helper. The helper accepts validated JSON for a small set of operations, writes atomically, validates full config, reloads, and restores its backup when validation or reload fails.
 
-### Cutover Must Preserve The Running App
+### Delay cutover until checks pass
 
-The existing app remains active while Shibumi checks resources, synchronizes a clean checkout, validates Compose, builds, and runs optional app tests. Cutover occurs only after those stages pass. If startup or health checks fail, Shibumi restores the previously running image and verifies its health.
+The current app stays up while the server checks resources, syncs the exact commit, validates Compose, verifies the image, and runs optional app tests. Container replacement begins after those checks. Failed startup or health restores the previous image.
 
-### History And Rollback Stay Bounded
+### Bound logs and rollback data
 
-Deployment history stores limited operational metadata in mode-`0600` JSONL. It excludes secrets, payloads, signatures, and request headers. Rollback accepts a unique commit prefix, resolves the full SHA, verifies it belongs to the configured branch, and uses the same deployment pipeline.
+Deployment history stores at most 100 JSONL records per app in a mode-`0600` file. Records exclude secrets, payloads, signatures, and request headers. The server retains one previous image for up to 12 hours.
 
-### Projects Own Their Deployment Contract
+### Keep config in the right place
 
-`shibumi-server.json` is committed with safe app settings. `scripts/ship.ts` belongs to the project and is never overwritten after installation. SSH targets remain in local Git config. Webhook secrets remain server-side or exist briefly in memory during explicit handoff.
+Commit `shibumi-server.json` and `scripts/ship.ts`. Keep SSH targets in local config. Keep machine paths and webhook secrets on the server.
 
 ## Extensions
 
-Extensions preserve the same ownership rule: they copy reviewed source and guidance into the app instead of adding a hidden runtime. Manifest structure, hooks, checks, and community registry design remain an RFC. See [Extensions](/extensions) for the current proposal.
+Bundled extensions copy reviewed source, tests, migrations, config, and a named agent guide into the app. See [Extensions](/extensions) for commands and package layout.
 
-## Deploy Targets
+## Deploy providers
 
-The app shape should stay familiar across deploy targets. Adapter, deployment config, and data driver may change without hiding application source.
-
-| Target | Status | Shape |
+| Target | Status | Planned output |
 | --- | --- | --- |
-| VPS or homelab | Released | Bun app, rootless Podman and Compose, persistent volumes, Caddy, systemd |
-| Fly.io | Planned | Bun runtime, container path, persistent volume support |
-| Cloudflare | Planned | Workers or Pages, Hono adapter, D1 |
-| Vercel | Planned | Serverless adapter, Turso or another external database |
-| Static CDN | Planned | Pre-built output with no runtime |
+| VPS or homelab | Released | Bun app, rootless Podman, Compose, persistent volumes, Caddy, systemd |
+| Static output on VPS | Released | Verified output directory in a pinned static image |
+| Fly.io | Planned | Container plus persistent volume where needed |
+| Cloudflare | Planned | Workers or Pages with D1 where needed |
+| Vercel | Planned | Serverless adapter and external database where needed |
 
-## Working Plan
+## Working plan
 
-The longer working plan lives at [`/dx.md`](/dx.md).
+The current CLI and extension plan is available as Markdown at [`/dx.md`](/dx.md).

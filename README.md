@@ -3,11 +3,9 @@
   <h1>shibumistack.dev</h1>
 </div>
 
-> Refined simplicity for shipping web apps.
+> Generate web projects with source, tests, agent instructions, and deployment config in the repository.
 
-Shibumi Stack is a small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
-
-Clear seams. No hidden runtime.
+Shibumi Stack uses Bun, Hono, Zod, Drizzle, SQLite, Alpine, and optional Nanostores.
 
 ## Run locally
 
@@ -16,7 +14,7 @@ bun install
 bun dev
 ```
 
-Open <http://localhost:9001>.
+Open URL printed by `bun dev` (currently <http://localhost:9002/> from `shibumi-server.json`).
 
 ## Useful commands
 
@@ -45,7 +43,7 @@ bun ship:update  # update only owned ship client source
 ## Routing
 
 - `/` maps to the `index` page.
-- One-segment routes such as `/brand`, `/server`, `/ship`, and `/building` are discovered
+- One-segment routes such as `/brand`, `/forms`, `/server`, `/ship`, and `/building` are discovered
   from `src/pages/{page}.html` and optional `src/content/{page}.md`.
 - `/docs` and nested `/docs/*` routes use a shared documentation shell with Markdown sources under `src/content/docs/`; `/docs/decisions` retains original technical-decision content.
 - Markdown-only pages such as `/dx` serve Markdown directly.
@@ -80,8 +78,9 @@ Production runs a scratch container containing only a static BusyBox binary and 
 
 ## Related projects
 
+- [`Shibumi Forms`](https://shibumistack.dev/forms) is open-source form collection for static sites. Hosted pre-alpha and self-hosted source are available.
 - [`shibumi-server`](https://shibumistack.dev/server) is the released, open-source webhook deploy service for rootless Podman behind Caddy. It builds exact commit images locally, uploads them through SSH, and checks server memory/disk headroom before cutover. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
 
 ## Status
 
-Coming soon: <https://shibumistack.dev>
+`create-shibumi`, bundled extensions, Forms, Server, and Ship are available: <https://shibumistack.dev>

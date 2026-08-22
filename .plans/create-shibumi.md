@@ -4,6 +4,10 @@
 
 Make `bun create shibumi@latest` generate small owned projects with one verified local development path and explicit deployment choices. Provider support must deploy locally built output without requiring Git integration or provider-side builds.
 
+## Current release decision
+
+VPS first. Release framework-agnostic static output, a Bun and Hono web app, and a SQLite full-stack app with `shibumi-server` deployment before provider adapters. See `.plans/cli-vps-release.md` for active acceptance and prototype gaps. Additional templates and providers below remain deferred follow-up.
+
 ## Current examples
 
 ### shibumistack.dev: static-capable

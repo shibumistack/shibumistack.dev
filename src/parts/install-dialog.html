@@ -1,28 +1,19 @@
 <dialog class="install-dialog" id="install-dialog" aria-labelledby="notify-dialog-title">
   <div class="install-dialog-content">
-    <button class="install-dialog-close" type="button" data-dialog-close aria-label="Close notification dialog">{{icon(close)}}</button>
+    <button class="install-dialog-close" type="button" data-dialog-close aria-label="Close create project dialog">{{icon(close)}}</button>
     <div class="install-dialog-head">
       <span class="kanji">渋み</span>
-      <span id="notify-dialog-title">Get notified</span>
+      <span id="notify-dialog-title">Create a Shibumi project</span>
     </div>
-    <p class="install-dialog-hint">Be first to know when <code>create-shibumi</code> is ready.</p>
-    <form class="notify-form" action="https://forms.shibumistack.dev/f/GQKyC2Dno2EEm3fdBkBYsik7BLssoSKLPRmAUp78Dx8" method="post">
-      <label for="notify-email">Email address</label>
-      <div class="notify-form-row">
-        <input id="notify-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required>
-        <button type="submit">Notify me</button>
-      </div>
-      <input class="notify-honeypot" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <p class="notify-fine-print">We'll only email you about Shibumi Stack releases.</p>
-    </form>
+    <p class="install-dialog-hint">Run this from the directory that will contain your project.</p>
     <div class="notify-preview">
-      <p class="notify-preview-label">Command preview</p>
+      <p class="notify-preview-label">Bun</p>
       <div class="install-dialog-command">
         <span class="prompt-mark">›</span>
-        <code>bun create shibumi@latest</code>
-        <button class="copy-command" type="button" data-copy="bun create shibumi@latest" aria-label="Copy future install command">{{icon(copy)}}{{icon(check)}}</button>
+        <code>bun create shibumi@latest my-app</code>
+        <button class="copy-command" type="button" data-copy="bun create shibumi@latest my-app" aria-label="Copy create command">{{icon(copy)}}{{icon(check)}}</button>
       </div>
-      <p class="install-dialog-alt">or <code>npm create shibumi@latest</code></p>
+      <p class="install-dialog-alt">or <code>npm create shibumi@latest my-app</code></p>
     </div>
   </div>
 </dialog>

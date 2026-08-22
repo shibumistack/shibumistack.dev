@@ -1,165 +1,94 @@
 # Extensions
 
-Extensions add features to your Shibumi project. They copy source code into your app instead of hiding behavior behind a Shibumi runtime. You own the files from the moment they land.
+Extensions copy feature code into a Shibumi project. The project owns the copied routes, migrations, tests, and configuration.
 
-> **RFC:** Extension packaging, lifecycle, conflict handling, checks, and community registry design are still under review. Commands and manifest fields below describe the current proposal, not a stable public contract.
-
-## Install an extension
+## Command
 
 ```sh
 bun run shibumi add <name>
 ```
 
-That's it. The extension copies files, installs any dependencies, and wires itself into your app if needed.
+Before writing, the command lists new files, edits, dependencies, environment variables, migrations, and `agents.md` changes. Existing files require an explicit conflict decision. Running the same install twice must not duplicate code.
+
+## What an extension contains
+
+An extension may include:
+
+- source files with fixed target paths
+- exact edits to existing project files
+- npm dependencies
+- environment variable names, never values
+- database migrations
+- fixture tests
+- a named guide such as `agents/auth.md`
+
+Example manifest fragment:
+
+```json
+{
+  "name": "auth",
+  "files": [
+    { "from": "files/src/lib/session.ts", "to": "src/lib/session.ts" }
+  ],
+  "agents": ["agents/auth.md"],
+  "env": ["SESSION_SECRET"],
+  "checks": ["bun test"]
+}
+```
 
 ## Available extensions
 
 ### Auth
 
-Cookie sessions with password or magic-link login.
-
-```sh
-bun run shibumi add auth
-```
-
-What it copies:
-- `src/lib/session.ts`: session management with `bun:sqlite`
-- `src/middleware/auth.ts`: auth middleware
-- `src/routes/auth.ts`: login, register, magic link, logout
-
-What it wires in:
-- Auth routes mounted at `/auth`
-- Auth middleware on `/protected/*`
-
-What it stores:
-- `data/auth.db`: SQLite database with users, sessions, magic links
-
-Zero npm dependencies. Uses `Bun.password` for hashing and `bun:sqlite` for storage.
-
-### Images
-
-Automatic WebP optimization. Serves WebP on the fly, keeps originals untouched.
-
-```sh
-bun run shibumi add images
-```
-
-What it copies:
-- `src/middleware/images.ts`: intercepts image requests, converts to WebP, caches
-
-What it wires in:
-- Image middleware on `/images/*`
-
-How it works:
-1. Browser requests `/images/hero.png`
-2. Middleware checks if cached WebP exists
-3. If no → converts with `Bun.Image`, writes to cache
-4. Serves WebP. Original stays in place.
-
-No HTML changes needed. No build step. Just middleware.
+Cookie sessions, login and logout routes, CSRF-protected mutations, password hashing with `Bun.password`, and SQLite session tables.
 
 ### Email
 
-Transactional email via Resend.
+A Resend-backed send helper, environment validation, webhook verification, and a fixture that proves template variables and delivery handling.
+
+### Uploads
+
+Validated multipart input plus either local persistent storage or S3-compatible storage. File limits, generated names, content checks, and cleanup rules must ship with it.
+
+List installed and available extensions with:
 
 ```sh
-bun run shibumi add email
+bun run shibumi list
 ```
 
-What it copies:
-- `src/lib/email.ts`: send emails with `sendEmail({ to, subject, html })`
+## File edits
 
-What it needs:
-- `RESEND_API_KEY` in your `.env`
-
-## How extensions work
-
-An extension is an install plan: source files, metadata, agent guidance, migrations, dependencies, environment variables, and checks.
-
-### Manifest
-
-Manifest metadata can describe name, version, author, license, source repository, compatibility, categories, themes, deploy targets, and official or community ownership. Exact schema remains part of the RFC.
-
-### Files
-
-Each extension declares files to copy. They land in your project exactly where specified:
-
-```json
-{
-  "files": [
-    { "from": "files/src/lib/helper.ts", "to": "src/lib/helper.ts" }
-  ]
-}
-```
-
-### Hooks
-
-Extensions can modify existing files when they install. The `hooks` field specifies what to find and what to add:
+A hook must name the file, the exact text it expects, and the text it will add. If the expected source is missing or appears more than once, installation stops without guessing.
 
 ```json
 {
   "hooks": [
     {
       "file": "src/app.ts",
-      "find": "import { Hono } from \"hono\";",
-      "insert": "import { helper } from \"./lib/helper\";",
-      "after": "export const app = new Hono();",
-      "add": "\napp.use(helper());"
+      "find": "export const app = new Hono();",
+      "after": "app.use(helper());"
     }
   ]
 }
 ```
 
-Hooks must be idempotent: running the same extension twice must not duplicate code.
+## Agent guidance
 
-### Prompts
+An extension keeps its instructions in a named file and merges a discoverable section into root `agents.md`. Removing the extension can then identify which guidance belongs to it.
 
-Extensions may ask for choices such as session strategy, email provider, or storage backend. Answers become visible generated configuration rather than hidden installer state.
+## Package checks
 
-### Agents
+Packed CLI tests install each bundled extension into supported fixture projects and run declared checks. They reject undeclared file writes, network access during installation, lifecycle scripts, duplicate hooks, and paths outside the project root.
 
-Each extension ships named guidance such as `agents/auth.md`. Installation merges it into the project's discoverable root `agents.md`, while the named source path keeps extension ownership clear.
+## Package layout
 
-### Dependencies
-
-Extensions can declare npm dependencies. They're installed automatically:
-
-```json
-{
-  "deps": ["resend"]
-}
+```text
+manifest.json
+agents/
+  feature.md
+files/
+  src/
+    ...
 ```
 
-### Checks
-
-Extension submissions should prove they install into fixture apps. Proposed checks include tests, formatting, declared-file verification, and rejection of undeclared network access or install scripts.
-
-```json
-{
-  "name": "auth",
-  "files": [{ "from": "files/src/lib/session.ts", "to": "src/lib/session.ts" }],
-  "agents": "agents/auth.md",
-  "env": ["SESSION_SECRET"],
-  "checks": ["bun test"]
-}
-```
-
-## Writing your own
-
-An extension is a directory:
-
-```
-src/extensions/my-ext/
-├── manifest.json
-├── agents/
-│   └── my-ext.md
-└── files/
-    └── src/
-        └── ...
-```
-
-Publish it as an npm package (`@shibumi/my-ext` or `shibumi-ext-my-ext`). Install with:
-
-```sh
-bun run shibumi add my-ext
-```
+Bundled extensions ship inside the versioned `create-shibumi` package.

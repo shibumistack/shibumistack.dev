@@ -16,7 +16,7 @@ type MediaRange = {
   quality: number;
 };
 
-const activePages = ["home", "docs", "server", "roadmap", "brand", "blog", "extensions"] as const;
+const activePages = ["home", "docs", "forms", "server", "roadmap", "brand", "blog", "extensions"] as const;
 
 type ActivePage = (typeof activePages)[number];
 
@@ -47,7 +47,7 @@ type DocPage = {
   path: string;
   title: string;
   description: string;
-  section: "Start" | "Server" | "CLI" | "Reference";
+  section: "Start" | "Forms" | "Server" | "CLI" | "Reference";
   source: string;
 };
 
@@ -58,6 +58,7 @@ const activeTokenPattern = new RegExp(`{{active\\((${safeNameSource})\\)}}`, "g"
 const pageRoutePattern = new RegExp(`^\\/(${safeNameSource})\\/?$`);
 const blogPostPattern = new RegExp(`^\\/blog\\/(${safeNameSource})\\/?$`);
 const docsRoutePattern = /^\/docs(?:\/([a-z0-9][a-z0-9/-]*))?\/?$/;
+const docsMarkdownRoutePattern = /^\/docs\/([a-z0-9][a-z0-9/-]*|index)\.md$/;
 const directMarkdownPattern = /^\/([A-Za-z0-9_-]+)\.md$/;
 const unresolvedTokenPattern = /{{[^}]+}}/;
 const unresolvedInsertPattern = /<!-- insert:[a-z0-9-]+ -->/;
@@ -71,8 +72,9 @@ const assetVersion = createHash("sha256")
   .slice(0, 12);
 
 const docs: DocPage[] = [
-  { path: "", title: "Shibumi docs", description: "Build apps that keep your zen.", section: "Start", source: "src/content/docs/index.md" },
-  { path: "decisions", title: "Technical decisions", description: "Why Shibumi uses seven visible pieces and stays out of your runtime.", section: "Start", source: "src/content/docs.md" },
+  { path: "", title: "Shibumi docs", description: "Reference for create-shibumi, extensions, Forms, Server, and Ship.", section: "Start", source: "src/content/docs/index.md" },
+  { path: "decisions", title: "Product and server choices", description: "Recorded choices for generated projects, extensions, deployment, and operations.", section: "Start", source: "src/content/docs.md" },
+  { path: "forms", title: "Forms overview", description: "Collect static-site submissions with plain HTML and one SQLite database.", section: "Forms", source: "src/content/forms.md" },
   { path: "server", title: "Server overview", description: "Deploy signed GitHub pushes to rootless Podman behind Caddy.", section: "Server", source: "src/content/server.md" },
   { path: "server/install", title: "Install server", description: "Prepare a Linux host and install a pinned shibumi-server release.", section: "Server", source: "src/content/docs/server/install.md" },
   { path: "server/add-app", title: "Add an app", description: "Register a domain, repository, checkout, and Caddy route.", section: "Server", source: "src/content/docs/server/add-app.md" },
@@ -81,14 +83,14 @@ const docs: DocPage[] = [
   { path: "server/history-rollback", title: "History and rollback", description: "Inspect verified deployments and restore the previous retained image.", section: "Server", source: "src/content/docs/server/history-rollback.md" },
   { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
   { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
-  { path: "cli", title: "CLI preview", description: "Planned create-shibumi and extension command surface.", section: "CLI", source: "src/content/docs/cli/index.md" },
+  { path: "cli", title: "create-shibumi CLI", description: "Create static, Bun web, and SQLite projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
   { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
 ];
 
 const pageMeta: Record<string, PageMeta> = {
   index: {
-    title: "Shibumi Stack: refined simplicity for shipping web apps",
-    description: "A small web stack for apps you can understand and keep: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.",
+    title: "Shibumi Stack: generated source and VPS deployment",
+    description: "Generate static, Bun web, and SQLite projects with source, tests, agent instructions, and VPS deployment config in your repository.",
     path: "/",
   },
   brand: {
@@ -98,27 +100,32 @@ const pageMeta: Record<string, PageMeta> = {
   },
   docs: {
     title: "Docs: Shibumi Stack",
-    description: "Shibumi Stack's seven pieces: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.",
+    description: "Reference for create-shibumi, extensions, Shibumi Forms, Server, and Ship.",
     path: "/docs",
   },
+  forms: {
+    title: "Shibumi Forms: open-source forms for static sites",
+    description: "Accept static-site form submissions through HTML, review them through email-link sign-in, and store them in SQLite.",
+    path: "/forms",
+  },
   server: {
-    title: "shibumi-server: deploy your app to your own server",
-    description: "A small Bun service that verifies and deploys locally built images to your own server with rootless Podman behind Caddy.",
+    title: "shibumi-server: verified deployment on your VPS",
+    description: "Build committed code locally, upload the exact image, and deploy it with rootless Podman behind Caddy.",
     path: "/server",
   },
   ship: {
     title: "Ship an existing project: Shibumi Stack",
-    description: "Add the owned Shibumi ship workflow to an existing Bun project, connect it to your server, and deploy with one command.",
+    description: "Add tracked Ship source to an existing Bun project, register it through SSH, and deploy exact commit-tagged images.",
     path: "/ship",
   },
   building: {
     title: "Roadmap: Shibumi Stack",
-    description: "What ships first, what comes next, and where the design is still open.",
+    description: "Available products, release checks, and later provider work.",
     path: "/building",
   },
   getnotified: {
-    title: "You're on the list: Shibumi Stack",
-    description: "Get notified when create-shibumi is ready.",
+    title: "create-shibumi CLI: Shibumi Stack",
+    description: "Create static, Bun web, and SQLite full-stack projects.",
     path: "/getnotified",
   },
 };
@@ -399,7 +406,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
   const pageDialog = files.key === "server" ? await part("server-install-dialog") : "";
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: meta?.title ?? "Shibumi Stack",
-    description: meta?.description ?? "A lean, opinionated web stack for building calm, durable apps.",
+    description: meta?.description ?? "Generated web projects with source, tests, and deployment config in your repository.",
     canonical: `https://shibumistack.dev${canonicalPath(meta?.path ?? files.routePath)}`,
     "asset-version": assetVersion,
   });
@@ -603,7 +610,7 @@ function docsMarkdownHtml(markdown: string): string {
 }
 
 function docsSidebar(activePath: string): string {
-  const sections: DocPage["section"][] = ["Start", "Server", "CLI", "Reference"];
+  const sections: DocPage["section"][] = ["Start", "Forms", "Server", "CLI", "Reference"];
   return sections.map((section) => {
     const links = docs.filter((page) => page.section === section).map((page) => {
       const href = page.path ? `/docs/${page.path}` : "/docs";
@@ -626,6 +633,7 @@ async function renderDocs(path: string): Promise<string | undefined> {
     "docs-title": page.title,
     "docs-description": page.description,
     "docs-section": page.section,
+    "docs-markdown": page.path ? `/docs/${page.path}.md` : "/docs/index.md",
   });
   body = insert(body, "docs-sidebar", docsSidebar(path));
   body = insert(body, "docs-content", docsMarkdownHtml(source));
@@ -666,14 +674,14 @@ async function renderBlogList(): Promise<string> {
 
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: "Blog: Shibumi Stack",
-    description: "Notes on building calm, durable web apps.",
+    description: "Development notes from Shibumi Stack.",
     canonical: "https://shibumistack.dev/blog/",
     "asset-version": assetVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
 
-  layout = insert(layout, "meta", await metaTags({ title: "Blog: Shibumi Stack", description: "Notes on building calm, durable web apps.", path: "/blog" }));
+  layout = insert(layout, "meta", await metaTags({ title: "Blog: Shibumi Stack", description: "Development notes from Shibumi Stack.", path: "/blog" }));
   layout = insert(layout, "page-style", await pageStyle("src/pages/blog.css"));
   layout = insert(layout, "nav", await nav("blog"));
   layout = insert(layout, "page", page);
@@ -719,7 +727,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 
   let layout = await renderTokens("layout", await read("src/layout.html"), {
     title: `${escapeHtml(title)}: Shibumi Stack`,
-    description: "Notes on building calm, durable web apps.",
+    description: "Development notes from Shibumi Stack.",
     canonical: `https://shibumistack.dev/blog/${slug}/`,
     "asset-version": assetVersion,
   });
@@ -729,7 +737,7 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   layout = insert(
     layout,
     "meta",
-    await metaTags({ title: `${title}: Shibumi Stack`, description: "Notes on building calm, durable web apps.", path: `/blog/${slug}` }),
+    await metaTags({ title: `${title}: Shibumi Stack`, description: "Development notes from Shibumi Stack.", path: `/blog/${slug}` }),
   );
   layout = insert(layout, "page-style", await pageStyle("src/pages/blog/post.css"));
   layout = insert(layout, "nav", await nav("blog"));
@@ -742,9 +750,9 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
 }
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v36.ts", 302));
-app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v26.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v38.ts"), 200, {
+app.get("/install/ship", (c) => c.redirect("/ship/install-v38.ts", 302));
+app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v28.sh", 302));
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v40.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",
@@ -768,6 +776,14 @@ app.use("*", async (c, next) => {
   }
 
   const pathname = new URL(c.req.url).pathname;
+
+  const docsMarkdownMatch = pathname.match(docsMarkdownRoutePattern);
+  if (docsMarkdownMatch) {
+    const docPath = docsMarkdownMatch[1] === "index" ? "" : docsMarkdownMatch[1];
+    const doc = docs.find((item) => item.path === docPath);
+    if (doc) return markdown(c, doc.source, "text/plain");
+    return next();
+  }
 
   const docsMatch = pathname.match(docsRoutePattern);
   if (docsMatch) {

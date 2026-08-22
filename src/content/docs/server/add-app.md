@@ -1,18 +1,18 @@
 # Add an app from the server
 
-This server-operator path registers one domain, GitHub repository, and branch at a time. Recommended onboarding starts from your [local project](/docs/server/ship), which invokes the same registration through SSH and continues into GitHub setup.
+This server-operator path registers one domain, GitHub repository, and branch at a time. Most users should start from the [local project](/docs/server/ship). Ship calls the same registration command over SSH, then configures the chosen trigger.
 
 ## Before setup
 
 Your repository needs a Compose file and a service with a loopback health endpoint. Point domain DNS toward the server or use Cloudflare proxying.
 
-## Preview safely
+## Preview without changes
 
 ```sh
 shis add example.com --dry-run
 ```
 
-Dry run follows real DNS detection, prompts, port selection, checkout validation, and Caddy detection. It writes no config or secrets, invokes no sudo, and changes neither Caddy nor systemd.
+Dry run performs DNS detection, prompts, port selection, checkout validation, and Caddy detection. It does not write config or secrets, invoke sudo, or change Caddy and systemd.
 
 ## Register
 
@@ -66,6 +66,6 @@ shis add example.com \
 
 Test arguments execute directly in the service container. They are never interpreted as a shell string.
 
-## Repeat behavior
+## Run setup again
 
 Repeating the same registration validates stored settings, preserves checkout and webhook secret, skips Caddy mutation, and restarts the service. Conflicting settings fail closed.

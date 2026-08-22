@@ -1,11 +1,20 @@
 <footer class="site-footer">
-    <span>MIT License &copy; {{year}} Shibumi Stack</span>
-    <span class="made-with">Made with &hearts; by <a href="https://bitbonsai.com">@bitbonsai</a></span>
-    <div class="footer-links">
-        <a href="/docs">Docs</a>
-        <a href="/server">Server</a>
-        <a href="/building">Roadmap</a>
-        <a href="https://github.com/shibumistack" aria-label="GitHub">GitHub</a>
-        <a href="mailto:info@shibumistack.dev">Contact</a>
+    <div class="footer-line">
+        <span>Simple apps, whole stack.</span>
+        <nav aria-label="Footer">
+            <a href="/docs">Docs</a>
+            <a href="/building">Roadmap</a>
+            <details class="stack-menu">
+                <summary>Shibumi Stack</summary>
+                <div class="stack-popover">
+                    <a href="https://shibumistack.dev" aria-current="page"><span>Stack</span><small>Build and ship Bun apps</small></a>
+                    <a href="https://forms.shibumistack.dev"><span>Forms</span><small>Collect form submissions</small></a>
+                    <a href="https://server.shibumistack.dev"><span>Server</span><small>Deploy to your VPS</small></a>
+                </div>
+            </details>
+            <a href="https://github.com/shibumistack">GitHub</a>
+            <a href="mailto:info@shibumistack.dev">Contact</a>
+        </nav>
     </div>
+    <p class="footer-meta">MIT License &copy; {{year}} Shibumi Stack · Made with <svg class="footer-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg><span class="sr-only">love</span> by <a href="https://bitbonsai.com">@bitbonsai</a></p>
 </footer>

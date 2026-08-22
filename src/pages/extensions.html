@@ -1,66 +1,68 @@
 <section class="page-header">
   <span class="eyebrow">Extensions</span>
-  <h1>Add features.<br>Own the code.</h1>
+  <h1>Add features.<br>Review every file.</h1>
 </section>
 
 <section class="page-body">
   <div class="page-content">
 
     <div class="ext-intro">
-      <p>Extensions copy source files into your project. You own the code from the moment it lands.</p>
-      <aside class="ext-rfc"><strong>RFC</strong> Packaging, lifecycle, conflict handling, checks, and registry design remain under review. Commands and manifests shown here are proposals, not a stable public contract.</aside>
+      <p>An extension copies feature source, migrations, tests, config, and agent instructions into a Shibumi project.</p>
+      <aside class="ext-rfc"><strong>Preview first</strong> The installer lists every file and exact edit before writing.</aside>
       <div class="ext-install-bar">
-        <code>bun run shibumi add &lt;name&gt;</code> <span>planned</span>
+        <code>bun run shibumi add &lt;name&gt;</code> <span>available</span>
       </div>
     </div>
 
-    <article class="ext-item">
+    <article class="ext-item" id="auth">
       <h3>auth</h3>
-      <p>Cookie sessions with password or magic-link login. Uses <code>Bun.password</code> and <code>bun:sqlite</code> with zero npm dependencies.</p>
+      <p>Cookie sessions, login and logout routes, CSRF-protected mutations, password hashing with <code>Bun.password</code>, and SQLite session tables.</p>
       <div class="ext-detail">
         <span>bun:sqlite</span>
         <span>Bun.password</span>
-        <span>hooks</span>
+        <span>migrations</span>
       </div>
     </article>
 
-    <article class="ext-item">
-      <h3>images</h3>
-      <p>WebP optimization middleware. Serves WebP on the fly, keeps originals untouched. No HTML changes needed.</p>
-      <div class="ext-detail">
-        <span>Bun.Image</span>
-        <span>middleware</span>
-        <span>hooks</span>
-      </div>
-    </article>
-
-    <article class="ext-item">
+    <article class="ext-item" id="email">
       <h3>email</h3>
-      <p>Transactional email via Resend. One function call.</p>
+      <p>Resend send helper, environment validation, webhook verification, and fixture tests.</p>
       <div class="ext-detail">
         <span>resend</span>
-        <span>requires RESEND_API_KEY</span>
+        <span>RESEND_API_KEY</span>
+        <span>webhooks</span>
+      </div>
+    </article>
+
+    <article class="ext-item" id="uploads">
+      <h3>uploads</h3>
+      <p>Multipart validation with local persistent storage or an S3-compatible service. Limits and cleanup rules ship with the source.</p>
+      <div class="ext-detail">
+        <span>multipart</span>
+        <span>local or S3</span>
+        <span>cleanup</span>
       </div>
     </article>
 
     <div class="ext-divider"></div>
 
-    <h2>Write your own</h2>
-    <p>An extension is a directory with a manifest, agent guidance, and source files. Publish to npm. Install with <code>bun run shibumi add my-ext</code>.</p>
-    <pre><code>src/extensions/my-ext/
-├── manifest.json
-├── agents/
-│   └── my-ext.md
-└── files/</code></pre>
+    <h2 id="package-layout">Package layout</h2>
+    <p>A package contains a manifest, a named <code>agents.md</code> guide, and files with fixed target paths. Installation must preview every write and stop on conflicts.</p>
+    <pre><code>manifest.json
+agents/
+  feature.md
+files/
+  src/
+    ...</code></pre>
 
   </div>
 
   <aside class="page-toc">
     <nav>
       <a href="#auth" class="toc-active">auth</a>
-      <a href="#images">images</a>
       <a href="#email">email</a>
-      <a href="#write-your-own">Write your own</a>
+      <a href="#uploads">uploads</a>
+      <a href="#package-layout">Package layout</a>
     </nav>
   </aside>
 </section>

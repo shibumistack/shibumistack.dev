@@ -1,34 +1,43 @@
 # shibumistack.dev
 
-> A small web stack: Bun, Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores. Clear seams. No hidden runtime.
+> Source, tests, agent instructions, and VPS deployment config for static, Bun web, and SQLite projects.
 
 ## Pages
 
 - [Home](/index.md)
-- [Documentation](/docs)
+- [Documentation index, Markdown](/docs/index.md)
 - [Roadmap](/building.md)
+- [Shibumi Forms](/forms.md)
 - [shibumi-server](/server.md)
 - [Ship an existing project](/ship.md)
 - [DX plan](/dx.md)
 - [Brand](/brand.md)
 
-## In development
+## Available
 
-- [`shibumi-server`](/server.md): an open-source Bun service for signed GitHub webhook deploys to rootless Podman behind Caddy. Recommended onboarding starts from local project root: owned ship setup connects through SSH, prepares server, registers app, configures GitHub, and preserves resumable setup when DNS or webhook delivery is pending. Public templates contain no machine credentials; real configuration and secrets stay on VPS.
+- [`create-shibumi`](/docs/cli.md): creates static output, Bun web apps, and SQLite full-stack apps with VPS deployment.
+- [Extensions](/extensions.md): add bundled auth, email, or uploads source with `bun run shibumi add <name>`.
+- [Shibumi Forms](/forms.md): hosted pre-alpha and self-hosted form collection for static sites using plain HTML, Bun, Hono, and SQLite.
+- [`shibumi-server`](/server.md): open-source VPS deployment service for exact locally built images, rootless Podman, Caddy, health checks, bounded rollback, and project-owned Ship source.
 
-## Docs
 
-- [Server overview](/docs/server)
-- [Install server](/docs/server/install)
-- [Add an app](/docs/server/add-app)
-- [Connect project](/docs/server/ship)
-- [Deployments](/docs/server/deployments)
-- [History and rollback](/docs/server/history-rollback)
-- [Operations](/docs/server/operations)
-- [Security model](/docs/server/security)
-- [Server commands](/docs/reference/server-commands)
-- [CLI preview](/docs/cli)
-- [Ship an existing project](/ship.md): add owned source, connect through SSH, and deploy with `bun run ship`.
+## Agent-readable docs
+
+- [Documentation index](/docs/index.md)
+- [Technical decisions](/docs/decisions.md)
+- [Forms overview](/docs/forms.md)
+- [Server overview](/docs/server.md)
+- [Install server](/docs/server/install.md)
+- [Add an app](/docs/server/add-app.md)
+- [Connect project](/docs/server/ship.md)
+- [Deployments](/docs/server/deployments.md)
+- [History and rollback](/docs/server/history-rollback.md)
+- [Operations](/docs/server/operations.md)
+- [Security model](/docs/server/security.md)
+- [Server commands](/docs/reference/server-commands.md)
+- [CLI](/docs/cli.md)
+- [Extensions](/extensions.md)
+- [Ship an existing project](/ship.md): add owned source, connect through SSH, and deploy with `bun ship`.
 - [Contributing](/CONTRIBUTING.md)
 - [License](/LICENSE)
 - [README](/README.md)

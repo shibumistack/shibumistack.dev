@@ -2,7 +2,7 @@
 
 Install once on a Linux VPS or homelab server as the user who will own deployments.
 
-## Requirements
+## Host requirements
 
 - Linux
 - Git
@@ -13,13 +13,13 @@ Install once on a Linux VPS or homelab server as the user who will own deploymen
 
 Bun is installed by the bootstrap when missing. macOS and Windows users should SSH into the Linux server first. Setup never asks a website for SSH or sudo credentials.
 
-## Run installer
+## Run the installer
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
 ```
 
-Setup checks host requirements before changing configuration. It verifies a working Compose frontend and stores the available command for each app. It stages an exact npm release with lockfile-pinned production dependencies and lifecycle scripts disabled. Both launchers are installed:
+The installer checks every host requirement before it writes config. It verifies a working Compose frontend and stores the available command for each app. It stages an exact npm release with lockfile-pinned production dependencies and lifecycle scripts disabled. Both launchers are installed:
 
 ```text
 ~/.local/bin/shis
@@ -28,7 +28,7 @@ Setup checks host requirements before changing configuration. It verifies a work
 
 `shis` is the short command used by docs. `shibumi-server` remains compatible.
 
-## What installation writes
+## Files written
 
 ```text
 ~/.config/shibumi-server/config.json
@@ -40,7 +40,7 @@ Setup checks host requirements before changing configuration. It verifies a work
 
 Configuration and secret files use mode `0600`. Service startup uses the pinned local release, not an unpinned network command.
 
-## Verify
+## Verify installation
 
 ```sh
 shis --version

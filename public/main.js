@@ -5,6 +5,8 @@
 
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
+    document.querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme === "dark" ? "#1e1510" : "#f7f3e8");
   }
 
   function initTheme() {
@@ -18,7 +20,14 @@
 
   initTheme();
 
+  function closeStackMenus(except) {
+    for (const menu of document.querySelectorAll(".stack-menu[open]")) {
+      if (menu !== except) menu.removeAttribute("open");
+    }
+  }
+
   function closeMenu() {
+    closeStackMenus();
     document.querySelector("header")?.classList.remove("menu-open");
     const btn = document.querySelector(".menu-toggle");
     if (btn) btn.setAttribute("aria-expanded", "false");
@@ -175,8 +184,11 @@
       return;
     }
 
+    const stackSummary = event.target.closest(".stack-menu > summary");
+    closeStackMenus(stackSummary?.parentElement);
+
     if (document.querySelector("header")?.classList.contains("menu-open")) {
-      if (!event.target.closest(".menu-toggle")) {
+      if (!event.target.closest(".menu-toggle") && !stackSummary) {
         closeMenu();
       }
     }
@@ -236,6 +248,12 @@
       const dialog = document.querySelector(".install-dialog[open]");
       if (dialog) {
         dialog.close();
+        return;
+      }
+      const stackMenu = document.querySelector(".stack-menu[open]");
+      if (stackMenu) {
+        stackMenu.removeAttribute("open");
+        stackMenu.querySelector("summary")?.focus();
         return;
       }
       if (document.querySelector("header")?.classList.contains("menu-open")) {

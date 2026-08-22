@@ -1,68 +1,68 @@
             <section class="hero">
                 <div>
                     <p class="eyebrow">Docs</p>
-                    <h1>Technical decisions<span class="dot">.</span></h1>
+                    <h1>Product and server choices<span class="dot">.</span></h1>
                 </div>
                 <div>
-                    <p class="dek">The public package is still being built. These notes document the product decisions first: what Shibumi will generate, why the stack is small, and where the seams stay visible.</p>
-                    <div class="toc" aria-label="On this page"><a href="#now">What exists now</a><a href="#stack">The seven pieces</a><a href="#decisions">Design decisions</a><a href="#extensions">Extensions</a><a href="#targets">Deploy targets</a></div>
+                    <p class="dek">Create static, Bun web, or SQLite projects, add feature source, and deploy them to your VPS.</p>
+                    <div class="toc" aria-label="On this page"><a href="#now">Available now</a><a href="#stack">Stack pieces</a><a href="#decisions">Product choices</a><a href="#extensions">Extensions</a><a href="#targets">Deploy targets</a></div>
                 </div>
             </section>
 
             <section id="now">
-                <h2>What exists now.</h2>
+                <h2>Available now.</h2>
                 <div class="intro">
-                    <p>This site is the first Shibumi artifact. It is built with Bun and Hono, serves static HTML, and exposes source-shaped Markdown for pages that benefit from it.</p>
-                    <p>The scaffolder, templates, and extensions are next. Until those ship, the docs are intentionally about decisions rather than package APIs.</p>
+                    <p><a href="/forms">Shibumi Forms</a> accepts static-page submissions as hosted pre-alpha or self-hosted source. <a href="https://server.shibumistack.dev">shibumi-server</a> and <a href="/ship">Ship</a> deploy Bun projects to Linux hosts.</p>
+                    <p><code>create-shibumi</code> creates static output, a Bun web app, or a SQLite full-stack app. All three include VPS deployment.</p>
                     <a class="btn btn-ghost command" href="/dx.md">DX plan (Markdown) →</a>
                 </div>
             </section>
 
             <section id="stack">
-                <h2>The seven pieces.</h2>
+                <h2>Stack pieces.</h2>
                 <ol class="rows">
-                    <li><span class="label">Bun</span><span><strong>Runtime, package manager, test runner, build tool.</strong> One command surface.</span></li>
-                    <li><span class="label">Hono</span><span><strong>Routes and middleware.</strong> Runs locally, on edge platforms, or behind Bun.</span></li>
-                    <li><span class="label">Zod</span><span><strong>Validate input at the boundary.</strong> Parse data where it enters the app.</span></li>
-                    <li><span class="label">Drizzle</span><span><strong>Schema, queries, migrations.</strong> SQL stays visible.</span></li>
-                    <li><span class="label">SQLite</span><span><strong>Local durable storage.</strong> No separate service in development or on a self-hosted deploy.</span></li>
-                    <li><span class="label">Alpine</span><span><strong>Small browser behavior.</strong> Keep interaction close to the HTML.</span></li>
-                    <li><span class="label">Nanostores</span><span><strong>Shared browser state.</strong> Use it only when Alpine's local state is not enough.</span></li>
+                    <li><span class="label">Bun</span><span><strong>Packages, tests, builds, and server runtime.</strong></span></li>
+                    <li><span class="label">Hono</span><span><strong>Routes and middleware.</strong></span></li>
+                    <li><span class="label">Zod</span><span><strong>Environment and request validation.</strong></span></li>
+                    <li><span class="label">Drizzle</span><span><strong>Schema, queries, and migrations.</strong></span></li>
+                    <li><span class="label">SQLite</span><span><strong>App data without a separate database service.</strong></span></li>
+                    <li><span class="label">Alpine</span><span><strong>Behavior inside HTML components.</strong></span></li>
+                    <li><span class="label">Nanostores</span><span><strong>Optional state shared across browser components.</strong></span></li>
                 </ol>
             </section>
 
             <section id="decisions">
-                <h2>Design decisions.</h2>
+                <h2>Product choices.</h2>
                 <div class="rows">
-                    <article class="decision"><span class="label">Not a framework</span><div><h3>Shibumi is glue.</h3><p>It chooses files, conventions, and deploy config. The generated app is plain source code, not a runtime hidden behind a new abstraction.</p></div></article>
-                    <article class="decision"><span class="label">Create first</span><div><h3>The first package is a scaffolder.</h3><p><code>create-shibumi</code> will ask what kind of app you are building, write the files, and then get out of the way.</p><pre class="code-block" glow><code language="bash"><b>bun</b> create <strong>shibumi@latest</strong> <em>my-app</em>
+                    <article class="decision"><span class="label">Generated source</span><div><h3>Write files instead of adding a runtime.</h3><p>Routes, tests, config, and deployment code stay in the app and import the selected libraries directly.</p></div></article>
+                    <article class="decision"><span class="label">Three options</span><div><h3>Choose a starting point.</h3><p>Publish static files, run a Bun web app, or add SQLite when the app needs data.</p><pre class="code-block" glow><code language="bash"><b>bun</b> create <strong>shibumi@latest</strong> <em>my-app</em>
 <b>cd</b> <em>my-app</em>
 <b>bun</b> dev</code></pre></div></article>
-                    <article class="decision"><span class="label">Owned code</span><div><h3>Extensions copy source.</h3><p>Auth, email, uploads, payments, and admin should be added explicitly. If an extension creates tables or routes, those files live in the app where they can be changed or deleted.</p></div></article>
-                    <article class="decision"><span class="label">Agents</span><div><h3>Conventions should be legible to tools.</h3><p>Generated projects will include an <code>agents.md</code> file. Extensions can append local guidance so coding agents know where sessions, routes, forms, and tests belong.</p></div></article>
-                    <article class="decision"><span class="label">Security</span><div><h3>CSRF belongs in core.</h3><p>Security defaults should not be something you remember after the app is live. The base template should include the helper every app needs.</p></div></article>
+                    <article class="decision"><span class="label">Extensions</span><div><h3>Copy feature code.</h3><p>An extension adds its routes, config, migrations, tests, and agent instructions. The app can edit or remove them.</p></div></article>
+                    <article class="decision"><span class="label">Agents</span><div><h3>Keep project rules in the repository.</h3><p>Root <code>agents.md</code> records shared conventions. Extensions keep named guides under <code>agents/</code>.</p></div></article>
+                    <article class="decision"><span class="label">Security</span><div><h3>Generate checks at each boundary.</h3><p>Relevant generated projects include request validation, secure headers, CSRF checks, loopback port binding, and secret-safe config.</p></div></article>
                 </div>
             </section>
 
             <section id="extensions">
                 <h2>Extensions.</h2>
                 <div class="intro">
-                    <p>Extensions are how Shibumi grows without becoming a framework. Official extensions are maintained with the core project. Community extensions can be submitted to the registry and installed with the same flow once they pass the checks.</p>
-                    <p>An extension is not just a dependency. It is an install plan: source files, metadata, agent guidance, migrations, dependencies, environment variables, and tests that prove the generated app still works.</p>
+                    <p>Bundled extensions copy reviewed source, migrations, tests, and named agent instructions into the app.</p>
+                    <p>Install previews writes, stops on conflicts, and produces the same result when repeated.</p>
                 </div>
                 <div class="rows">
-                    <article class="decision"><span class="label">Manifest</span><div><h3>The registry needs structured metadata.</h3><p>Name, version, description, author, license, source repo, compatibility, categories, supported themes, supported deploy targets, and whether the extension is official or community.</p></div></article>
-                    <article class="decision"><span class="label">Files</span><div><h3>The payload is copied source.</h3><p>Routes, libraries, components, styles, config, migrations, fixtures, and tests are written into the app. Every file declares its target path and conflict behavior so installs can be reviewed before they run.</p></div></article>
-                    <article class="decision"><span class="label">Prompts</span><div><h3>Some extensions need choices.</h3><p>Auth may ask for cookie session or OAuth. Email may ask for Resend or SMTP. Uploads may ask for local disk or S3. The answers become generated config, not hidden state.</p></div></article>
-                    <article class="decision"><span class="label">Agents</span><div><h3>Each extension carries local guidance.</h3><p>An <code>agents.md</code> fragment explains the conventions it adds: where sessions live, how routes are protected, which helpers to use, and what files agents should avoid editing casually.</p></div></article>
-                    <article class="decision"><span class="label">Checks</span><div><h3>Submissions should prove they install.</h3><p>The registry can install an extension into fixture apps, run tests, check formatting, verify declared files, and reject packages that require undeclared network access or install scripts.</p><pre class="code-block" glow><code language="json"><i>{</i>
+                    <article class="decision"><span class="label">Manifest</span><div><h3>Declare compatibility and effects.</h3><p>The manifest names package compatibility, target files, dependencies, environment keys, migrations, agent guides, and checks.</p></div></article>
+                    <article class="decision"><span class="label">Files</span><div><h3>Every write has a target path.</h3><p>Install lists new files and exact edits before changing the project. Unexpected source stops the operation.</p></div></article>
+                    <article class="decision"><span class="label">Prompts</span><div><h3>Store choices in generated config.</h3><p>Provider and storage answers become reviewable project files.</p></div></article>
+                    <article class="decision"><span class="label">Agents</span><div><h3>Keep guidance beside the feature.</h3><p>A named file under <code>agents/</code> records routes, helpers, tests, and files that need extra care.</p></div></article>
+                    <article class="decision"><span class="label">Checks</span><div><h3>Install packages into fixture apps.</h3><p>Registry checks reject undeclared writes, network access during installation, lifecycle scripts, duplicate hooks, and paths outside the project root.</p><pre class="code-block" glow><code language="json"><i>{</i>
   <b>"name"</b><i>:</i> <em>"auth"</em><i>,</i>
   <b>"title"</b><i>:</i> <em>"Auth"</em><i>,</i>
   <b>"type"</b><i>:</i> <em>"official"</em><i>,</i>
   <b>"compatibility"</b><i>:</i> <i>{</i>
     <b>"shibumi"</b><i>:</i> <em>"&gt;=0.1.0"</em><i>,</i>
-    <b>"themes"</b><i>:</i> <i>[</i><em>"full-stack"</em><i>],</i>
-    <b>"deploy"</b><i>:</i> <i>[</i><em>"self-hosted"</em><i>,</i> <em>"fly"</em><i>,</i> <em>"cloudflare"</em><i>,</i> <em>"vercel"</em><i>]</i>
+    <b>"projects"</b><i>:</i> <i>[</i><em>"full-stack"</em><i>],</i>
+    <b>"deploy"</b><i>:</i> <i>[</i><em>"self-hosted"</em><i>]</i>
   <i>},</i>
   <b>"files"</b><i>:</i> <i>[{</i> <b>"from"</b><i>:</i> <em>"files/src/lib/session.ts"</em><i>,</i> <b>"to"</b><i>:</i> <em>"src/lib/session.ts"</em> <i>}],</i>
   <b>"agents"</b><i>:</i> <i>[</i><em>"agents.md"</em><i>],</i>
@@ -74,12 +74,9 @@
 
             <section id="targets">
                 <h2>Deploy targets.</h2>
-                <p class="intro">The app shape should stay familiar across deploy targets. Only the adapter, config file, and data driver should change.</p>
+                <p class="intro">VPS deployment is supported. Other providers wait until their generated projects pass equivalent artifact and deployment tests.</p>
                 <ul class="rows">
-                    <li><span class="label">Self-hosted</span><span><strong>Bun and Docker.</strong> SQLite on a volume, Caddy for HTTPS, and ordinary server ownership.</span></li>
-                    <li><span class="label">Fly.io</span><span><strong>Bun runtime.</strong> Same Docker path with persistent volume support.</span></li>
-                    <li><span class="label">Cloudflare</span><span><strong>Workers or Pages.</strong> Hono adapter plus D1 for SQLite-shaped data.</span></li>
-                    <li><span class="label">Vercel</span><span><strong>Serverless adapter.</strong> Hono routes with Turso or another external database.</span></li>
-                    <li><span class="label">Static CDN</span><span><strong>No runtime.</strong> Pre-built output for sites that do not need server behavior.</span></li>
+                    <li><span class="label">VPS</span><span><strong>Supported.</strong> Rootless Podman, Compose, persistent volumes, Caddy, and systemd.</span></li>
+                    <li><span class="label">Other providers</span><span><strong>Planned.</strong> Fly.io, Cloudflare, and Vercel remain unsupported.</span></li>
                 </ul>
             </section>

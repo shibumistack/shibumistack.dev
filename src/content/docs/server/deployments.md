@@ -1,6 +1,6 @@
 # Deployments
 
-`bun ship` builds one exact committed image locally. A signed GitHub push then starts one deterministic server deployment for one app.
+`bun ship` builds one exact committed image locally. A signed GitHub push then starts one deployment for that app and commit.
 
 ## Client pipeline
 
@@ -33,11 +33,11 @@ Duplicate verified deliveries are acknowledged without deploying twice. One depl
 7. Run optional app tests in a temporary container.
 8. Capture currently running image.
 9. Start replacement with `--no-build` and check loopback health endpoint.
-10. Retain active image plus configured rollback images, then prune dangling images.
+10. Retain active image plus one rollback image for up to 12 hours, remove legacy and superseded tags, then prune dangling images.
 
 Current app remains running through validation and optional tests. Cutover happens only after those steps pass.
 
-## Runtime deployment metadata
+## Runtime metadata
 
 Every started app service receives two environment variables without Compose configuration:
 
@@ -46,7 +46,7 @@ Every started app service receives two environment variables without Compose con
 
 Rollback updates `SHIBUMI_COMMIT` to retained image's commit. Apps can expose this metadata in version or health responses while apps that ignore it remain unchanged.
 
-## Failed cutover
+## Failed replacement
 
 If startup or health fails, Shibumi retags previous running image under Compose image name, recreates service without building, and checks restored health. Attempted deployment remains failed in status and history.
 
@@ -56,6 +56,6 @@ If startup or health fails, Shibumi retags previous running image under Compose 
 - Fallback server-build available memory: 2 GiB
 - Free disk: 4 GiB
 - Fallback build deadline: 10 minutes
-- Retained earlier successful images: 1 (active plus one rollback image)
+- Retained earlier successful images: 1 for up to 12 hours (active plus one rollback image)
 
 Images build on client by default, so running apps do not compete with production builds. Systemd limits receiver and fallback build processes. App containers need their own Compose resource limits.

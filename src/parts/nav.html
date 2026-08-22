@@ -8,15 +8,21 @@
     </button>
     <nav id="primary-nav" aria-label="Primary">
         <div class="nav-links">
-            <a href="/"{{active(home)}}>Home</a>
             <a href="/docs"{{active(docs)}}>Docs</a>
-            <a href="/server"{{active(server)}}>Server</a>
+            <details class="stack-menu">
+                <summary>Shibumi Stack</summary>
+                <div class="stack-popover">
+                    <a href="https://shibumistack.dev" aria-current="page"><span>Stack</span><small>Build and ship Bun apps</small></a>
+                    <a href="https://forms.shibumistack.dev"><span>Forms</span><small>Collect form submissions</small></a>
+                    <a href="https://server.shibumistack.dev"><span>Server</span><small>Deploy to your VPS</small></a>
+                </div>
+            </details>
             <a href="/building"{{active(roadmap)}}>Roadmap</a>
             <a href="/brand"{{active(brand)}}>Brand</a>
             <a href="/blog"{{active(blog)}}>Blog</a>
         </div>
         <div class="nav-actions">
-            <button class="nav-cta" type="button" data-dialog="install-dialog">Get notified</button>
+            <button class="nav-cta" type="button" data-dialog="install-dialog">Create project</button>
             <div class="nav-icons">
                 <a class="github-link" href="https://github.com/shibumistack/shibumistack.dev" aria-label="GitHub repository">
                     {{icon(github)}}

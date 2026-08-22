@@ -25,7 +25,7 @@ const SERVER_HOSTNAME = /^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,251}[A-Za-z0-9])?$/;
 const COMMIT = /^[a-f0-9]{40}$/;
 const SERVER_CLI = "~/.local/bin/shibumi-server";
 const LATEST_SOURCE = "https://shibumistack.dev/ship/latest.ts";
-const CURRENT_SOURCE = "https://shibumistack.dev/ship/v40.ts";
+const CURRENT_SOURCE = "https://shibumistack.dev/ship/v39.ts";
 let sshControlDirectory: string | undefined;
 let sshControlTarget: string | undefined;
 
@@ -106,21 +106,8 @@ export function shouldAnimateProgress(agentExecution: boolean, stdoutTTY: boolea
   return !agentExecution && stdoutTTY;
 }
 
-type ShipSpinner = {
-  start(message?: string): void;
-  message(message?: string): void;
-  stop(message?: string, code?: number): void;
-};
-
-function spinner(): ShipSpinner {
-  if (shouldAnimateProgress(agentRun, Boolean(process.stdout.isTTY))) {
-    const animated = animatedSpinner();
-    return {
-      start: (message) => animated.start(message),
-      message: (message) => animated.message(message),
-      stop: (message, code) => code ? animated.error(message) : animated.stop(message),
-    };
-  }
+function spinner(): ReturnType<typeof animatedSpinner> {
+  if (shouldAnimateProgress(agentRun, Boolean(process.stdout.isTTY))) return animatedSpinner();
   const write = (message?: string, error = false) => {
     if (message) (error ? process.stderr : process.stdout).write(`${message}\n`);
   };
@@ -750,7 +737,7 @@ async function remoteSetup(target: string, _force: boolean, current?: ClientConf
     const answer = await text({
       message: "App domain",
       placeholder: "example.com",
-      validate: (value) => value && DOMAIN.test(value) ? undefined : "Use a lowercase public hostname",
+      validate: (value) => DOMAIN.test(value) ? undefined : "Use a lowercase public hostname",
     });
     if (isCancel(answer)) throw new Error("setup cancelled");
     domain = answer;

@@ -17,11 +17,11 @@
     "ship:status": "bun scripts/ship.ts --status"
   },
   "dependencies": {
-    "hono": "^4"
+    "hono": "^4.13.3"
   },
   "devDependencies": {
-    "@clack/prompts": "^0.7.0",
-    "@types/bun": "^1.3.13",
-    "typescript": "^6.0.3"
+    "@clack/prompts": "^1.7.0",
+    "@types/bun": "^1.4.0",
+    "typescript": "^7.0.2"
   }
 }

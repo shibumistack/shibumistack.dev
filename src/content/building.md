@@ -1,55 +1,53 @@
 # Roadmap
 
-Shibumi is being built in public.
+This page separates working software from plans.
 
-The plan is public while the stack settles. This page tracks what is decided, what ships first, and where the design is still open.
+## Available now
 
-## Now
+- [Shibumi Forms](/forms.md), hosted pre-alpha and self-hosted source
+- [`shibumi-server`](https://server.shibumistack.dev) for Linux VPS and homelab deployment
+- [Ship](/ship.md), the project-owned client for setup, status, logs, deployment, and rollback
+- [`create-shibumi`](/docs/cli.md) for static output, Bun web, and SQLite full-stack projects
+- [Extensions](/extensions.md) for bundled auth, email, and uploads source
 
-Brand, landing pages, CLI design, and the DX plan. The product promise is being narrowed before the package ships.
+## CLI
 
-## Next
+`create-shibumi` offers three starting points:
 
-Release `create-shibumi` with bare, blog, SSR, and static starts plus deploy config chosen during setup.
+- framework-agnostic static output
+- a Bun, Hono, Zod, and Alpine web app
+- the web app plus Drizzle and SQLite
 
-## Then
+Each generated project includes tests or artifact checks, a root `agents.md`, current Ship source, and VPS deployment through `shibumi-server`.
 
-Ship auth, email, uploads, payments, and admin as copied source with migrations and agent guidance.
+## Release checks
 
-## What is planned
+Packed-package tests create every starting point in a temporary directory. Generated projects must install, test, typecheck, build, and run without paths back into the CLI repository.
 
-### create-shibumi
+Static output must contain `index.html` and stay inside the project root. Bun apps must bind to the assigned loopback port and pass their health check. SQLite data must survive container replacement, and backup and restore must work before migrations run in deployment tests.
 
-A scaffolder with prompts for template, deploy target, git, and dependencies.
+## Later work
 
-### Templates
+Other deploy providers remain unsupported. Payments, admin, and background jobs can follow as copied source after their installers pass conflict, migration, removal, and fixture tests.
 
-Bare, blog, SSR, and static starts. Different starts for different projects, not one template forced everywhere.
-
-### Deploy targets
-
-Cloudflare, Vercel, Fly.io, static CDN, and self-hosted Bun with Docker.
+## Stack rules
 
 ### Data
 
-SQLite by default. Drizzle handles schema, queries, and migrations. The production driver follows the target.
+Full-stack projects use Drizzle with SQLite under persistent `/data`. WAL mode, foreign keys, migrations, backup, and restore belong in the generated project.
 
-### State
+### Browser state
 
-Nanostores for shared state. Use Alpine inside a component. Use a store only when state is shared.
+Alpine handles behavior inside a component. Add Nanostores when separate components need the same state.
 
-### Core
+### Security
 
-CSRF included. Security defaults should not be an optional extension.
+Validation belongs at request and environment boundaries. Form mutations need CSRF protection. Generated deployment config binds app ports to loopback.
 
 ### Extensions
 
-Copy code, not dependencies. Auth, Resend email, uploads, payments, and admin are added explicitly and owned by the app.
+Extensions copy files into the project. A feature that adds tables or routes also brings migrations, tests, and a named `agents/*.md` guide.
 
-### Agents
+### Server
 
-Each extension can merge named guidance such as `agents/auth.md` into root `agents.md`, so coding agents know local conventions and fragment ownership stays clear.
-
-### [shibumi-server](/server.md)
-
-A VPS deploy service that accepts exact commit-tagged images over SSH, verifies signed GitHub pushes, checks host capacity, validates deployment config and image platform, replaces the old container, checks health, keeps one rollback image, and removes older ones. Images build locally; app-owned tests remain optional. Public code and templates stay in Git; secrets and machine inventory stay on the server.
+[`shibumi-server`](https://server.shibumistack.dev) accepts exact commit-tagged images over SSH, verifies signed GitHub pushes, checks host capacity, validates Compose and image identity, starts the replacement, and checks health. It retains one rollback image for up to 12 hours. Public source stays in Git; server secrets and machine paths do not.

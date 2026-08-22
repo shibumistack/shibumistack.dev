@@ -10,11 +10,13 @@ beforeAll(() => {
 
 describe("static artifact", () => {
   test("contains rendered routes, Markdown, installers, and custom 404", async () => {
-    expect(await Bun.file(resolve(root, "dist/index.html")).text()).toContain("Simple.");
+    expect(await Bun.file(resolve(root, "dist/index.html")).text()).toContain("Simple apps,");
     const serverDocs = await Bun.file(resolve(root, "dist/docs/server/index.html")).text();
     expect(serverDocs).toContain("Built and uploaded a1b2c3d");
     expect(serverDocs).toContain('<link rel="canonical" href="https://shibumistack.dev/docs/server/">');
     expect(await Bun.file(resolve(root, "dist/docs/server.md")).text()).toContain("# shibumi-server");
+    expect(await Bun.file(resolve(root, "dist/docs/forms.md")).text()).toContain("# Shibumi Forms");
+    expect(await Bun.file(resolve(root, "dist/docs/cli.md")).text()).toContain("## Full-stack SQLite");
     expect(await Bun.file(resolve(root, "dist/404.html")).text()).toContain("Nothing here.");
     expect((await Bun.file(resolve(root, "dist/install/ship.sh")).text()).startsWith("#!/bin/sh")).toBeTrue();
     expect(await Bun.file(resolve(root, "dist/install/server")).text()).toContain("raw.githubusercontent.com/bitbonsai/shibumi-server");

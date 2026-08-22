@@ -1,8 +1,8 @@
             <section class="hero server-hero">
                 <div class="server-hero-copy">
                     <p class="eyebrow">Self-hosted deploys</p>
-                    <h1>Ship,<br><span class="accent-word">done.</span></h1>
-                    <p class="dek">Build on your computer. Run verified images on your VPS or homelab server.</p>
+                    <h1>Deploy exact<br><span class="accent-word">images.</span></h1>
+                    <p class="dek">Build committed code on your computer. The server verifies and runs that image on your VPS.</p>
                     <div class="status-line"><span class="status-dot" aria-hidden="true"></span><span>Open source · v{{server-version}}</span></div>
                     <div class="server-hero-actions">
                         <button class="btn btn-primary" type="button" data-dialog="server-install-dialog">Install on your server</button>
@@ -30,17 +30,17 @@
                         <div class="deploy-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span class="deploy-result-message"><strong>Shipped in 15 seconds</strong><a href="https://example.com">https://example.com</a></span></div>
                     </div>
                     <details class="deploy-details">
-                        <summary>What do these checks mean?</summary>
+                        <summary>Checks run before replacement</summary>
                         <div class="deploy-details-reveal">
                             <div class="deploy-details-reveal-clip">
                                 <div class="deploy-details-body">
-                                    <p>Every deploy runs the same checks. You do not need to write tests for them.</p>
+                                    <p>The server runs these checks even when the app has no test command.</p>
                                     <ol>
                                         <li>Verify the webhook, repository, branch, and commit.</li>
                                         <li>Check free memory and disk space.</li>
                                         <li>Validate the Compose configuration.</li>
                                         <li>Verify the uploaded image and run any optional app tests in a temporary container.</li>
-                                        <li>Replace the old container, check the new one's local health endpoint, keep the previous successful image for rollback, and remove older images.</li>
+                                        <li>Replace the old container, check the new one's local health endpoint, keep the previous successful image for rollback for up to 12 hours, and remove older or superseded tags.</li>
                                     </ol>
                                     <p>App tests are optional. Add a command such as <code>bun test</code> only when the project has its own test suite.</p>
                                 </div>
@@ -51,25 +51,25 @@
             </section>
 
             <section class="server-intro" aria-labelledby="small-title">
-                <p class="eyebrow">Small on purpose</p>
-                <h2 id="small-title">No dashboard.<br>No cloud deploy service.</h2>
-                <p><code>bun ship</code> builds the server's Linux image from committed code on your computer and uploads it through SSH before pushing Git. Recommended mode triggers deployment over SSH. Your current app keeps running while shibumi-server verifies commit, checkout, image, and Compose identity. Healthy deployments keep one previous image for rollback.</p>
+                <p class="eyebrow">Deployment model</p>
+                <h2 id="small-title">One service behind<br>your existing Caddy.</h2>
+                <p><code>bun ship</code> builds committed <code>HEAD</code> for the server's Linux platform and uploads it through SSH before pushing Git. The current app stays up during commit, image, platform, and Compose checks. The server retains one previous image for up to 12 hours.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">
-                <article><span>01</span><h3>Verify every push.</h3><p>The webhook must match the secret, repository, branch, and commit. Bad or repeated requests do not deploy.</p></article>
-                <article><span>02</span><h3>Built for small servers.</h3><p>Images build locally. The server checks free memory and disk before deployment.</p></article>
-                <article><span>03</span><h3>Bad images don't go live.</h3><p>Only one deploy runs at a time. Invalid configuration, image, or tests stop before startup.</p></article>
+                <article><span>01</span><h3>Match the signed commit.</h3><p>The webhook must match its secret, repository, branch, and full SHA. Replayed requests do not deploy.</p></article>
+                <article><span>02</span><h3>Check host capacity.</h3><p>Images build on the client. The server still checks available memory and disk before deployment.</p></article>
+                <article><span>03</span><h3>Check identity and health.</h3><p>A mismatched image, invalid Compose config, failed app test, or failed health request stops replacement.</p></article>
             </section>
 
             <section class="dogfood-section" aria-labelledby="dogfood-title">
                 <div>
-                    <p class="eyebrow">Dogfooding with MCPVault</p>
-                    <h2 id="dogfood-title">Testing for real.</h2>
+                    <p class="eyebrow">MCPVault</p>
+                    <h2 id="dogfood-title">A failed build changed the design.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>I also maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, the open-source MCP bridge for Obsidian. Its Astro website had become more machinery than the site needed. Astro 7 moved its Cloudflare deploy from Pages to Workers, adding another adapter and more platform-specific complexity, so I'm rebuilding it with Shibumi on a tiny VPS.</p>
-                    <p>The first build exhausted the server's memory. That failure led to resource checks, bounded fallback builds, and the current local-build flow.</p>
+                    <p>I maintain <a href="https://github.com/bitbonsai/mcpvault">MCPVault</a>, an MCP bridge for Obsidian. I started moving its Astro site after Astro 7 changed the Cloudflare path from Pages to Workers.</p>
+                    <p>The first VPS build exhausted memory before health checks ran. That failure moved image builds to the client and added memory, disk, timeout, and systemd limits.</p>
                     <a class="text-link" href="https://mcpvault.org">Visit MCPVault →</a>
                 </div>
             </section>
@@ -80,7 +80,7 @@
                     <h2 id="install-title">Prepare your<br>server.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>You need a Linux VPS or homelab server reachable through SSH. The recommended app flow starts from your local project and installs this server component through confirmed SSH when needed. You can also prepare it directly.</p>
+                    <p>Use a Linux VPS or homelab server reachable over SSH. Project setup can install the server after confirmation, or you can install it directly.</p>
                     <div class="install-terminal setup-cli" data-setup-cli aria-label="Simulated shibumi-server installation">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                         <div class="setup-output clack-output">
@@ -92,7 +92,7 @@
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>From project root: <strong>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</strong></span></div>
                         </div>
                     </div>
-                    <p>The installer checks requirements silently, then stages lockfile-pinned production dependencies before activation. The service keeps using that exact release. User-run commands check npm for a newer stable version and suggest <code>shis update</code>; <code>serve</code> never performs this network check. Update installs one exact release while preserving config and secrets. Registry problems never block local work.</p>
+                    <p>The installer checks the host, then stages one release with lockfile-pinned production dependencies. Interactive commands suggest <code>shis update</code> when npm reports a newer stable version. <code>serve</code> skips that check, and registry failures do not block local commands.</p>
                     <p><code>shibumi-server uninstall</code> removes the service and installed code while preserving config and secrets. Add <code>--purge</code> to remove those too after confirmation. App checkouts, containers, Caddy, and GitHub settings stay untouched.</p>
                 </div>
             </section>
@@ -103,7 +103,7 @@
                     <h2 id="apps-title">Connect from<br>your project.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>Run one installer from local project root. It infers project settings, connects through SSH, registers app, and asks whether <code>bun ship</code> or every GitHub push should deploy. Missing container files can be generated as a bounded Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and secret-safe <code>.dockerignore</code> before server registration.</p>
+                    <p>Run the installer from the local Git root. It reads the domain, repository, branch, Compose service, and health path, then registers the app through SSH. When container files are missing, setup can generate a Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and <code>.dockerignore</code>.</p>
                     <div class="install-terminal setup-cli" data-app-cli aria-label="Simulated local project connection">
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(refresh-cw)}}</button></div>
                         <div class="setup-output clack-output">
@@ -117,7 +117,7 @@
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>If DNS or webhook delivery is not ready, setup keeps the owned files and prints the exact next action. Resume with <code>bun ship:setup</code>. No reinstall needed.</p>
+                    <p>If DNS or webhook delivery is not ready, setup keeps the generated files and prints the command needed to resume.</p>
                     <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>
                 </div>
             </section>
@@ -125,20 +125,20 @@
             <section class="ship-section" aria-labelledby="ship-title">
                 <div>
                     <p class="eyebrow">Ship</p>
-                    <h2 id="ship-title">Ship with<br>one command.</h2>
+                    <h2 id="ship-title">Build locally,<br>then upload.</h2>
                 </div>
                 <div class="section-copy">
-                    <p>Self-hosted projects own a small ship script:</p>
+                    <p>The project owns its Ship client:</p>
                     <pre class="ship-command"><code>bun ship</code></pre>
-                    <p>The local installer handles first setup through confirmed SSH. The server checks DNS, prepares Caddy, and returns commit-safe <code>shibumi-server.json</code>. GitHub CLI creates and tests the webhook without printing or storing its secret.</p>
-                    <p>Later runs check Git state, run project tests and type checks, build committed <code>HEAD</code> locally for the server platform, and upload the labeled image through SSH. Only then does Ship push Git and follow deployment status with an ETA. During container replacement, Caddy waits and retries for up to 20 seconds; deployment logs show health readiness against that budget. After a server update, <code>shis caddy-refresh &lt;app-id&gt;</code> adds retry budget to existing managed apps without replacing their other Caddy settings. Existing domains keep their current upstream until first Shibumi deployment is healthy and you confirm Caddy cutover.</p>
-                    <p>Before each deployment, Ship checks for reviewed client source. It can use that version immediately, then saves it to tracked <code>scripts/ship.ts</code> only after deployment succeeds. Network errors keep the current client; owned edits are never replaced.</p>
-                    <p>Docker layer cache stays enabled. Use <code>bun ship --rebuild</code> for a no-cache build, <code>bun ship:logs</code> for latest deployment log, or <code>bun ship --rollback</code> to restore previous retained image. Run <code>bun ship:setup</code> whenever you want to review or change setup. Existing project? <a href="/ship">Add owned ship workflow</a>.</p>
+                    <p>Setup registers the app through confirmed SSH and writes commit-safe <code>shibumi-server.json</code>. GitHub CLI is used only when the user selects deploy-on-push.</p>
+                    <p>Normal runs check Git, run project checks, build committed <code>HEAD</code> for the server platform, and upload the labeled image. Ship pushes Git after upload and follows deployment status. Caddy retries the loopback upstream for up to 20 seconds during replacement. After a server update, <code>shis caddy-refresh &lt;app-id&gt;</code> adds this retry budget to an existing managed route without replacing its other Caddy settings. Existing domains keep their old upstream until the first deployment passes health and the user approves cutover.</p>
+                    <p>Ship can run newer reviewed client source for the current deployment. It saves that source to tracked <code>scripts/ship.ts</code> only after success. Network errors keep the installed client, and local edits are never replaced.</p>
+                    <p>Use <code>bun ship --rebuild</code> for a no-cache build, <code>bun ship:logs</code> for the latest deployment log, or <code>bun ship --rollback</code> to restore the retained image. <a href="/ship">Add Ship to an existing project</a>.</p>
                 </div>
             </section>
 
             <section class="server-cta" aria-labelledby="server-install-title">
-                <p class="eyebrow">Run it yourself</p>
+                <p class="eyebrow">Linux host</p>
                 <h2 id="server-install-title">Install on your server.</h2>
                 <p>Requires Linux with Bun, Git, rootless Podman, Caddy, and systemd. On macOS or Windows, SSH into your Linux VPS or homelab server first.</p>
                 <div class="server-cta-actions">

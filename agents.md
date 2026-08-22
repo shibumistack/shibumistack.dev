@@ -6,10 +6,7 @@ This repo is the current public site for Shibumi Stack at `shibumistack.dev`.
 It is also the first dogfood artifact for the product idea: a small, Bun-first
 web stack built around Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
-The package/scaffolder does not exist in this repo yet. The site documents the
-decisions, roadmap, brand, and planned DX for `create-shibumi`. The experimental
-`shibumi-server` implementation lives in the separate public `shibumi-server`
-repository.
+An unreleased scaffolder prototype lives under `shibumi-cli/`; the public `create-shibumi` repository and npm package remain placeholders without an executable. Do not present CLI as released. First release is scoped to three paths: framework-agnostic static output, a Bun/Hono/Alpine web app, and a Bun/Hono/Alpine/Drizzle/SQLite full-stack app. VPS deployment through `shibumi-server` is the only initial target; other providers and extensions remain planned. The experimental `shibumi-server` implementation lives in the separate public `shibumi-server` repository.
 
 ## Stack
 
@@ -32,7 +29,7 @@ not active dependencies here.
 
 ```sh
 bun install
-bun dev        # hot reload server on http://localhost:9001
+bun dev        # Ship wrapper starts hot reload on configured app port (currently http://localhost:9002/)
 bun start      # run dynamic development server
 bun run build  # render deterministic static output to dist/
 bun test       # route and artifact tests
@@ -46,7 +43,7 @@ There is no lint script.
 
 `serve.ts` exports the Bun server config:
 
-- Port: `9001`.
+- Port: validated `SHIBUMI_PORT`, then `PORT`, then `9001`. `bun dev` supplies the configured Ship app port.
 - Fetch handler: `app.fetch` from `src/app.ts`.
 
 `src/app.ts` owns rendering behavior used by development, tests, and the static build:
@@ -103,6 +100,7 @@ site contract for humans, agents, and direct source-shaped docs:
 - `src/content/building.md`: roadmap.
 - `src/content/brand.md`: brand guidance.
 - `src/content/dx.md`: long-form DX plan.
+- `src/content/forms.md`: hosted and self-hosted Shibumi Forms product page, mirrored by `/forms`.
 - `src/content/server.md`: public architecture and security model for `shibumi-server`.
 - `src/content/ship.md`: existing-project ship setup, mirrored by the non-nav `/ship` page. Files under `public/ship/v*.ts` are immutable owned-source snapshots; publish a new versioned path and update `/ship` instead of changing an existing version. `/install/ship` redirects to latest immutable `public/ship/install-v*.ts` snapshot, which validates project root and existing owned source before adding dependencies, package commands, and starting Clack setup.
 - `README.md` and `CONTRIBUTING.md`: repo docs, served inline from root.

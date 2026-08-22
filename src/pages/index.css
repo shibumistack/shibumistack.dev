@@ -144,12 +144,12 @@
 
         .why {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
             gap: clamp(1.5rem, 4vw, 3rem);
             margin-top: clamp(2rem, 4vw, 3.5rem);
         }
 
-        .card { min-height: 10.75rem; padding-top: 0; }
+        .card { padding-top: 0; }
 
         .card span {
             color: var(--accent);
@@ -158,8 +158,7 @@
             text-transform: uppercase;
         }
 
-        .card h3 { margin: 1.1rem 0 0.55rem; font-size: 1.38rem; font-weight: 500; }
-        .card p { margin: 0; color: var(--muted); line-height: 1.6; }
+        .card p { margin: 0.9rem 0 0; color: var(--muted); line-height: 1.6; }
 
         .pieces, .themes, .feature-section {
             margin-top: clamp(4rem, 8vw, 7rem);
@@ -175,14 +174,8 @@
         }
 
         .status-badge {
-            display: flex;
-            width: max-content;
             margin: 0.8rem 0 0;
-            padding: 0.18rem 0.42rem 0.2rem;
-            border: 1px solid light-dark(rgba(255, 102, 0, 0.25), rgba(255, 136, 51, 0.32));
-            border-radius: 999px;
             color: var(--accent);
-            opacity: 0.5;
             font-family: var(--font-mono);
             font-size: 0.72rem;
             font-weight: 700;
@@ -255,8 +248,14 @@
             overflow-x: auto;
         }
 
-        .feature-copy code {
-            font: 0.875rem/1.55 var(--font-mono);
+        .dek code,
+        .card p code,
+        .theme-card p code,
+        .feature-copy p code {
+            padding: 0.12em 0.38em;
+            border-radius: 6px;
+            background: light-dark(rgba(37, 33, 22, 0.08), rgba(255, 255, 255, 0.08));
+            font: 0.85em/1.4 var(--font-mono);
         }
 
         .feature-terminal { margin: 1rem 0 1.5rem; padding: 1rem; overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: light-dark(rgba(37,33,22,.04),rgba(0,0,0,.4)); color: var(--text); font: .8rem/1.55 var(--font-mono); }
@@ -362,6 +361,13 @@
             line-height: 0.92;
             letter-spacing: -0.055em;
             font-weight: 400;
+        }
+
+        .final-cta-copy {
+            max-width: 38rem;
+            margin: 0 0 1.5rem;
+            color: var(--muted);
+            font-size: 1.08rem;
         }
 
         .final-cta .install-command {

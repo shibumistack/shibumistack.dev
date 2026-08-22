@@ -31,7 +31,7 @@ Machine-readable status:
 shis status example-com --commit <full-sha> --json
 ```
 
-Status is latest atomic snapshot per app. Use [history](/docs/server/history-rollback) for durable recent records.
+Status stores the latest result for each app. [History](/docs/server/history-rollback) keeps up to 100 records.
 
 ## Update
 
@@ -39,7 +39,7 @@ Status is latest atomic snapshot per app. Use [history](/docs/server/history-rol
 shis update
 ```
 
-User-run commands check npm with short timeout and suggest update when stable release exists. Registry failures never block local work. Update installs exact reported version, preserves machine config and secrets, moves local release symlink, and reloads service.
+Interactive commands check npm with a short timeout and suggest an update when a stable release exists. Registry failures do not block the command. Update installs that exact version, keeps machine config and secrets, moves the local release symlink, and reloads the service.
 
 ## Remove app
 
@@ -62,6 +62,14 @@ shis uninstall --purge
 ```
 
 Purge uses a stronger confirmation and also removes config and webhook secrets. Automation must pass `--purge --yes` explicitly.
+
+## Refresh Caddy buffering
+
+```sh
+shis caddy-refresh <app-id>
+```
+
+After a server update, this command adds the current restart retry budget to an existing managed route. It preserves the route's other Caddy settings and fails closed when the managed directive cannot be identified safely.
 
 ## Service logs
 

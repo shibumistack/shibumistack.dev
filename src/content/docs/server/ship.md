@@ -1,8 +1,8 @@
 # Connect project to server
 
-Deployment setup belongs to the project. `bun ship` uses owned TypeScript source and a commit-safe `shibumi-server.json` file.
+The project owns deployment setup. `bun ship` runs tracked TypeScript and reads commit-safe `shibumi-server.json`.
 
-## Add ship workflow
+## Add Ship to the project
 
 From local Git project root:
 
@@ -14,7 +14,7 @@ Installer refuses to run outside Git root and never overwrites an existing owned
 
 When no tracked Compose file exists, setup offers to generate `Dockerfile`, `compose.yaml`, and `.dockerignore` from standard Bun package scripts. Review, commit, and push those files, then resume with `bun ship:setup`. Existing files are never overwritten.
 
-## First setup
+## Connect to the server
 
 ```sh
 bun ship:setup
@@ -48,7 +48,7 @@ Docker layer cache stays enabled. Use `bun ship --rebuild` for a no-cache build.
 
 Agents use `bun ship -y` for prompt-free routine confirmation. Clean-tree checks, project checks, image verification, and failures remain active. Missing SSH, GitHub, domain, server registration, or cutover prerequisites produce a direct request for agent to ask user.
 
-## Change setup
+## Change the setup
 
 ```sh
 bun ship:setup
@@ -63,7 +63,7 @@ bun ship:setup --trigger github-push
 
 Change SSH target with `git config --local shibumi.server user@server`.
 
-## Update client
+## Update the Ship client
 
 Before each normal deployment, Ship checks mutable latest pointer against immutable reviewed source. When newer source exists, it offers to run that version immediately. After successful deployment it updates tracked `scripts/ship.ts`, leaving change unstaged for review and commit. `bun ship -y` accepts update automatically.
 

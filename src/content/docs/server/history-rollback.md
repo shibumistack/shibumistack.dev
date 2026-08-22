@@ -2,7 +2,7 @@
 
 Inspect recent verified deployments or restore the previous retained image.
 
-## Recent history
+## Read recent history
 
 ```run
 shis history example-com
@@ -23,13 +23,13 @@ Each app keeps latest 100 records in mode-`0600` JSONL. Records contain timestam
 
 History never stores webhook payloads, signatures, secrets, or request headers.
 
-## Restore previous image
+## Restore the previous image
 
 ```sh
 shis rollback example-com
 ```
 
-Shibumi selects the one previous successful image retained for the app, retags it under the Compose image name, recreates the service without building, and verifies health. Successful rollback rotates retention, making the replaced image available for the next rollback. Failed startup or health restores the current image.
+Shibumi selects the one previous successful image retained for the app for up to 12 hours, retags it under the Compose image name, recreates the service without building, and verifies health. Successful rollback rotates retention, making the replaced image available for the next rollback. Failed startup or health restores the current image.
 
 Use `--yes` only for confirmed automation:
 
