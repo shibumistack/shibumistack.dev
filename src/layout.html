@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
     <meta name="description" content="{{description}}">
-    <meta name="theme-color" content="#f7f3e8">
+    <meta name="theme-color" content="#f5f0e4">
     <meta name="color-scheme" content="light dark">
     <script>
         (() => {
@@ -16,11 +16,12 @@
                 : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
             document.documentElement.setAttribute("data-theme", theme);
             document.querySelector('meta[name="theme-color"]')
-                ?.setAttribute("content", theme === "dark" ? "#1e1510" : "#f7f3e8");
+                ?.setAttribute("content", theme === "dark" ? "#1b130f" : "#f5f0e4");
         })();
     </script>
     <link rel="icon" type="image/png" href="/favicon.png">
     <!-- insert:meta -->
+    <link rel="stylesheet" href="/shibumi.css?v={{asset-version}}">
     <link rel="stylesheet" href="/shared.css?v={{asset-version}}">
     <!-- insert:page-style -->
     <meta name="robots" content="index, follow">

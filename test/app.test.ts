@@ -11,16 +11,16 @@ describe("routes", () => {
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Simple apps,");
     expect(body).toContain("whole stack");
-    expect(body).toContain('<meta name="theme-color" content="#f7f3e8">');
+    expect(body).toContain('<meta name="theme-color" content="#f5f0e4">');
     expect(body).not.toContain('theme-color" media=');
     expect(body).toContain('<meta name="color-scheme" content="light dark">');
     expect(body).toContain('aria-label="Replay terminal animation"');
     expect(body).toContain("home-clack-done");
     expect(body).toContain("home-clack-rail");
-    expect(body).toContain(`Install pinned v${packageJson.shibumiServerVersion}`);
     expect(body).toContain("Shibumi Forms");
-    expect(body).toContain("Ship to a server you own");
-    expect(body).toContain("Create a project");
+    expect(body).toContain("shibumi-server");
+    expect(body).toContain("coding agents");
+    expect(body).toContain("get release updates");
   });
 
   test("shows create command and CLI page", async () => {

@@ -1,6 +1,7 @@
 <header>
     <a class="mark" href="/" aria-label="Shibumi Stack home">
-        <img src="/brand/logos/shibumistack-light.png" alt="">
+        <img class="logo-light" src="/brand/logos/shibumistack-light.webp" alt="">
+        <img class="logo-dark" src="/brand/logos/shibumistack-dark.webp" alt="">
         <span>shibumistack<span class="mark-tld">.dev</span></span>
     </a>
     <button class="menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
@@ -8,18 +9,23 @@
     </button>
     <nav id="primary-nav" aria-label="Primary">
         <div class="nav-links">
+            <details class="stack-menu">
+                <summary>About</summary>
+                <div class="stack-popover">
+                    <a href="/building"{{active(roadmap)}}><span>Roadmap</span><small>What's building now</small></a>
+                    <a href="/brand"{{active(brand)}}><span>Brand</span><small>Logos and assets</small></a>
+                </div>
+            </details>
+            <a href="/blog"{{active(blog)}}>Blog</a>
             <a href="/docs"{{active(docs)}}>Docs</a>
             <details class="stack-menu">
                 <summary>Shibumi Stack</summary>
                 <div class="stack-popover">
                     <a href="https://shibumistack.dev" aria-current="page"><span>Stack</span><small>Build and ship Bun apps</small></a>
-                    <a href="https://forms.shibumistack.dev"><span>Forms</span><small>Collect form submissions</small></a>
                     <a href="https://server.shibumistack.dev"><span>Server</span><small>Deploy to your VPS</small></a>
+                    <a href="https://forms.shibumistack.dev"><span>Forms</span><small>Collect form submissions</small></a>
                 </div>
             </details>
-            <a href="/building"{{active(roadmap)}}>Roadmap</a>
-            <a href="/brand"{{active(brand)}}>Brand</a>
-            <a href="/blog"{{active(blog)}}>Blog</a>
         </div>
         <div class="nav-actions">
             <button class="nav-cta" type="button" data-dialog="install-dialog">Create project</button>
