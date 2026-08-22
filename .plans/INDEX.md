@@ -14,8 +14,8 @@
 
 ## Recently shipped
 
+- [x] Redesign homepage as dev-friend story prose with eyebrow-rail layout; deployed to production.
+- [x] Extract canonical `public/shibumi.css` shared by all three sites (vendored + sync scripts in server/forms repos).
+- [x] Rework server.shibumistack.dev: story sections, tabbed first-run/ship terminals from real CLI output, expanded provider table.
 - [x] Migrate `shibumistack.dev` from legacy VPS builds to loopback-only Shibumi prebuilt deployment.
 - [x] Align website Clack simulations and docs with local image builds, identity verification, and self-updates.
-- [x] Ship v28 reviewed automatic client updates and accurate image-before-push confirmation.
-- [x] Publish and deploy `shibumi-server` 0.7.11.
-- [x] Add and benchmark Mac-built ARM64 image uploads over SSH.
