@@ -20,7 +20,7 @@ An extension adds a named file such as `agents/auth.md` and merges its rules int
 
 `create-shibumi` offers three starting points:
 
-1. **Static output**: publish a verified directory such as `dist`, `public`, `build`, or `out`, regardless of framework.
+1. **Static site**: publish a verified build directory such as `./dist`, `public`, `build`, or `out` from any framework.
 2. **Bun web**: Hono, HTML, CSS, Alpine, Zod, tests, and a health endpoint.
 3. **SQLite full stack**: the Bun web project plus Drizzle, migrations, persistent data, backup, and restore.
 

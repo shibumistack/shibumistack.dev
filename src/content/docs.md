@@ -4,13 +4,13 @@ This page records product choices that should survive implementation changes.
 
 ## What works now
 
-[Shibumi Forms](/forms.md) accepts static-site form submissions through HTML. Hosted pre-alpha and self-hosted source are available.
+`create-shibumi` creates a static site, a Bun web app, or a SQLite full-stack app. All three include VPS deployment.
 
 [`shibumi-server`](/docs/server) deploys apps to Linux VPS and homelab hosts with rootless Podman, Caddy, and systemd. [Ship](/docs/server/ship) adds committed deployment config and owned TypeScript to an existing Bun project.
 
-This website runs on Bun and Hono, builds static HTML, and publishes Markdown versions for agents.
+[Shibumi Forms](/forms.md) is a standalone service: any static site can accept form submissions through plain HTML, built with Shibumi or not. Hosted pre-alpha and self-hosted source are available.
 
-`create-shibumi` creates static output, a Bun web app, or a SQLite full-stack app. All three include VPS deployment.
+This website runs on Bun and Hono, builds static HTML, and publishes Markdown versions for agents.
 
 ## Stack pieces
 

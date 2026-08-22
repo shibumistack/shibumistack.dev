@@ -1,6 +1,6 @@
 # Shibumi Forms
 
-Shibumi Forms accepts submissions from a static HTML page. Hosted pre-alpha runs at <https://forms.shibumistack.dev>; the same Bun, Hono, and SQLite code is available at <https://github.com/bitbonsai/shibumi-forms>.
+Shibumi Forms is a standalone service: it accepts submissions from any static site through a plain HTML form, whether or not the site was built with Shibumi. Hosted pre-alpha runs at <https://forms.shibumistack.dev>; the same Bun, Hono, and SQLite code is available at <https://github.com/bitbonsai/shibumi-forms>.
 
 ## Connect a page
 
