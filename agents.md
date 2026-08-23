@@ -6,7 +6,7 @@ This repo is the current public site for Shibumi Stack at `shibumistack.dev`.
 It is also the first dogfood artifact for the product idea: a small, Bun-first
 web stack built around Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
-An unreleased scaffolder prototype lives under `shibumi-cli/`; the public `create-shibumi` repository and npm package remain placeholders without an executable. Site copy deliberately presents the CLI as released ahead of the actual release (owner decision, 2026-08-22); the npm package is still a placeholder and shipping it is the top item in `.plans/INDEX.md`. Do not walk the site copy back; do close the gap by releasing. First release is scoped to three paths: framework-agnostic static output, a Bun/Hono/Alpine web app, and a Bun/Hono/Alpine/Drizzle/SQLite full-stack app. VPS deployment through `shibumi-server` is the only initial target; other providers and extensions remain planned. The experimental `shibumi-server` implementation lives in the separate public `shibumi-server` repository.
+The scaffolder source lives in the public `shibumistack/create-shibumi` repository (local checkout `../create-shibumi`); this repo keeps no package source since 2026-08-23. The npm package is still the 0.0.1 placeholder; npm publish is manual and owner-only, gated on `.plans/cli-vps-release.md` workstream 7. Site copy deliberately presents the CLI as released ahead of the actual release (owner decision, 2026-08-22). Do not walk the site copy back; do close the gap by releasing. First release is scoped to three paths: framework-agnostic static output, a Bun/Hono/Alpine web app, and a Bun/Hono/Alpine/Drizzle/SQLite full-stack app, plus the extension installer with auth and email (owner decision 2026-08-23). VPS deployment through `shibumi-server` is the only initial target. The experimental `shibumi-server` implementation lives in the separate public `shibumi-server` repository.
 
 ## Stack
 
@@ -213,9 +213,9 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 
 ## Gotchas
 
-- Bun base image stays floating `oven/bun:alpine` everywhere (site Dockerfile + ship/CLI templates); owner decision 2026-08-23, no version or digest pins. Don't switch to `slim`: measured ~2x larger than alpine (241–264MB vs 131MB unpacked per arch), and slim lacks wget/curl so the wget healthcheck in `shibumi-cli/src/utils.ts` breaks. Slim only becomes relevant if a template gains a glibc-only native dep (sharp, better-sqlite3).
-- `shibumi-cli` `bun test` has 3 pre-existing failures in `src/templates/static/test/build.test.ts` (execSync); not a regression from your change.
-- `shibumi-cli/blog/` is gitignored (`shibumi-cli/.gitignore:7`); edits there never show in `git status` or land in commits.
+- Bun base image stays floating `oven/bun:alpine` everywhere (site Dockerfile + ship/CLI templates); owner decision 2026-08-23, no version or digest pins. Don't switch to `slim`: measured ~2x larger than alpine (241–264MB vs 131MB unpacked per arch), and slim lacks wget/curl so wget healthchecks break. Slim only becomes relevant if a template gains a glibc-only native dep (sharp, better-sqlite3).
+- CLI source moved to `../create-shibumi` (public repo). Leftover `shibumi-cli/` dir here contains only the gitignored `blog/` prototype and stale `node_modules`; nothing in it is tracked.
+- In `../create-shibumi`: the vendored Ship client `src/templates/ship.ts` is sha256-locked to `scripts/ship.lock.json`; never edit it by hand, update the lock and run `bun sync:ship`. Template `.gitignore` files are stored as `gitignore` (npm pack strips dotted ones) and renamed at scaffold time.
 
 - Theme choice is per-origin `localStorage`, so a visitor's light/dark pick does not follow them between shibumistack.dev and the server/forms subdomains. Sharing it would need a cookie on `.shibumistack.dev`.
 - `shibumi.css` must never style bare element selectors that page content can contain: a bare `header` rule pinned card/section headers in consuming apps as fixed blurred bars that swallowed clicks. Scope shared components (`.shell > header`, `.site-header`).

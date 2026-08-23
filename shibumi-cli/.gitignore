@@ -1,7 +1,0 @@
-node_modules/
-test-project/
-*.tgz
-.DS_Store
-
-# Local nested prototype repository
-blog/

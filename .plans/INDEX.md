@@ -2,7 +2,7 @@
 
 ## Active
 
-- [ ] Ship VPS-first `create-shibumi` with static, Bun web, and SQLite full-stack starts (`.plans/cli-vps-release.md`).
+- [ ] Ship VPS-first `create-shibumi` with static, Bun web, and SQLite full-stack starts (`.plans/cli-vps-release.md`). Workstreams 1 (foundation) and 2 (public-repo migration + Ship v41 byte-lock) done 2026-08-23; next: web template (ws3). Source now in `../create-shibumi`; npm publish stays manual/owner-only at ws7.
 - [ ] Dogfood static output across Netlify, Cloudflare, and Vercel after VPS-first release (`.plans/create-shibumi.md`).
 - [ ] Add protected-branch PR flow to owned ship client, including exact merged-SHA handoff.
 - [ ] Bootstrap Vibetoolbox and MCPVault owned clients to v28; verify automatic update on next release.
