@@ -24,6 +24,10 @@ An extension adds a named file such as `agents/auth.md` and merges its rules int
 2. **Bun web**: Hono, HTML, CSS, Alpine, Zod, tests, and a health endpoint.
 3. **Static site**: publish a verified build directory such as `./dist`, `public`, `_site`, `build`, or `out` from any framework.
 
+```sh
+bun create shibumi@latest my-app
+```
+
 All three deploy to a Linux VPS or homelab through `shibumi-server`. Other providers can wait until their generated projects pass the same artifact and deployment tests.
 
 ## VPS deployment
@@ -45,7 +49,7 @@ Project code stays in Git. SSH targets stay on your computer. Webhook secrets an
 
 ## Extensions
 
-From a generated project, install auth, email, or uploads as source:
+From a generated project, install auth or email as source (uploads is planned next):
 
 ```sh
 bun run shibumi add auth

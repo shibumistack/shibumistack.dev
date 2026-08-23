@@ -1,6 +1,6 @@
 # create-shibumi CLI
 
-`create-shibumi` creates static output, a Bun web app, or a Bun full-stack app. All three deploy to a Linux VPS through `shibumi-server`.
+`create-shibumi` creates a static site, a Bun web app, or a Bun full-stack app. All three deploy to a Linux VPS through `shibumi-server`.
 
 ## Create a project
 
@@ -10,7 +10,7 @@ bun create shibumi@latest my-app
 
 The CLI asks what you are shipping:
 
-1. **Static output** for any framework or plain files. Provide a build command when needed and a relative output directory such as `dist`, `public`, `build`, or `out`.
+1. **Static site** for any framework or plain files. A follow-up asks where to start: plain files, or the Astro blog template with RSS, sitemap, OG meta, and markdown alternates for agents. Build command and output directory are configured later by `bun ship:setup`.
 2. **Bun web app** with Hono, plain HTML and CSS, Alpine for browser behavior, Zod at trust boundaries, tests, and `/healthz`.
 3. **Bun full-stack app** with the web starter plus Drizzle and SQLite on a persistent volume.
 
@@ -28,7 +28,7 @@ Generated projects import their libraries directly. Each applicable project incl
 
 Project creation initializes Git only when selected. It never stages or commits user files. Existing paths are never overwritten silently, and failed creation leaves the destination absent or unchanged.
 
-## Static output
+## Static sites
 
 Static publishing depends on an artifact contract rather than a framework adapter:
 
@@ -68,7 +68,7 @@ Tests run against the packed npm artifact, not repository source. Every starting
 ```sh
 bun install --frozen-lockfile
 bun test
-bun check
+bun run check
 bun run build
 ```
 
@@ -78,13 +78,13 @@ Release checks use a disposable VPS fixture for setup, exact image upload, deplo
 
 ## Extensions
 
-Generated projects include the versioned extension command. Add bundled auth, email, or uploads source with:
+Bun web and full-stack projects include the versioned extension command. Add bundled auth or email source with:
 
 ```sh
 bun run shibumi add auth
 ```
 
-The command previews writes, stops on conflicts, records a named guide under `agents/`, and does not duplicate files when repeated.
+The command previews writes, stops on conflicts, records a named guide under `agents/`, and does not duplicate files when repeated. Auth needs the full-stack database and refuses other paths. Uploads is planned as the next extension.
 
 ## Deferred
 

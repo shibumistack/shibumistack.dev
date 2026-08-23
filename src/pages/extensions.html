@@ -16,7 +16,7 @@
 
     <article class="ext-item" id="auth">
       <h3>auth</h3>
-      <p>Cookie sessions, login and logout routes, CSRF-protected mutations, password hashing with <code>Bun.password</code>, and SQLite session tables.</p>
+      <p>Cookie sessions with password and login-link sign-in. <code>Bun.password</code> hashing, sha256-hashed tokens, CSRF-protected mutations, rate limiting, a bot honeypot, and SQLite tables installed through the project's migration stream. Needs the full-stack database.</p>
       <div class="ext-detail">
         <span>bun:sqlite</span>
         <span>Bun.password</span>
@@ -26,9 +26,9 @@
 
     <article class="ext-item" id="email">
       <h3>email</h3>
-      <p>Resend send helper, environment validation, webhook verification, and fixture tests.</p>
+      <p>Resend send helper over plain fetch (no SDK dependency), environment validation, escaped template rendering, webhook signature verification, and fixture tests. No tables.</p>
       <div class="ext-detail">
-        <span>resend</span>
+        <span>plain fetch</span>
         <span>RESEND_API_KEY</span>
         <span>webhooks</span>
       </div>
@@ -36,7 +36,7 @@
 
     <article class="ext-item" id="uploads">
       <h3>uploads</h3>
-      <p>Multipart validation with local persistent storage or an S3-compatible service. Limits and cleanup rules ship with the source.</p>
+      <p><strong>Planned next.</strong> Multipart validation with local persistent storage or an S3-compatible service. Limits and cleanup rules ship with the source.</p>
       <div class="ext-detail">
         <span>multipart</span>
         <span>local or S3</span>
@@ -49,11 +49,13 @@
     <h2 id="package-layout">Package layout</h2>
     <p>A package contains a manifest, a named <code>agents.md</code> guide, and files with fixed target paths. Installation must preview every write and stop on conflicts.</p>
     <pre><code>manifest.json
+migration.sql
 agents/
   feature.md
 files/
   src/
     ...</code></pre>
+    <p>Bundled extensions ship inside the versioned <code>create-shibumi</code> package, embedded in the vendored <code>scripts/shibumi.ts</code> and covered by its checksum. Installation touches no network. Removal deletes code and reverses edits; tables are never dropped by tooling.</p>
 
   </div>
 
