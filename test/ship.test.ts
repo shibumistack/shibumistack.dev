@@ -328,6 +328,7 @@ describe("static output shipping", () => {
     expect(staticHttpdConf(true)).toContain("E404:404.html");
     expect(staticHttpdConf(false)).not.toContain("E404");
     expect(staticHttpdConf(false)).toContain("I:index.html");
+    expect(staticHttpdConf(false)).toContain(".xml:application/xml");
   });
 
   test("prepareStaticContext verifies output and writes httpd.conf", async () => {
