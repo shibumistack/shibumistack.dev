@@ -122,10 +122,13 @@ Bun apps expose:
     "ship:setup": "bun scripts/ship.ts --setup",
     "ship:update": "bun scripts/ship.ts --update",
     "ship:status": "bun scripts/ship.ts --status",
-    "ship:logs": "bun scripts/ship.ts --logs"
+    "ship:logs": "bun scripts/ship.ts --logs",
+    "shibumi": "bun scripts/shibumi.ts"
   }
 }
 ```
+
+The full-stack path adds `db:migrate`, `db:backup`, `db:restore`, and `db:status`. The `shibumi` script is the extension installer: `bun run shibumi add auth`, with `--dry-run` previewing every write.
 
 Static projects get equivalent artifact, preview, and Ship commands without a Bun app server.
 
