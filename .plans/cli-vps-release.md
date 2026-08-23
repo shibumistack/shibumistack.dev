@@ -33,8 +33,9 @@ The site copy is the contract; this plan closes the gap between it and the proto
 
 ### Extensions (v1: installer + auth + email)
 - Installer: `bun run shibumi add <name>` via an owned, vendored `scripts/shibumi.ts` (ship.ts pattern; keeps the no-runtime-dependency promise; bundle delivery mechanism pinned and checksummed, defined in workstream 6). Dry-run preview of every write and exact edit; hooks use unique source matches and stop on changed text; removal supported; agents.md section merge. Ships only after fixture/repeat/conflict/removal tests pass (site promise).
-- Auth: cookie sessions, password + magic-link login. Hardened beyond the prototype: `Bun.password` hashing, session table with tracked migration (targets the full-stack path; installer refuses paths without a database), CSRF on mutation forms, login rate limit, tests. v1
-- Email: transactional send via Resend; single lib file, env var names, agents fragment, pinned dep. v1
+- Single-database rule (owner decision 2026-08-23): extensions never create their own database; they add tables to app.db through the project's one migration stream. Manifests carry migration content, and the installer writes it as the next filename in sequence at install time (fixed names would collide or trip the high-water guard). Extensions add their own Drizzle schema file (`src/db/schema-<ext>.ts`) wired into `src/db/index.ts` by an install hook. Removal deletes code, never tables; the agents fragment documents leftover tables and the manual drop.
+- Auth: cookie sessions, password + magic-link login. Hardened beyond the prototype: `Bun.password` hashing, users/sessions tables via an installed migration (targets the full-stack path; installer refuses paths without a database), CSRF on mutation forms, login rate limit, tests. v1
+- Email: transactional send via Resend; single lib file, env var names, agents fragment, pinned dep, no tables. v1
 - Uploads: named site promise, no prototype code, largest security surface (multipart, validation, /data storage, safe serving). 0.2 fast-follow with a dated slot.
 - Payments, admin, public registry, npm-scoped registry. later
 
