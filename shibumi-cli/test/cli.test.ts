@@ -1,227 +1,104 @@
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { mkdtempSync, rmSync, existsSync, readFileSync, mkdirSync, writeFileSync } from "fs";
-import { join } from "path";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from "fs";
 import { tmpdir } from "os";
-import {
-  copyTemplate,
-  generateDeployConfig,
-  installExtension,
-  listExtensions,
-  optimizeImages,
-} from "../src/utils";
-import type { Template } from "../src/utils";
+import { join } from "path";
 
-let tempDir: string;
+const CLI = new URL("../src/cli.ts", import.meta.url).pathname;
+const PKG_VERSION = (
+  JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")) as {
+    version: string;
+  }
+).version;
+
+let work: string;
 
 beforeEach(() => {
-  tempDir = mkdtempSync(join(tmpdir(), "shibumi-test-"));
+  work = mkdtempSync(join(tmpdir(), "shibumi-cli-"));
 });
 
 afterEach(() => {
-  rmSync(tempDir, { recursive: true, force: true });
+  rmSync(work, { recursive: true, force: true });
 });
 
-// ── Templates ───────────────────────────────────────────────────────
+function runCli(args: string[]) {
+  const proc = Bun.spawnSync(["bun", CLI, ...args], {
+    cwd: work,
+    stdin: "ignore",
+    stdout: "pipe",
+    stderr: "pipe",
+  });
+  return {
+    code: proc.exitCode,
+    stdout: proc.stdout.toString(),
+    stderr: proc.stderr.toString(),
+  };
+}
 
-describe("copyTemplate", () => {
-  it("copies bare with all critical files", () => {
-    copyTemplate("bare", tempDir);
-    expect(existsSync(join(tempDir, "package.json"))).toBe(true);
-    expect(existsSync(join(tempDir, "src", "app.ts"))).toBe(true);
-    expect(existsSync(join(tempDir, "src", "server.ts"))).toBe(true);
-    expect(existsSync(join(tempDir, "test", "app.test.ts"))).toBe(true);
+describe("cli", () => {
+  it("prints help with exit 0", () => {
+    const r = runCli(["--help"]);
+    expect(r.code).toBe(0);
+    expect(r.stdout).toContain("create-shibumi: scaffold a Shibumi Stack project");
+    expect(r.stdout).toContain("--template <id>");
   });
 
-  it("copies blog with content directory", () => {
-    copyTemplate("blog", tempDir);
-    expect(existsSync(join(tempDir, "content", "hello.md"))).toBe(true);
-    expect(existsSync(join(tempDir, "src", "lib", "posts.ts"))).toBe(true);
+  it("prints the package version with exit 0", () => {
+    const r = runCli(["--version"]);
+    expect(r.code).toBe(0);
+    expect(r.stdout).toBe(`${PKG_VERSION}\n`);
   });
 
-  it("copies ssr with db schema", () => {
-    copyTemplate("ssr", tempDir);
-    expect(existsSync(join(tempDir, "src", "db", "schema.ts"))).toBe(true);
-    expect(existsSync(join(tempDir, "src", "routes", "api.ts"))).toBe(true);
+  it("rejects unknown flags with exit 2 and an exact message", () => {
+    const r = runCli(["--nope"]);
+    expect(r.code).toBe(2);
+    expect(r.stderr).toBe("Unknown flag: --nope\nRun create-shibumi --help for usage.\n");
   });
 
-  it("copies static with build script", () => {
-    copyTemplate("static", tempDir);
-    expect(existsSync(join(tempDir, "src", "build.ts"))).toBe(true);
-    expect(existsSync(join(tempDir, "content", "hello.md"))).toBe(true);
+  it("rejects --yes without a template with exit 2 and an exact message", () => {
+    const r = runCli(["my-app", "--yes"]);
+    expect(r.code).toBe(2);
+    expect(r.stderr).toBe(
+      "--yes requires --template (static, web, full-stack).\nRun create-shibumi --help for usage.\n"
+    );
   });
 
-  it("throws for unknown template", () => {
-    expect(() => copyTemplate("nonexistent" as Template, tempDir)).toThrow();
-  });
-});
-
-// ── Deploy config ───────────────────────────────────────────────────
-
-describe("generateDeployConfig", () => {
-  beforeEach(() => copyTemplate("bare", tempDir));
-
-  it("self-hosted: Dockerfile, Compose, and owned ship script", () => {
-    generateDeployConfig(tempDir, "self-hosted", "app");
-    expect(existsSync(join(tempDir, "Dockerfile"))).toBe(true);
-    expect(existsSync(join(tempDir, "docker-compose.yml"))).toBe(true);
-    expect(existsSync(join(tempDir, "Caddyfile"))).toBe(false);
-    expect(existsSync(join(tempDir, "scripts", "ship.ts"))).toBe(true);
-    const packageJson = JSON.parse(readFileSync(join(tempDir, "package.json"), "utf8"));
-    expect(packageJson.scripts.ship).toBe("bun scripts/ship.ts");
-    expect(packageJson.scripts["ship:logs"]).toBe("bun scripts/ship.ts --logs");
-    expect(packageJson.scripts.dev).toBe("bun scripts/ship.ts --dev");
-    expect(packageJson.scripts["dev:app"]).toBe("bun --watch src/server.ts");
-    expect(packageJson.devDependencies["@clack/prompts"]).toBe("^0.7.0");
-    expect(readFileSync(join(tempDir, "src", "server.ts"), "utf8")).toContain("Bun.env.PORT ?? 3000");
-    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
-    expect(readFileSync(join(tempDir, "docker-compose.yml"), "utf8")).toContain("memory: 512M");
+  it("rejects unimplemented static options with exit 2", () => {
+    const r = runCli(["my-app", "--yes", "--template", "static", "--spa"]);
+    expect(r.code).toBe(2);
+    expect(r.stderr).toContain("not implemented yet");
   });
 
-  it("cloudflare: wrangler.toml + worker entry", () => {
-    generateDeployConfig(tempDir, "cloudflare", "app");
-    expect(existsSync(join(tempDir, "wrangler.toml"))).toBe(true);
-    expect(existsSync(join(tempDir, "src", "worker.ts"))).toBe(true);
+  it("refuses interactive mode without a TTY with exit 2", () => {
+    const r = runCli([]);
+    expect(r.code).toBe(2);
+    expect(r.stderr).toContain("No interactive terminal.");
   });
 
-  it("vercel: vercel.json", () => {
-    generateDeployConfig(tempDir, "vercel", "app");
-    expect(existsSync(join(tempDir, "vercel.json"))).toBe(true);
+  it("scaffolds non-interactively with --yes", () => {
+    const r = runCli(["my-app", "--yes", "--template", "static", "--no-install"]);
+    expect(r.code).toBe(0);
+    const dest = join(work, "my-app");
+    expect(existsSync(join(dest, "package.json"))).toBe(true);
+    const pkg = JSON.parse(readFileSync(join(dest, "package.json"), "utf8"));
+    expect(pkg.name).toBe("my-app");
+    expect(existsSync(join(dest, ".git"))).toBe(true);
+    const log = Bun.spawnSync(["git", "log", "--oneline"], { cwd: dest });
+    expect(log.exitCode).not.toBe(0);
+    expect(r.stdout).toContain("cd my-app && bun dev");
   });
 
-  it("fly: fly.toml + Dockerfile", () => {
-    generateDeployConfig(tempDir, "fly", "app");
-    expect(existsSync(join(tempDir, "fly.toml"))).toBe(true);
-    expect(existsSync(join(tempDir, "Dockerfile"))).toBe(true);
+  it("fails on an existing destination with exit 1 and leaves it untouched", () => {
+    mkdirSync(join(work, "my-app"));
+    const r = runCli(["my-app", "--yes", "--template", "static", "--no-install"]);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain("Destination already exists");
+    expect(existsSync(join(work, "my-app"))).toBe(true);
   });
 
-  it("static: no extra files", () => {
-    generateDeployConfig(tempDir, "static", "app");
-    expect(existsSync(join(tempDir, "Dockerfile"))).toBe(false);
-  });
-});
-
-// ── Extensions ──────────────────────────────────────────────────────
-
-describe("installExtension", () => {
-  beforeEach(() => copyTemplate("ssr", tempDir));
-
-  it("installs auth with files and hooks", () => {
-    const result = installExtension("auth", tempDir);
-    expect(result.files.length).toBe(3);
-    expect(result.hooksApplied).toContain("src/app.ts");
-    expect(existsSync(join(tempDir, "src", "lib", "session.ts"))).toBe(true);
-  });
-
-  it("installs email with deps, no migration", () => {
-    const result = installExtension("email", tempDir);
-    expect(result.files.length).toBe(1);
-    expect(result.deps).toContain("resend");
-    expect(result.migration).toBeNull();
-  });
-
-  it("throws for unknown extension", () => {
-    expect(() => installExtension("nonexistent", tempDir)).toThrow();
-  });
-});
-
-// ── Hooks ───────────────────────────────────────────────────────────
-
-describe("hooks", () => {
-  it("images extension wires itself into app.ts", () => {
-    copyTemplate("bare", tempDir);
-    const result = installExtension("images", tempDir);
-
-    // Check that the hook was applied
-    expect(result.hooksApplied).toContain("src/app.ts");
-
-    // Check the file was modified
-    const app = readFileSync(join(tempDir, "src", "app.ts"), "utf-8");
-    expect(app).toContain('import { imageMiddleware } from "./middleware/images"');
-    expect(app).toContain('app.use("/images/*", imageMiddleware())');
-  });
-
-  it("does not duplicate hooks on second install", () => {
-    copyTemplate("bare", tempDir);
-    installExtension("images", tempDir);
-    const result = installExtension("images", tempDir);
-
-    // Second install should not modify the file again
-    expect(result.hooksApplied).not.toContain("src/app.ts");
-
-    const app = readFileSync(join(tempDir, "src", "app.ts"), "utf-8");
-    const importCount = (app.match(/imageMiddleware/g) || []).length;
-    expect(importCount).toBe(2); // once in import, once in usage: not duplicated
-  });
-
-  it("skips hook if target file missing", () => {
-    copyTemplate("bare", tempDir);
-    // Delete app.ts
-    rmSync(join(tempDir, "src", "app.ts"));
-
-    const result = installExtension("images", tempDir);
-    expect(result.hooksApplied).not.toContain("src/app.ts");
-    expect(result.files.length).toBe(1); // middleware file still copied
-  });
-});
-
-// ── Image optimization ──────────────────────────────────────────────
-
-describe("optimizeImages", () => {
-  it("converts jpeg to webp", async () => {
-    const imagesDir = join(tempDir, "images");
-    const outputDir = join(tempDir, "optimized");
-    mkdirSync(imagesDir, { recursive: true });
-
-    // Create a test image using Bun.Image
-    const { Image } = require("bun");
-    const src = new Image("/Users/mwolff/bit/shibumistack.dev/public/brand/logos/favicon.png");
-    const pngBuf = await src.bytes("png");
-    writeFileSync(join(imagesDir, "photo.png"), pngBuf);
-
-    const stats = await optimizeImages(imagesDir, outputDir);
-
-    expect(stats.files).toBe(1);
-    expect(stats.originalSize).toBeGreaterThan(0);
-    expect(stats.optimizedSize).toBeGreaterThan(0);
-    expect(existsSync(join(outputDir, "photo.webp"))).toBe(true);
-  });
-
-  it("handles multiple images", async () => {
-    const imagesDir = join(tempDir, "images");
-    const outputDir = join(tempDir, "optimized");
-    mkdirSync(imagesDir, { recursive: true });
-
-    const { Image } = require("bun");
-    const src = new Image("/Users/mwolff/bit/shibumistack.dev/public/brand/logos/favicon.png");
-    const pngBuf = await src.bytes("png");
-    writeFileSync(join(imagesDir, "a.png"), pngBuf);
-    writeFileSync(join(imagesDir, "b.png"), pngBuf);
-
-    const stats = await optimizeImages(imagesDir, outputDir);
-
-    expect(stats.files).toBe(2);
-    expect(existsSync(join(outputDir, "a.webp"))).toBe(true);
-    expect(existsSync(join(outputDir, "b.webp"))).toBe(true);
-  });
-
-  it("skips output directory to avoid recursion", async () => {
-    const imagesDir = join(tempDir, "images");
-    const outputDir = join(imagesDir, "optimized");
-    mkdirSync(outputDir, { recursive: true });
-
-    const { Image } = require("bun");
-    const src = new Image("/Users/mwolff/bit/shibumistack.dev/public/brand/logos/favicon.png");
-    const pngBuf = await src.bytes("png");
-    writeFileSync(join(imagesDir, "photo.png"), pngBuf);
-    writeFileSync(join(outputDir, "photo.webp"), pngBuf);
-
-    const stats = await optimizeImages(imagesDir, outputDir);
-
-    expect(stats.files).toBe(1); // only the original, not the cached one
-  });
-
-  it("handles missing directory", async () => {
-    const stats = await optimizeImages("/nonexistent", "/nonexistent");
-    expect(stats.files).toBe(0);
+  it("fails on unavailable templates with exit 1 and no output paths", () => {
+    const r = runCli(["my-app", "--yes", "--template", "web", "--no-install", "--no-git"]);
+    expect(r.code).toBe(1);
+    expect(r.stderr).toContain('Template "web" is not available in this build.');
+    expect(existsSync(join(work, "my-app"))).toBe(false);
   });
 });

@@ -1,5 +1,4 @@
 import { describe, it, expect } from "bun:test";
-import { execSync } from "child_process";
 import { readFileSync, existsSync, rmSync } from "fs";
 import { join } from "path";
 
@@ -12,7 +11,8 @@ describe("static build", () => {
     if (existsSync(DIST)) rmSync(DIST, { recursive: true });
 
     // Build
-    execSync("bun run build", { cwd: ROOT, stdio: "ignore" });
+    const build = Bun.spawnSync(["bun", "run", "build"], { cwd: ROOT });
+    expect(build.exitCode).toBe(0);
 
     // Check output
     expect(existsSync(join(DIST, "index.html"))).toBe(true);
