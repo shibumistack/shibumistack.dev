@@ -292,7 +292,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v41.ts");
+    const source = await app.request("/ship/v42.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -302,7 +302,9 @@ describe("routes", () => {
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).toContain("export function formatDevStartup");
-    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v41.ts"');
+    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v42.ts"');
+    expect(sourceBody).toContain("dev.shibumistack.static.output");
+    expect(sourceBody).toContain("What are you shipping?");
     expect(sourceBody).toContain("--rollback if needed");
     expect(sourceBody).toContain("dev.shibumistack.source-tree");
     expect(sourceBody).toContain('"--no-cache"');
@@ -332,13 +334,13 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v39.ts");
-    const installer = await app.request("/ship/install-v39.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v40.ts");
+    const installer = await app.request("/ship/install-v40.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v41.ts");
+    expect(installerBody).toContain("ship/v42.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');

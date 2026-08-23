@@ -3,7 +3,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import packageJson from "../package.json";
-import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, deploymentStatusSummary, dockerCredentialHelpers, domainFromProject, formatDevStartup, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseDeployStatus, parseShipArgs, prebuiltImage, prebuiltLabels, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, stripDockerDesktopLinks, supportsTerminalColor, terminalHistory, validateConfig } from "../scripts/ship";
+import { appIdForDomain, canFollowDeployment, clientSettingsPath, composeFileFromTracked, composeFrontend, deploymentFileTemplates, deploymentModeForTrigger, deploymentStatusSummary, dockerCredentialHelpers, domainFromProject, formatDevStartup, formatDuration, immutableShipSource, isAgentExecution, latestDeployDuration, matchingWebhook, missingComposeMessage, parseDeployStatus, parseShipArgs, prebuiltImage, prebuiltLabels, prepareStaticContext, protectedPushBlocked, removeDockerCredentialHelper, repositoryFromRemote, setupDomain, shouldAnimateProgress, shouldCheckForShipUpdate, shouldTriggerRedeploy, staticComposeLabels, staticConfigFromCompose, staticDeploymentFileTemplates, staticHttpdConf, staticOutputDirProblem, staticServerSource, stripDockerDesktopLinks, supportsTerminalColor, terminalHistory, validateConfig } from "../scripts/ship";
 
 const config = {
   version: 1,
@@ -68,6 +68,8 @@ describe("ship configuration", () => {
       dev: false,
       rebuild: false,
       yes: true,
+      staticSite: false,
+      spa: false,
       server: "deploy@example-vps",
       domain: "app.example.com",
     });
@@ -271,5 +273,82 @@ describe("ship configuration", () => {
     expect(validateConfig({ ...config, trigger: "github-push" })).toMatchObject({ trigger: "github-push" });
     expect(() => validateConfig({ ...config, trigger: "other" })).toThrow("invalid");
     expect(() => validateConfig({ ...config, webhookUrl: "https://attacker.example/hook" })).toThrow("invalid");
+  });
+});
+
+describe("static output shipping", () => {
+  test("parses static setup options and enforces flag rules", () => {
+    expect(parseShipArgs(["--setup", "--static", "--output-dir", "dist", "--build-script", "build", "--spa"])).toMatchObject({
+      setup: true, staticSite: true, outputDir: "dist", buildScript: "build", spa: true,
+    });
+    expect(() => parseShipArgs(["--static"])).toThrow("require --setup");
+    expect(() => parseShipArgs(["--setup", "--output-dir", "dist"])).toThrow("require --static");
+    expect(() => parseShipArgs(["--setup", "--static", "--output-dir", "/abs"])).toThrow("relative");
+    expect(() => parseShipArgs(["--setup", "--static", "--build-script", "rm -rf"])).toThrow("script name");
+  });
+
+  test("rejects unsafe output directories", () => {
+    expect(staticOutputDirProblem("dist")).toBeUndefined();
+    expect(staticOutputDirProblem("build/site")).toBeUndefined();
+    expect(staticOutputDirProblem("/dist")).toContain("relative");
+    expect(staticOutputDirProblem("../up")).toContain("segments");
+    expect(staticOutputDirProblem("a/./b")).toContain("segments");
+    expect(staticOutputDirProblem("")).toContain("required");
+  });
+
+  test("compose labels round-trip the static config", () => {
+    for (const config of [
+      { outputDir: "dist", buildScript: "build", spa: false },
+      { outputDir: "_site", buildScript: undefined, spa: true },
+    ]) {
+      const compose = staticDeploymentFileTemplates(config)["compose.yaml"]!;
+      expect(staticConfigFromCompose(compose)).toEqual(config);
+    }
+    expect(staticConfigFromCompose("services:\n  app:\n    build: .\n")).toBeUndefined();
+    expect(() => staticConfigFromCompose(`services:\n  app:\n    labels:\n      dev.shibumistack.static.output: "../up"\n`)).toThrow("invalid");
+  });
+
+  test("static templates package only output with the pinned runtime", () => {
+    const plain = staticDeploymentFileTemplates({ outputDir: "dist", buildScript: "build", spa: false });
+    expect(plain.Dockerfile).toContain("FROM scratch");
+    expect(plain.Dockerfile).toContain("busybox:1.37-musl@sha256:");
+    expect(plain.Dockerfile).toContain("COPY --chown=65534:65534 dist /www");
+    expect(plain.Dockerfile).not.toContain("RUN");
+    expect(plain[".dockerignore"]).toBe("*\n!dist\n");
+    expect(plain["compose.yaml"]).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
+
+    const spa = staticDeploymentFileTemplates({ outputDir: "out", spa: true });
+    expect(spa.Dockerfile).toContain("oven/bun:alpine");
+    expect(spa.Dockerfile).toContain("USER bun");
+    expect(spa[".dockerignore"]).toContain("!scripts/static-server.ts");
+    expect(staticServerSource("out")).toContain("Bun.serve");
+  });
+
+  test("httpd.conf includes E404 only when 404.html exists", () => {
+    expect(staticHttpdConf(true)).toContain("E404:404.html");
+    expect(staticHttpdConf(false)).not.toContain("E404");
+    expect(staticHttpdConf(false)).toContain("I:index.html");
+  });
+
+  test("prepareStaticContext verifies output and writes httpd.conf", async () => {
+    const context = await mkdtemp(join(tmpdir(), "ship-static-"));
+    try {
+      const ok = async () => ({ exitCode: 0, stdout: "", stderr: "" });
+      await Bun.write(join(context, "dist", "index.html"), "<h1>hi</h1>");
+      await Bun.write(join(context, "dist", "404.html"), "nope");
+      await prepareStaticContext(context, { outputDir: "dist", spa: false }, ok);
+      expect(await readFile(join(context, "dist", "httpd.conf"), "utf8")).toContain("E404:404.html");
+
+      await expect(prepareStaticContext(context, { outputDir: "missing", spa: false }, ok)).rejects.toThrow("not in the commit");
+      await Bun.write(join(context, "empty", ".keep"), "");
+      await expect(prepareStaticContext(context, { outputDir: "empty", spa: false }, ok)).rejects.toThrow("no index.html");
+      await Bun.write(join(context, "package.json"), JSON.stringify({ scripts: {} }));
+      await expect(prepareStaticContext(context, { outputDir: "dist", buildScript: "build", spa: false }, ok)).rejects.toThrow('no "build" script');
+      const failingBuild = async (args: string[]) => ({ exitCode: args[1] === "run" ? 1 : 0, stdout: "", stderr: "boom" });
+      await Bun.write(join(context, "package.json"), JSON.stringify({ scripts: { build: "x" } }));
+      await expect(prepareStaticContext(context, { outputDir: "dist", buildScript: "build", spa: false }, failingBuild)).rejects.toThrow("static build failed");
+    } finally {
+      await rm(context, { recursive: true, force: true });
+    }
   });
 });
