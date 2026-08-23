@@ -23,16 +23,16 @@ The site copy is the contract; this plan closes the gap between it and the proto
 - Creation is atomic: temp sibling directory, verify, rename into place; failure or cancellation leaves destination absent; never overwrites an existing path. "Deploy now" = Yes runs as an explicit post-create phase with its own cancellation semantics, after the rename; it may touch SSH config and server state, never half-written projects. v1
 - Git init optional; CLI never stages or commits. v1
 - Nanostores absent until shared browser state exists. v1 by omission
-- Blog, SPA, AI, framework-specific templates. later. Owner is authoring Astro templates (2026-08-23); when they land (0.1.0 if ready before the gate, else 0.2) they follow the static-path template contract plus the astro-blog contract below.
+- Blog, SPA, AI, framework-specific templates. later. The Astro `blog` template shipped 2026-08-23 (contract below, id `blog`); further framework templates follow the same pattern.
 
-### astro-blog template contract (pinned 2026-08-23, build target for owner-authored templates)
+### blog template contract (template id `blog`, shipped 2026-08-23)
 - Standard static-path contract: pinned deps, committed bun.lock, pack-safe `gitignore` (node_modules/, dist/, .astro/), agents.md six sections, ship scripts with `ship:setup --static --output-dir dist --build-script build`, no Dockerfile/compose (ship generates).
 - Design: Nue-blog structure (name-only hairline header, one ~650px column, whole-block post links of date/title/excerpt, no cards or boxes, content-as-demo with real posts and zero template meta-copy) skinned with shibumi.css tokens (paper/ink palette, persimmon accent, serif h1-h3). CSS stays one small file, @layer + native nesting, semantic selectors.
 - Content collection schema enforces SEO: title max 60, description 50-160 (drives meta + RSS), date, optional ogImage falling back to a static `public/og-default.png`. No generated OG images in v1.
 - RSS via pinned @astrojs/rss at `/rss.xml` with head autodiscovery link; sitemap via pinned @astrojs/sitemap plus `public/robots.txt` with the Sitemap line; BaseHead component emits title, description, canonical, og:*, twitter:card, article:published_time; optional JSON-LD BlogPosting.
 - Agentic surface: generated `/llms.txt` endpoint (H1, blockquote summary, per-post links to markdown alternates) and a `[id].md.ts` endpoint emitting every post as plain markdown at `posts/<id>.md`; each post's HTML head links `rel="alternate" type="text/markdown"`.
 - Gotchas: `site` must be set in astro.config.mjs before first ship (sitemap/RSS/canonicals need it; agents.md checks-before-commit item); keep `build.format: "directory"` so BusyBox httpd serves clean URLs; `.md` MIME already mapped in ship v42's httpd.conf; `.xml:application/xml` mapping ships with the next ship revision (v43 batch) so RSS/sitemap serve with the right content type.
-- Selector: "Static site" gains a "Start from" follow-up (Plain files default, Astro templates listed) backed by real template ids (`astro-blog`) so `--template astro-blog` works non-interactively.
+- Selector: "Static site" gains a "Start from" follow-up (Plain files default, Astro templates listed) backed by real template ids so `--template blog` works non-interactively. Shipped 2026-08-23 with clack 1.7 (0.7 dropped keystrokes under agent-driven ptys).
 
 ### Deploy
 - VPS or homelab only, via shibumi-server; Cloudflare, Vercel, Fly.io deferred until they pass the same tests. v1
