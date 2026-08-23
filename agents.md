@@ -213,6 +213,10 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 
 ## Gotchas
 
+- Bun base image stays floating `oven/bun:alpine` everywhere (site Dockerfile + ship/CLI templates); owner decision 2026-08-23, no version or digest pins. Don't switch to `slim`: measured ~2x larger than alpine (241–264MB vs 131MB unpacked per arch), and slim lacks wget/curl so the wget healthcheck in `shibumi-cli/src/utils.ts` breaks. Slim only becomes relevant if a template gains a glibc-only native dep (sharp, better-sqlite3).
+- `shibumi-cli` `bun test` has 3 pre-existing failures in `src/templates/static/test/build.test.ts` (execSync); not a regression from your change.
+- `shibumi-cli/blog/` is gitignored (`shibumi-cli/.gitignore:7`); edits there never show in `git status` or land in commits.
+
 - Theme choice is per-origin `localStorage`, so a visitor's light/dark pick does not follow them between shibumistack.dev and the server/forms subdomains. Sharing it would need a cookie on `.shibumistack.dev`.
 - `shibumi.css` must never style bare element selectors that page content can contain: a bare `header` rule pinned card/section headers in consuming apps as fixed blurred bars that swallowed clicks. Scope shared components (`.shell > header`, `.site-header`).
 - After editing `public/shibumi.css`, re-run the sync scripts in `../shibumi-server` and `../shibumi-forms` (or `cp` directly); vendored copies drift silently otherwise.
