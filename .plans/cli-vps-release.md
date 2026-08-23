@@ -7,7 +7,7 @@ The site copy is the contract; this plan closes the gap between it and the proto
 ### Commands
 - `bun create shibumi@latest my-app`, then `cd my-app && bun dev`. v1 (site)
 - `bunx create-shibumi` works equivalently. v1 (package quality, not site copy)
-- Strict flags: `--yes`, `--no-git`, `--no-install`, `--help`, `--version`, plus non-interactive answers (`--template`, `--output-dir`, `--build-script`, `--spa`) so packed tests can scaffold without prompts; unknown flags rejected. v1 (package quality)
+- Strict flags: `--yes`, `--no-git`, `--no-install`, `--help`, `--version`, plus `--template` for non-interactive scaffolds; unknown flags rejected. v1 (package quality). `--output-dir`/`--build-script`/`--spa` dropped 2026-08-23 (ws7): ship:setup owns those choices, the static template pins `--static --output-dir public`, and the packed matrix needs only `--template`.
 - Generated package scripts: `dev`, `dev:app`, `start`, `build`, `test`, `check`, `ship`, `ship:setup`, `ship:update`, `ship:status`, `ship:logs` with the exact command strings on /dx. Static template gets its own published exact script table (no app server). v1
 - `bun ship` flow and flags (`--rebuild`, `--rollback`, `-y`; read-only `ship:status`/`ship:logs`). v1, carried by the released owned Ship client; CLI vendors it, never rewrites it.
 - `bun run shibumi add <name>` extension installer with dry-run preview and conflict stop, shipping with auth and email extensions. v1 (owner decision 2026-08-23). Uploads is a named 0.2 fast-follow.
