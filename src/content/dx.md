@@ -8,9 +8,9 @@ Shibumi writes files into a project. Generated apps run on their chosen librarie
 
 The package supports one deploy target, a Linux VPS running `shibumi-server`. It offers three starting points:
 
-- static output from any framework or plain files
-- a Bun, Hono, Zod, and Alpine web app
-- the web app plus Drizzle and SQLite
+- a Bun, Hono, Zod, and Alpine web app plus Drizzle and SQLite (recommended)
+- the same web app without a database
+- a static site from any framework's build output or plain files
 
 Nanostores joins only when separate browser components need shared state.
 
@@ -25,9 +25,12 @@ The CLI asks only what changes generated files:
 ```text
 What are you shipping?
 
-● Static output
+● Bun full-stack app (recommended)
+    Hono, Alpine, and SQLite with migrations and backups
   Bun web app
-  Bun full-stack app
+    Hono, Alpine, and Zod; no database
+  Static site
+    Any framework's build output: dist/, public/, _site/, or plain files
 
 Deploy to a VPS now?
 

@@ -4,7 +4,7 @@ This page records product choices that should survive implementation changes.
 
 ## What works now
 
-`create-shibumi` creates a static site, a Bun web app, or a SQLite full-stack app. All three include VPS deployment.
+`create-shibumi` creates a SQLite full-stack app, a Bun web app, or a static site. All three include VPS deployment.
 
 [`shibumi-server`](/docs/server) deploys apps to Linux VPS and homelab hosts with rootless Podman, Caddy, and systemd. [Ship](/docs/server/ship) adds committed deployment config and owned TypeScript to an existing Bun project.
 
