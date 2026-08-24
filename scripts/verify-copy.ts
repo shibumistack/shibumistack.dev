@@ -5,12 +5,12 @@
 //   bun run verify:copy [path-to-create-shibumi]
 //
 // Fails (exit 1) on any drift, listing every finding. The create-shibumi
-// checkout defaults to ../create-shibumi.
+// checkout defaults to ../shibumi-create (repo/package name stays create-shibumi).
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const SITE = resolve(import.meta.dir, "..");
-const CLI_REPO = resolve(process.argv[2] ?? join(SITE, "..", "create-shibumi"));
+const CLI_REPO = resolve(process.argv[2] ?? join(SITE, "..", "shibumi-create"));
 
 const findings: string[] = [];
 function drift(finding: string): void {
