@@ -67,6 +67,7 @@ const namesCache = new Map<string, Set<string>>();
 
 const assetVersion = createHash("sha256")
   .update(readFileSync("public/shared.css"))
+  .update(readFileSync("public/shibumi.css"))
   .update(readFileSync("public/main.js"))
   .digest("hex")
   .slice(0, 12);
