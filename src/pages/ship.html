@@ -18,6 +18,7 @@
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
                     <p>The installer checks the Git root, adds Ship source and package commands, and starts setup. It never replaces an edited <code>scripts/ship.ts</code>.</p>
                     <p>Setup suggests a domain, asks for the SSH target you already use, and registers the current branch. Choose <strong>Run bun ship</strong> or <strong>Deploy every GitHub push</strong>. Run <code>bun ship:setup</code> again to switch.</p>
+                    <p>In Ship mode, setup ends with a <strong>Ship now?</strong> confirm: Enter runs the first deploy in the same run.</p>
                     <p>When no tracked Compose file exists, setup can generate a Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and <code>.dockerignore</code>. Review and commit them before resuming. Existing files are never replaced.</p>
                     <p>Direct Ship mode deploys over SSH and can disable the matching webhook. Deploy-on-push creates or repairs that webhook. Pending DNS or GitHub changes leave generated files in place with a command to resume.</p>
                     <p><strong>Cloudflare:</strong> Deploy-on-push requires <strong>Full (strict)</strong> SSL/TLS mode for proxied domains.</p>
