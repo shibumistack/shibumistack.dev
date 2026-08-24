@@ -28,6 +28,8 @@ The installer checks the Git root, adds Ship source and package commands, and st
 
 Setup suggests a domain from the package name or Compose `SITE_URL`. It asks for the SSH target you already use and registers the current branch. Choose **Run bun ship** or **Deploy every GitHub push**. The first option is recommended and records a `ship` trigger in committed `shibumi-server.json`.
 
+In Ship mode, setup ends with a **Ship now?** confirm: Enter runs the first deploy in the same run. Declining prints the command for later.
+
 SSH targets stay in mode-`0600` `~/.config/shibumi/config.json`, or `$XDG_CONFIG_HOME/shibumi/config.json`. Projects can reuse one saved server or choose among several. Password login works once per run because Ship reuses its temporary SSH connection.
 
 When no tracked Compose file exists, setup can generate a Bun `Dockerfile`, loopback-only `compose.yaml`, and `.dockerignore`. Existing files are never replaced. Review and commit generated files before resuming:
