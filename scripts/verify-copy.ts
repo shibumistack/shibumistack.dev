@@ -106,11 +106,12 @@ if (/(^|\s)bun check(\s|$)/m.test(docsCli)) drift('docs/cli says "bun check"; ge
 // 5. Extensions copy vs the shipped bundle list --------------------------------
 
 const lock = JSON.parse(read(join(CLI_REPO, "scripts", "shibumi.lock.json"))) as {
-  extensions: string[];
+  extensions: Array<{ name: string; version: string }>;
 };
+const shipped = new Set(lock.extensions.map((entry) => entry.name));
 const extensionsMd = read(join(SITE, "src", "content", "extensions.md"));
 const extensionsHtml = read(join(SITE, "src", "pages", "extensions.html"));
-for (const name of lock.extensions) {
+for (const name of shipped) {
   const heading = new RegExp(`^### ${name}`, "im");
   if (!heading.test(extensionsMd)) drift(`extensions.md has no section for shipped extension "${name}"`);
   if (!extensionsHtml.includes(`id="${name}"`)) drift(`extensions.html has no entry for shipped extension "${name}"`);
@@ -118,10 +119,10 @@ for (const name of lock.extensions) {
 for (const match of extensionsMd.matchAll(/^### (\w[\w-]*)( \(planned\))?/gim)) {
   const name = match[1]!.toLowerCase();
   const planned = match[2] !== undefined;
-  if (!planned && !lock.extensions.includes(name)) {
+  if (!planned && !shipped.has(name)) {
     drift(`extensions.md claims "${name}" without marking it planned, but the package does not ship it`);
   }
-  if (planned && lock.extensions.includes(name)) {
+  if (planned && shipped.has(name)) {
     drift(`extensions.md marks shipped extension "${name}" as planned`);
   }
 }
