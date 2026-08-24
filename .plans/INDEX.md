@@ -2,6 +2,7 @@
 
 ## Active
 
+- [ ] **Flow simplification** (`.plans/flows.md`): create menu to 3 templates (web template deleted), 2-question plan-summary setup, webhook out of default path behind new `bun ship:webhook`, adopt mode (`bun create shibumi .`), shis day-2 fixes (`set-repository`, PATH, remove/add outros). Lands as create-shibumi 0.3.0 + ship v48 + shibumi-server 0.10.7, after 0.2.9 ships unmixed. Full docs/pages sweep required, incl. homepage replay re-record.
 - [ ] Cut and publish create-shibumi 0.2.9 (0.2.8 on npm matches only its release commit; 16 later commits — Ship v47 vendor, static clack dep fix, favicon/generator meta, static landing restyle, full blog polish (hero mark, view transitions, drafts, Pexels images, ghost pill, unslopped posts) — are unpublished). 0.2.9 sums 11, golden-legal.
 - [ ] Restore kunstfy.com when dogfooding ends: `~/bit/backups/kunstfy.com-2026-08-24/RESTORE.md`; `shis remove` each of kunstfy.com, web/blog/static.kunstfy.com on alpha; delete the four CF A records; delete private bitbonsai/kunstfy-* repos if unwanted.
 - [ ] amd64 dogfood host: run the live VPS leg (setup, ship, env, rollback) on amd64; alpha is arm64-only, CI covers the amd64 container path.
