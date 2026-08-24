@@ -10,7 +10,7 @@ bun run shibumi add <name>
 
 Before writing, the command lists new files, edits, dependencies, environment variables, migrations, and `agents.md` changes; `--dry-run` stops after the preview and writes nothing. Existing files stop the install; move them aside and re-run. Running the same install twice must not duplicate code.
 
-Extensions are removable: `bun run shibumi remove <name>` deletes the installed code and reverses the edits. Tables are never dropped by tooling.
+Extensions are removable: `bun run shibumi remove <name>` deletes the installed code and reverses the edits. Tables are never dropped by tooling. `shi` is the short alias for the same script: `bun shi add auth`.
 
 ## What an extension contains
 
