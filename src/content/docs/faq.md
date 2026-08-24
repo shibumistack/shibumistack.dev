@@ -1,37 +1,37 @@
 # FAQ
 
-Questions that come up in real projects, with the reasoning behind the behavior.
+Every question here came from a real deploy hitting a real wall. The answers explain what the tooling did and why it was right to do it.
 
 ## Why do I need to push if Ship uploads the image?
 
-Because the server refuses to run anything it cannot verify. Every image is labeled with the commit and Git tree it was built from. At deploy time the server fetches that commit from GitHub, resolves the tree independently, and compares both against the image labels. If they do not match, nothing starts. The push is what makes the commit visible to the server for that check.
+The server refuses to run anything it cannot verify. Every image carries labels naming the commit and Git tree it was built from. Before starting anything, the server fetches that commit from GitHub, resolves the tree itself, and compares both against the labels. No match, no deploy. The push exists so the server can see the commit it is checking against.
 
-You never push manually: `bun ship` builds from committed HEAD, uploads the image, then pushes, then asks the server to deploy. The only manual push is the first one, when the repository is created and setup clones it server-side.
+You don't push manually. `bun ship` builds from committed HEAD, uploads the image, then pushes, then asks the server to deploy. The one manual push is the first one, when the repository is new and setup clones it server-side.
 
 ## Why did Ship stop with "working tree has uncommitted changes"?
 
-Ship builds from committed HEAD only, using `git archive`. Uncommitted files are invisible to the build, so a dirty tree means the deployed app would silently differ from what you see locally. Commit or stash, then run `bun ship` again.
+Ship builds with `git archive`, which packs committed HEAD and nothing else. Your uncommitted edits would not be in the deployed app, and you would not find out until production disagreed with your editor. Ship stops instead. Commit or stash, run `bun ship` again.
 
 ## Does `bun dev` work before I set up a server?
 
-Yes. Without `shibumi-server.json` it runs the app on port 9000; after setup it uses the app's registered port. Registered apps get the first free port above 9000, so local and deployed behavior match.
+Yes. Without `shibumi-server.json` the app runs on port 9000. After setup it runs on the port the server assigned, which is also the first free port above 9000, so the number in your terminal is the number in production.
 
 ## Where does my data live, and does rollback touch it?
 
-SQLite lives on a volume at `/data`, outside the image. Deploys and rollbacks swap images only; the database is untouched. The scaffold's counter demonstrates this: increment it, deploy, roll back, and the count is still there. Backups run automatically before each migration.
+SQLite sits on a volume at `/data`, outside the image. Deploys and rollbacks swap images; the database never moves. The scaffold's counter is the proof: increment it, deploy, roll back, and the count is still there. Each migration also writes a backup before it runs.
 
 ## Where do secrets and per-deploy config go?
 
-On the server, never in the repository: `bun ship:env set KEY=value`, applied to the container at the next deploy. Values survive rollback and are listed by name only. Tunable non-secret limits live in committed `src/config/*.yaml` files instead. See [Environment and secrets](https://server.shibumistack.dev/docs/app-env).
+On the server. `bun ship:env set KEY=value` stores them there and injects them into the container at the next deploy. They survive rollback, never enter the repository, and `list` prints names without values. Non-secret tunables (upload limits, rate windows) belong in committed `src/config/*.yaml` files instead. Details in [Environment and secrets](https://server.shibumistack.dev/docs/app-env).
 
 ## Why do my form POSTs return 403 in production?
 
-The CSRF check compares the browser's `Origin` header against `APP_ORIGIN`. If `APP_ORIGIN` is unset or wrong, every form submission is refused. Set it with `bun ship:env set APP_ORIGIN=https://your-domain` and redeploy. JSON API calls are unaffected.
+The CSRF check compares the browser's `Origin` header against `APP_ORIGIN`. Unset or wrong, and every form submission is refused, while JSON API calls keep working, which makes this one confusing to debug. Fix: `bun ship:env set APP_ORIGIN=https://your-domain`, then redeploy.
 
 ## Why can't I register the admin email?
 
-Addresses in `ADMIN_EMAILS` are reserved from self-service registration so nobody can claim the admin account before you. Sign in with a login link (proves inbox control) or seed the account; `agents/admin.md` in your project has both paths.
+Addresses in `ADMIN_EMAILS` are blocked from self-service registration so an attacker cannot claim your admin account by signing up first. Sign in with a login link, which proves you control the inbox, or seed the account directly; `agents/admin.md` in your project shows both.
 
 ## Can I add a write endpoint to the scaffold?
 
-The templates ship one deliberate unauthenticated mutation, the demo counter: a single clamped row with a rate limit. For anything touching user data, add authentication first (`bun shi add auth`) and put the route behind `requireAuth`. The route-guard test will remind you.
+The templates ship exactly one unauthenticated mutation on purpose, the demo counter: one shared row, clamped by a database constraint, rate-limited per IP. Anything that touches user data needs authentication first (`bun shi add auth`) and a `requireAuth` guard on the route. If you forget, the route-guard test fails and reminds you.
