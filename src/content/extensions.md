@@ -18,9 +18,10 @@ An extension may include:
 
 - source files with fixed target paths
 - exact edits to existing project files
-- npm dependencies (neither bundled extension needs any)
+- npm dependencies (none of the bundled extensions need any)
 - environment variable names, never values
 - a database migration, numbered into the project's migration stream at install time
+- an editable config file (`src/config/<name>.yaml`) for tunable limits
 - fixture tests
 - a named guide such as `agents/auth.md`
 
@@ -54,7 +55,7 @@ A Resend-backed send helper over plain fetch, environment validation, HTML-escap
 
 ### Uploads
 
-Authenticated file uploads. Type is decided by magic-byte sniffing (PNG, JPEG, GIF, WebP, PDF), never the client filename or `Content-Type`. Files are stored content-addressed (sha256) on the persistent volume with per-user and per-request size limits, a per-user quota, and an upload rate limit; serving is owner-scoped and forced to download. Needs auth and the full-stack database. No tables are dropped on removal.
+Authenticated file uploads. Type is decided by magic-byte sniffing (PNG, JPEG, GIF, WebP, PDF), never the client filename or `Content-Type`. Files are stored content-addressed (sha256) on the persistent volume with per-user and per-request size limits, a per-user quota, and an upload rate limit (all in `src/config/uploads.yaml`, default 5 MiB per file); serving is owner-scoped and forced to download. Needs auth and the full-stack database. No tables are dropped on removal.
 
 ### Admin
 
@@ -90,6 +91,10 @@ An extension keeps its instructions in a named file and merges a marked section 
 
 Packed CLI tests install each bundled extension into fixture projects scaffolded from the tarball, run their tests and checks, and prove removal restores the scaffold byte for byte. Installation touches no network, runs no lifecycle scripts, and refuses paths outside the project root, including through symlinks.
 
+## Config
+
+An extension with tunable limits ships a YAML file at `src/config/<name>.yaml`, with comments and human units. The code imports it, so `bun build` bundles the values into the image: the running config always matches the commit that built it, with no server-side drift. Change a limit by editing the file and running `bun ship`. A loader validates every value at startup and refuses to boot on a bad one, so a typo fails the health check instead of silently disabling a limit. Deployment-specific values (secrets, admin emails, sender addresses) stay in environment variables, never in the committed config.
+
 ## Package layout
 
 ```text
@@ -99,6 +104,8 @@ agents/
   feature.md
 files/
   src/
+    config/
+      feature.yaml
     ...
 ```
 
