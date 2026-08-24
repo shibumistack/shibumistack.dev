@@ -2,10 +2,10 @@
 
 ## Active
 
-- [ ] Publish `shibumi-server` 0.10.6 to npm (manual/owner). npm still serves 0.10.4 without `shis env`, so a fresh server install cannot run `bun ship:env` from a 0.2.0-scaffolded project. Ship v45 requires server >= 0.10.6.
+- [ ] Cut and publish create-shibumi 0.2.9 (0.2.8 on npm matches only its release commit; 16 later commits — Ship v47 vendor, static clack dep fix, favicon/generator meta, static landing restyle, full blog polish (hero mark, view transitions, drafts, Pexels images, ghost pill, unslopped posts) — are unpublished). 0.2.9 sums 11, golden-legal.
+- [ ] Restore kunstfy.com when dogfooding ends: `~/bit/backups/kunstfy.com-2026-08-24/RESTORE.md`; `shis remove` each of kunstfy.com, web/blog/static.kunstfy.com on alpha; delete the four CF A records; delete private bitbonsai/kunstfy-* repos if unwanted.
 - [ ] amd64 dogfood host: run the live VPS leg (setup, ship, env, rollback) on amd64; alpha is arm64-only, CI covers the amd64 container path.
-- [ ] Ship v46 batch: fix github-push setup outro ("git push deploys automatically" but the setup commit is local-only; say `git push origin <branch> to deploy`). k3 LOW from the v45 review.
-- [ ] Restore kunstfy.com when dogfooding ends: `~/bit/backups/kunstfy.com-2026-08-24/RESTORE.md` + `shis remove kunstfy.com` on alpha.
+- [ ] Full-stack path never re-verified from npm on a real domain after the local dir was deleted mid-test: counter-survives-rollback on a deployed 0.2.8+ scaffold is still unproven end-to-end (blog/static/web legs all passed live).
 - [ ] Dogfood static output across Netlify, Cloudflare, and Vercel after VPS-first release (`.plans/create-shibumi.md`).
 - [ ] Add protected-branch PR flow to owned ship client, including exact merged-SHA handoff.
 
@@ -16,11 +16,12 @@
 - [ ] More Astro templates (landing page etc.) per the blog template contract in `.plans/cli-vps-release.md`.
 - [ ] Ship-client trust-model hardening (signed install manifest, pinned digests, POSIX-quoted remote args) — deliberate self-hosted trust decisions, owner call.
 
-## Recently shipped (2026-08-24)
+## Recently shipped (2026-08-24, second wave)
 
-- [x] **create-shibumi 0.2.0 published to npm** (tag `v0.2.0`, registry sha256 `a5b090bd…`). `bun create shibumi@latest` real; cold-verified all four templates + extension cycle from the registry. Closes the site-copy-ahead-of-release gap open since 2026-08-22. Repo dir renamed to `../shibumi-create` (package name stays `create-shibumi`).
-- [x] Real VPS dogfood end-to-end on kunstfy.com → alpha: DNS via Cloudflare API, setup, `ship:env`, deploy, auth/uploads/admin live, rollback with env retention, remove + re-add from zero. Caught and fixed: CSRF-behind-TLS-proxy 403s (extensions 1.0.1, `csrfOptions()` pinned to APP_ORIGIN + scheme check), stale env store after `shis remove`, admin console-seed doc impossible in prebuilt containers, same-version source-install init no-op.
-- [x] Ship v45: setup ends with "Ship now?" confirm, Enter runs the first deploy. Upgrade path verified live (v44→v45 via `bun ship:update`). Installer `install-v43` pins v45.
-- [x] shibumi-server 0.10.6 on alpha (source install): `shis env` hardened per k3 review (rollback re-injects env, reserved keys rejected at set, stdin cap, 0700/0600 + temp-rename, env store deleted on app removal).
-- [x] Docs: `/docs/app-env` (environment and secrets) on server site, `ship:env` in command tables, fresh-VPS prep guide (rent → harden → linger → DNS) as an expand on `/docs/install`, Ship-now flow in both `/ship` pages.
-- [x] Adversarial reviews: k3 on shis env diff (1 MED + 4 LOW, all fixed), k3 on release tarball + CSRF fix (MED scheme gap fixed), k3 on v45 prompt (ok, 1 LOW queued as v46).
+- [x] **shibumi-server 0.10.6 on npm**; install chain site → v0.10.6 install.sh → npm verified. `shis update` on alpha agrees with source install.
+- [x] **create-shibumi 0.2.1–0.2.8 published** through the day (branded installer, `shi` alias, clean test output, Ship v46 `bun dev` pre-setup). npm 0.2.8 == commit 1bdb699 only; later polish awaits 0.2.9.
+- [x] **Ship v47 live**: `--no-spa` (pinned in blog/static), commit-and-continue after deploy-file generation, generated compose drops `init: true` (catatonit exit-125 trap found by the blog deploy).
+- [x] **Template dogfood on real domains**: blog.kunstfy.com (first real static pipeline deploy; RSS/sitemap `application/xml` proven, llms.txt, md alternates, clean URLs), static.kunstfy.com, web.kunstfy.com. Findings fixed: static template missing clack dep, generated-compose init, SPA question on preconfigured setups.
+- [x] **Design pass everywhere**: kozo paper background site-only (canonical shibumi.css, pure-blur header), noise texture removed, cache-hash asset links on both sites, `/extensions` folded into docs as `/docs/cli/extensions` with `bun shi` canonical, FAQ page at `/docs/faq`, docs sidebar sans labels, rotate-cw replay icons.
+
+Archived plans: .plans/.archive/
