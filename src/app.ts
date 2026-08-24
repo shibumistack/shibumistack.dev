@@ -74,6 +74,7 @@ const assetVersion = createHash("sha256")
 const docs: DocPage[] = [
   { path: "", title: "Shibumi docs", description: "Reference for create-shibumi, extensions, Forms, Server, and Ship.", section: "Start", source: "src/content/docs/index.md" },
   { path: "decisions", title: "Product and server choices", description: "Recorded choices for generated projects, extensions, deployment, and operations.", section: "Start", source: "src/content/docs.md" },
+  { path: "faq", title: "FAQ", description: "Why push with a prebuilt image, dirty-tree stops, data across rollbacks, secrets, CSRF 403s.", section: "Start", source: "src/content/docs/faq.md" },
   { path: "forms", title: "Forms overview", description: "Collect static-site submissions with plain HTML and one SQLite database.", section: "Forms", source: "src/content/forms.md" },
   { path: "server", title: "Server overview", description: "Deploy signed GitHub pushes to rootless Podman behind Caddy.", section: "Server", source: "src/content/server.md" },
   { path: "server/install", title: "Install server", description: "Prepare a Linux host and install a pinned shibumi-server release.", section: "Server", source: "src/content/docs/server/install.md" },
