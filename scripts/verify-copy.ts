@@ -94,7 +94,7 @@ for (const [file, content] of [
   }
 }
 for (const [file, content] of [["index.md", index], ["docs/cli/index.md", docsCli]] as const) {
-  if (!content.includes("bun run shibumi add auth")) {
+  if (!content.includes("bun shi add auth")) {
     drift(`${file}: printed extension command missing`);
   }
 }
