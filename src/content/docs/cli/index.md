@@ -78,13 +78,13 @@ Release checks use a disposable VPS fixture for setup, exact image upload, deplo
 
 ## Extensions
 
-Bun web and full-stack projects include the versioned extension command. Add bundled auth or email source with:
+Bun web and full-stack projects include the versioned extension command. Add bundled auth, email, or uploads source with:
 
 ```sh
 bun run shibumi add auth
 ```
 
-The command previews writes, stops on conflicts, records a named guide under `agents/`, and does not duplicate files when repeated. Auth needs the full-stack database and refuses other paths. Uploads is planned as the next extension.
+The command previews writes, stops on conflicts, records a named guide under `agents/`, and does not duplicate files when repeated. Auth and uploads need the full-stack database; uploads also needs auth installed first.
 
 ## Deferred
 

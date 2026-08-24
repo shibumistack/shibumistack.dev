@@ -52,9 +52,9 @@ Cookie sessions with password and login-link sign-in. `Bun.password` hashing, sh
 
 A Resend-backed send helper over plain fetch, environment validation, HTML-escaping template rendering, webhook signature verification, and a fixture that proves template variables and delivery handling. No tables.
 
-### Uploads (planned)
+### Uploads
 
-Validated multipart input plus either local persistent storage or S3-compatible storage. File limits, generated names, content checks, and cleanup rules must ship with it. Planned as the next extension after v1.
+Authenticated file uploads. Type is decided by magic-byte sniffing (PNG, JPEG, GIF, WebP, PDF), never the client filename or `Content-Type`. Files are stored content-addressed (sha256) on the persistent volume with per-user and per-request size limits, a per-user quota, and an upload rate limit; serving is owner-scoped and forced to download. Needs auth and the full-stack database. No tables are dropped on removal.
 
 List installed and available extensions with:
 

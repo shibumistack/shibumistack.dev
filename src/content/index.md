@@ -49,7 +49,7 @@ Project code stays in Git. SSH targets stay on your computer. Webhook secrets an
 
 ## Extensions
 
-From a generated project, install auth or email as source (uploads is planned next):
+From a generated project, install auth, email, or uploads as source:
 
 ```sh
 bun run shibumi add auth

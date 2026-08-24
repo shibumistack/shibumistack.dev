@@ -127,9 +127,9 @@ for (const match of extensionsMd.matchAll(/^### (\w[\w-]*)( \(planned\))?/gim)) 
 }
 if (!extensionsMd.includes("bun run shibumi add <name>")) drift("extensions.md: add command missing");
 if (!extensionsMd.includes("bun run shibumi list")) drift("extensions.md: list command missing");
-if (!/uploads[\s\S]{0,200}?Planned/i.test(extensionsHtml)) {
-  drift("extensions.html: uploads entry is not marked planned");
-}
+// Every shipped extension must have an entry on both pages (checked above via
+// lock.extensions); a "(planned)" section must NOT name a shipped extension
+// (checked against the lock in the extensions loop).
 
 // 6. Manifest example fields must exist in the real manifest schema ------------
 
