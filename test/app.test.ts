@@ -380,14 +380,17 @@ describe("routes", () => {
     expect(res.headers.get("location")).toBe(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh`);
   });
 
-  test("serves extensions page", async () => {
-    const res = await app.request("/extensions");
-    const body = await res.text();
+  test("extensions moved into the docs", async () => {
+    const stub = await app.request("/extensions");
+    expect(stub.status).toBe(200);
+    expect(await stub.text()).toContain("/docs/cli/extensions");
 
+    const res = await app.request("/docs/cli/extensions");
+    const body = await res.text();
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("text/html");
     expect(body).toContain("Extensions");
-    expect(body).toContain("shibumi add");
+    expect(body).toContain("bun shi add");
     expect(body).toContain("auth");
     expect(body).toContain("uploads");
     expect(body).toContain("email");

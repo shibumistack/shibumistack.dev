@@ -16,7 +16,7 @@ type MediaRange = {
   quality: number;
 };
 
-const activePages = ["home", "docs", "forms", "server", "roadmap", "brand", "blog", "extensions"] as const;
+const activePages = ["home", "docs", "forms", "server", "roadmap", "brand", "blog"] as const;
 
 type ActivePage = (typeof activePages)[number];
 
@@ -84,6 +84,7 @@ const docs: DocPage[] = [
   { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
   { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
   { path: "cli", title: "create-shibumi CLI", description: "Create static, Bun web, and SQLite projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
+  { path: "cli/extensions", title: "Extensions", description: "Add auth, email, uploads, or admin source to a project with bun shi add.", section: "CLI", source: "src/content/docs/cli/extensions.md" },
   { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
 ];
 
@@ -748,6 +749,12 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
   assertNoInserts(layout);
   return layout;
 }
+
+// The standalone extensions page moved into the docs. A 200 stub (not a 30x)
+// so the static build writes a real file at the old URL.
+const EXTENSIONS_MOVED = '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Extensions: Shibumi Stack</title><meta http-equiv="refresh" content="0;url=/docs/cli/extensions"><link rel="canonical" href="https://shibumistack.dev/docs/cli/extensions"></head><body><p>Moved to <a href="/docs/cli/extensions">/docs/cli/extensions</a>.</p></body></html>';
+app.get("/extensions", (c) => c.html(EXTENSIONS_MOVED));
+app.get("/extensions.md", (c) => c.redirect("/docs/cli/extensions.md", 301));
 
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${serverVersion}/install.sh`, 302));
 app.get("/install/ship", (c) => c.redirect("/ship/install-v44.ts", 302));

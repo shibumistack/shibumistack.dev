@@ -80,7 +80,7 @@ Commit `shibumi-server.json` and `scripts/ship.ts`. Keep SSH targets in local co
 
 ## Extensions
 
-Bundled extensions copy reviewed source, tests, migrations, config, and a named agent guide into the app. See [Extensions](/extensions) for commands and package layout.
+Bundled extensions copy reviewed source, tests, migrations, config, and a named agent guide into the app. See [Extensions](/docs/cli/extensions) for commands and package layout.
 
 ## Deploy providers
 

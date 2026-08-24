@@ -8,7 +8,7 @@ This page separates working software from plans.
 - [`shibumi-server`](https://server.shibumistack.dev) for Linux VPS and homelab deployment
 - [Ship](/ship.md), the project-owned client for setup, status, logs, deployment, and rollback
 - [`create-shibumi`](/docs/cli.md) for SQLite full-stack, Bun web, and static site projects
-- [Extensions](/extensions.md) for bundled auth, email, and uploads source
+- [Extensions](/docs/cli/extensions.md) for bundled auth, email, and uploads source
 
 ## CLI
 

@@ -5,12 +5,12 @@ Extensions copy feature code into a Shibumi project. The project owns the copied
 ## Command
 
 ```sh
-bun run shibumi add <name>
+bun shi add <name>
 ```
 
 Before writing, the command lists new files, edits, dependencies, environment variables, migrations, and `agents.md` changes; `--dry-run` stops after the preview and writes nothing. Existing files stop the install; move them aside and re-run. Running the same install twice must not duplicate code.
 
-Extensions are removable: `bun run shibumi remove <name>` deletes the installed code and reverses the edits. Tables are never dropped by tooling. `shi` is the short alias for the same script: `bun shi add auth`.
+Extensions are removable: `bun shi remove <name>` deletes the installed code and reverses the edits. Tables are never dropped by tooling. `shibumi` is the long form of the same script: `bun shibumi add auth` and `bun run shibumi add auth` behave identically.
 
 ## What an extension contains
 
@@ -64,7 +64,7 @@ A minimal server-rendered panel at `/admin` for listing and deleting users (with
 List installed and available extensions with:
 
 ```sh
-bun run shibumi list
+bun shi list
 ```
 
 ## File edits

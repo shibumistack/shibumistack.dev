@@ -109,12 +109,10 @@ const lock = JSON.parse(read(join(CLI_REPO, "scripts", "shibumi.lock.json"))) as
   extensions: Array<{ name: string; version: string }>;
 };
 const shipped = new Set(lock.extensions.map((entry) => entry.name));
-const extensionsMd = read(join(SITE, "src", "content", "extensions.md"));
-const extensionsHtml = read(join(SITE, "src", "pages", "extensions.html"));
+const extensionsMd = read(join(SITE, "src", "content", "docs", "cli", "extensions.md"));
 for (const name of shipped) {
   const heading = new RegExp(`^### ${name}`, "im");
   if (!heading.test(extensionsMd)) drift(`extensions.md has no section for shipped extension "${name}"`);
-  if (!extensionsHtml.includes(`id="${name}"`)) drift(`extensions.html has no entry for shipped extension "${name}"`);
 }
 for (const match of extensionsMd.matchAll(/^### (\w[\w-]*)( \(planned\))?/gim)) {
   const name = match[1]!.toLowerCase();
@@ -126,8 +124,8 @@ for (const match of extensionsMd.matchAll(/^### (\w[\w-]*)( \(planned\))?/gim)) 
     drift(`extensions.md marks shipped extension "${name}" as planned`);
   }
 }
-if (!extensionsMd.includes("bun run shibumi add <name>")) drift("extensions.md: add command missing");
-if (!extensionsMd.includes("bun run shibumi list")) drift("extensions.md: list command missing");
+if (!extensionsMd.includes("bun shi add <name>")) drift("extensions.md: add command missing");
+if (!extensionsMd.includes("bun shi list")) drift("extensions.md: list command missing");
 // Every shipped extension must have an entry on both pages (checked above via
 // lock.extensions); a "(planned)" section must NOT name a shipped extension
 // (checked against the lock in the extensions loop).
