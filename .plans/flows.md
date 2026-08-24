@@ -1,5 +1,17 @@
 # Flow simplification
 
+STATUS 2026-08-25: steps 0-5 DONE and merged. create-shibumi main @ c5dfcfd (111 tests,
+tsc, verify:packed green), shibumi-server main @ 05eda65 (202 tests green). Implemented
+by agent team, 59 review findings fixed across 7 rounds, both branches reviewer-approved.
+Remaining: step 6 (docs/pages sweep below) and releases. Hard facts for step 6:
+- Site MUST publish /ship/v48.ts with sha256 425a8ca3d0b9b8b27660906ea38ec9acb3441a0e0fcf0bd3be191a8e3bd5bea6
+  (byte content = shibumi-create scripts/ship.ts vendored client; digest in scripts/ship.lock.json).
+- Release create-shibumi 0.3.0 (bump from 0.2.9) and shibumi-server 0.10.7. Owner publishes;
+  verify registry digest vs npm pack, then tag (git tag needs -m in shibumi-create).
+- After 0.10.7: `shis update` on alpha to get set-repository/PATH fixes live.
+- Accepted trade recorded in review: only `.env`/`.env.*` basenames excluded from setup
+  commits (app.env-style names commit); .env.example/.sample/.template re-added as examples.
+
 Decided 2026-08-24 evening, walking every prompt flow clack-screen by clack-screen.
 Goal: Astro-grade DX. Two real inputs exist in the whole product (SSH target, domain);
 everything else must be a default, a plan line, or an opt-in command.
