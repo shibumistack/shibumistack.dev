@@ -74,7 +74,7 @@ for (const key of dbExtras) {
 // 3. Static template's pinned ship:setup and script surface --------------------
 
 const staticScripts = scriptsOf("static");
-if (staticScripts["ship:setup"] !== "bun scripts/ship.ts --setup --static --output-dir public") {
+if (staticScripts["ship:setup"] !== "bun scripts/ship.ts --setup --static --output-dir public --no-spa") {
   drift(`static template ship:setup changed: ${staticScripts["ship:setup"]}`);
 }
 if (staticScripts.shibumi) drift("static template unexpectedly carries the shibumi script");
