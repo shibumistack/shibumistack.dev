@@ -1,5 +1,7 @@
 # create-shibumi VPS-first release plan
 
+**SHIPPED 2026-08-24: `create-shibumi@0.2.0` published to npm (tag `v0.2.0`), cold-verified from the registry, real VPS dogfood passed on kunstfy.com → alpha.** The gap this plan existed to close is closed. Remaining follow-ups live in `.plans/INDEX.md` (shibumi-server npm publish, amd64 host, v46 outro fix). The contract below stays as the record of what was promised and shipped.
+
 The site copy is the contract; this plan closes the gap between it and the prototype. Nothing on the site gets walked back. Adversarially reviewed 2026-08-23 (codex/gpt-5.6-sol); findings folded in below.
 
 ## What we're promising
