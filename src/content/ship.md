@@ -75,11 +75,11 @@ The installer adds `scripts/ship.ts` and these package entries:
 }
 ```
 
-`bun dev` runs the original development command on the app port from `shibumi-server.json`. If another process owns that port, Ship shows its PID and command, then asks before sending `SIGTERM`.
+`bun dev` runs the original development command on the app port from `shibumi-server.json`, or on port `9000` before setup exists. If another process owns that port, Ship shows its PID and command, then asks before sending `SIGTERM`.
 
 `bun ship:setup` refreshes project config or changes the trigger. Direct Ship mode uses prebuilt images and disables the matching webhook when GitHub CLI is available. Deploy-on-push uses server builds and creates or repairs the webhook. GitHub access is optional for direct shipping.
 
-Source: <https://shibumistack.dev/ship/v45.ts>
+Source: <https://shibumistack.dev/ship/v46.ts>
 
 - Commit `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Keep SSH targets in local Shibumi config.

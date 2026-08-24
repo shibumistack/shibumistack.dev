@@ -292,7 +292,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v45.ts");
+    const source = await app.request("/ship/v46.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -302,7 +302,7 @@ describe("routes", () => {
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).toContain("export function formatDevStartup");
-    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v45.ts"');
+    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v46.ts"');
     expect(sourceBody).toContain("Ship now?");
     expect(sourceBody).toContain("dev.shibumistack.static.output");
     expect(sourceBody).toContain("What are you shipping?");
@@ -330,6 +330,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v42.ts")).status).toBe(200);
     expect((await app.request("/ship/v43.ts")).status).toBe(200);
     expect((await app.request("/ship/v44.ts")).status).toBe(200);
+    expect((await app.request("/ship/v45.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -338,13 +339,13 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v43.ts");
-    const installer = await app.request("/ship/install-v43.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v44.ts");
+    const installer = await app.request("/ship/install-v44.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v45.ts");
+    expect(installerBody).toContain("ship/v46.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
