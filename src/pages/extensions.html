@@ -44,6 +44,16 @@
       </div>
     </article>
 
+    <article class="ext-item" id="admin">
+      <h3>admin</h3>
+      <p>Minimal server-rendered panel at <code>/admin</code> to list and delete users. Gated by an <code>ADMIN_EMAILS</code> allowlist; auth reserves those addresses from self-service registration. No new tables. Needs auth.</p>
+      <div class="ext-detail">
+        <span>ADMIN_EMAILS</span>
+        <span>server-rendered</span>
+        <span>CSRF forms</span>
+      </div>
+    </article>
+
     <div class="ext-divider"></div>
 
     <h2 id="package-layout">Package layout</h2>
@@ -64,6 +74,7 @@ files/
       <a href="#auth" class="toc-active">auth</a>
       <a href="#email">email</a>
       <a href="#uploads">uploads</a>
+      <a href="#admin">admin</a>
       <a href="#package-layout">Package layout</a>
     </nav>
   </aside>

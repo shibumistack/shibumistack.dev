@@ -56,6 +56,10 @@ A Resend-backed send helper over plain fetch, environment validation, HTML-escap
 
 Authenticated file uploads. Type is decided by magic-byte sniffing (PNG, JPEG, GIF, WebP, PDF), never the client filename or `Content-Type`. Files are stored content-addressed (sha256) on the persistent volume with per-user and per-request size limits, a per-user quota, and an upload rate limit; serving is owner-scoped and forced to download. Needs auth and the full-stack database. No tables are dropped on removal.
 
+### Admin
+
+A minimal server-rendered panel at `/admin` for listing and deleting users (with session and upload counts). Access is gated by an `ADMIN_EMAILS` allowlist; auth reserves those addresses from self-service registration so the admin account cannot be claimed by an attacker. No client JS beyond a self-hosted confirm script, no new tables. Needs auth and the full-stack database.
+
 List installed and available extensions with:
 
 ```sh
