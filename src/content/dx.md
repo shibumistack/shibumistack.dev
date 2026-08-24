@@ -123,6 +123,7 @@ Bun apps expose:
     "ship:update": "bun scripts/ship.ts --update",
     "ship:status": "bun scripts/ship.ts --status",
     "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:env": "bun scripts/ship.ts --env",
     "shibumi": "bun scripts/shibumi.ts"
   }
 }
