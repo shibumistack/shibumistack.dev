@@ -102,11 +102,11 @@ An extension with tunable limits ships a YAML file at `src/config/<name>.yaml`, 
 ├── manifest.json
 ├── migration.sql
 ├── agents/
-│   └── feature.md
+│   └── <name>.md
 └── files/
     └── src/
         ├── config/
-        │   └── feature.yaml
+        │   └── <name>.yaml
         └── ...
 ```
 
