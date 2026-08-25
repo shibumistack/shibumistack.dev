@@ -4,44 +4,24 @@ Every template deploys to a Linux VPS through `shibumi-server`.
 
 ## Create a project
 
-```sh
-bun create shibumi@latest my-app
-```
-
 Three questions, then the project exists:
 
-```text
-┌  渋み shibumi
-│
-◆  Project name?
-│  quiet-bamboo
-│
-◆  What are you shipping?
-│  ● Bun full-stack app (recommended)
-│      Hono, Alpine, and SQLite with migrations and backups
-│  ○ Blog
-│      with RSS, sitemap, SEO
-│  ○ Static site
-│      Any framework's build output: dist/, public/, _site/, or plain files
-│
-◆  Deploy to a VPS now?
-│  ○ Yes / ● Later
-│
-◇  Created quiet-bamboo
-│
-◆  Template copied
-│
-◆  Git initialized; nothing committed, the first commit is yours
-│
-◆  Dependencies installed
-│
-◆  Deploy script added (scripts/ship.ts)
-│
-│  next  cd quiet-bamboo
-│        bun dev           start the dev server (ctrl+c stops it)
-│        bun ship:setup    connect your VPS when you're ready
-│
-└  Docs: https://shibumistack.dev/docs
+```clack
+bun create shibumi@latest my-app
+渋み  shibumi
+success|Project name?
+answer|quiet-bamboo
+success|What are you shipping?
+answer|Bun full-stack app (recommended)
+success|Deploy to a VPS now?
+answer|Later
+result|Created quiet-bamboo
+success|Template copied
+success|Git initialized; nothing committed, the first commit is yours
+success|Dependencies installed
+success|Deploy script added (scripts/ship.ts)
+info|Next: cd quiet-bamboo, bun dev, and bun ship:setup when you're ready
+outro|Docs: https://shibumistack.dev/docs
 ```
 
 Answering **Yes** to the deploy question runs `bun ship:setup` in the same session, so the project's first deploy happens before you leave the terminal. **Later** prints the command instead.
@@ -58,36 +38,21 @@ bun create shibumi@latest my-app --template full-stack --yes
 
 A dot instead of a name adopts the current directory. Instead of scaffolding, the deploy script is copied in next to your own files. Your existing files are left as they are, with one exception: `package.json` gains the `ship*` scripts and a `@clack/prompts` dev dependency, since the deploy script imports it.
 
-```sh
+```clack
 bun create shibumi .
-```
-
-```text
-┌  渋み shibumi
-│
-●  Existing project found (Astro detected)
-│
-◆  Add deploy tooling to this project?
-│  ● Yes / ○ No
-│
-◆  Built site directory?
-│  ● dist/ (detected)
-│  ○ Somewhere else
-│
-◆  Wrote scripts/ship.ts, package.json, Dockerfile, compose.yaml, .dockerignore
-│
-◆  Added scripts: ship, ship:setup, ship:update, ship:status, ship:logs, ship:webhook
-│
-◇  Installed @clack/prompts
-│
-◆  Deploy to a VPS now?
-│  ○ Yes / ● Later
-│
-│  next  bun ship:setup    connect your VPS when you're ready
-│
-│  Deployments serve dist/. Review the generated Dockerfile and compose.yaml.
-│
-└  Docs: https://shibumistack.dev/docs
+渋み  shibumi
+info|Existing project found (Astro detected)
+success|Add deploy tooling to this project?
+answer|Yes
+success|Built site directory?
+answer|dist/ (detected)
+success|Wrote scripts/ship.ts, package.json, Dockerfile, compose.yaml, .dockerignore
+success|Added scripts: ship, ship:setup, ship:update, ship:status, ship:logs, ship:webhook
+result|Installed @clack/prompts
+success|Deploy to a VPS now?
+answer|Later
+info|Deployments serve dist/. Review the generated Dockerfile and compose.yaml.
+outro|Docs: https://shibumistack.dev/docs
 ```
 
 The build directory is detected from your dependencies and config files, with the framework signal winning over a directory that happens to be on disk:
