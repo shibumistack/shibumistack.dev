@@ -99,6 +99,7 @@
 .docs-callout-icon { display:grid; width:1.35rem; height:1.35rem; place-items:center; margin-top:.13rem; border:1.5px solid var(--accent); border-radius:50%; color:var(--accent); font:800 .75rem/1 var(--font-mono); }
 .docs-callout-warning { background:light-dark(rgba(163,63,67,.07),rgba(243,139,168,.08)); }
 .docs-prose hr { display:none; }
+.docs-prose img { display:block; width:100%; height:auto; margin:1.5rem 0; border:1px solid var(--line); border-radius:.65rem; }
 .docs-callout-warning .docs-callout-icon { border-color:light-dark(#a33f43,#f38ba8); color:light-dark(#a33f43,#f38ba8); }
 .docs-anchor { margin-left:.4rem; color:var(--accent); text-decoration:none; opacity:0; font:.7em var(--font-mono); }
 .docs-prose h2:hover .docs-anchor,.docs-prose h3:hover .docs-anchor,.docs-anchor:focus { opacity:1; }

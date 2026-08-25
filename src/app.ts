@@ -599,6 +599,7 @@ function docsMarkdownHtml(markdown: string): string {
       return `<div class="docs-code ${terminal ? "docs-terminal" : "docs-source"}" data-language="${escapeHtml(language)}"><div class="docs-code-bar">${terminal ? "" : `<span>${escapeHtml(language)}</span>`}<button class="docs-copy copy-command" type="button" data-copy-code aria-label="Copy code">Copy</button></div><pre><code>${highlightDocsCode(text, language)}</code></pre></div>`;
     },
     link: (children, attrs: { href: string }) => isSafeHref(attrs.href) ? `<a href="${attrs.href}">${children}</a>` : children,
+    image: (children, attrs: { src: string }) => isSafeHref(attrs.src) ? `<img src="${attrs.src}" alt="${escapeHtml(children.replace(/<[^>]+>/g, ""))}" loading="lazy">` : "",
     list: (children, attrs: { ordered: boolean }) => `<${attrs.ordered ? "ol" : "ul"}>${children}</${attrs.ordered ? "ol" : "ul"}>`,
     listItem: (children) => `<li>${children}</li>`,
     table: (children) => `<div class="docs-table-wrap"><table>${children}</table></div>`,
