@@ -41,6 +41,12 @@ shis update
 
 Interactive commands check npm with a short timeout and suggest an update when a stable release exists. Registry failures do not block the command. Update installs that exact version, keeps machine config and secrets, moves the local release symlink, and reloads the service.
 
+Installs from 0.10.6 or older live in `~/.local/bin` only, which non-interactive `ssh host shis ...` sessions often miss. Since 0.10.8 setup symlinks `shis` into `/usr/local/bin`; `shis update` skips the sudo prompt and prints the fix instead. Run it once from your machine:
+
+```sh
+ssh -t your-server 'sudo ln -sf ~/.local/bin/shis /usr/local/bin/shis'
+```
+
 ## Remove app
 
 ```sh
