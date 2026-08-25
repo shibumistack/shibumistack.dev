@@ -6,7 +6,7 @@
 //
 // Fails (exit 1) on any drift, listing every finding. The create-shibumi
 // checkout defaults to ../shibumi-create (repo/package name stays create-shibumi).
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const SITE = resolve(import.meta.dir, "..");
@@ -34,50 +34,102 @@ function scriptsOf(template: string): Record<string, string> {
   ).scripts;
 }
 
-// 1. dx.md generated-commands block must equal the web template's scripts ------
+// 0. the shipped template set is exactly what the site claims ------------------
+// A resurrected or renamed template must fail here before any copy is checked.
 
+const TEMPLATES = ["blog", "full-stack", "static"];
+const templatesPresent = readdirSync(join(CLI_REPO, "src", "templates"), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name)
+  .sort();
+if (templatesPresent.join(",") !== TEMPLATES.join(",")) {
+  drift(`shipped templates are ${templatesPresent.join(", ")}; the site documents ${TEMPLATES.join(", ")}`);
+}
+
+// 1. dx.md generated-commands block must equal the full-stack scripts ----------
+// minus the db:* additions, which the prose claims separately.
+
+const dbExtras = ["db:migrate", "db:backup", "db:restore", "db:status"];
+const fullScripts = scriptsOf("full-stack");
 const dx = read(join(SITE, "src", "content", "dx.md"));
 const dxBlock = dx.match(/## Generated commands[\s\S]*?```json\n([\s\S]*?)```/);
 if (!dxBlock) {
   drift("dx.md: generated-commands JSON block not found");
 } else {
   const documented = (JSON.parse(dxBlock[1]!) as { scripts: Record<string, string> }).scripts;
-  const actual = scriptsOf("web");
-  const keys = new Set([...Object.keys(documented), ...Object.keys(actual)]);
+  const baseline = Object.fromEntries(
+    Object.entries(fullScripts).filter(([key]) => !dbExtras.includes(key))
+  );
+  const keys = new Set([...Object.keys(documented), ...Object.keys(baseline)]);
   for (const key of keys) {
-    if (documented[key] !== actual[key]) {
-      drift(`dx.md scripts["${key}"] = ${JSON.stringify(documented[key])}, web template has ${JSON.stringify(actual[key])}`);
+    if (documented[key] !== baseline[key]) {
+      drift(`dx.md scripts["${key}"] = ${JSON.stringify(documented[key])}, full-stack template has ${JSON.stringify(baseline[key])}`);
     }
   }
 }
 
-// 2. full-stack = web scripts plus exactly the documented db:* additions -------
+// 2. db:* additions exist and are named in dx.md -------------------------------
 
-const webScripts = scriptsOf("web");
-const fullScripts = scriptsOf("full-stack");
-const dbExtras = ["db:migrate", "db:backup", "db:restore", "db:status"];
-for (const key of Object.keys(webScripts)) {
-  if (fullScripts[key] !== webScripts[key]) {
-    drift(`full-stack script "${key}" diverges from web: ${JSON.stringify(fullScripts[key])} vs ${JSON.stringify(webScripts[key])}`);
-  }
-}
-for (const key of Object.keys(fullScripts)) {
-  if (!(key in webScripts) && !dbExtras.includes(key)) {
-    drift(`full-stack has undocumented extra script "${key}" (dx.md only claims db:*)`);
-  }
-}
 for (const key of dbExtras) {
   if (!(key in fullScripts)) drift(`full-stack is missing documented script "${key}"`);
   if (!dx.includes(`\`${key}\``)) drift(`dx.md does not mention full-stack script "${key}"`);
 }
 
-// 3. Static template's pinned ship:setup and script surface --------------------
+// 3. Static and blog pinned ship:setup, and the script surface ----------------
 
 const staticScripts = scriptsOf("static");
 if (staticScripts["ship:setup"] !== "bun scripts/ship.ts --setup --static --output-dir public --no-spa") {
   drift(`static template ship:setup changed: ${staticScripts["ship:setup"]}`);
 }
 if (staticScripts.shibumi) drift("static template unexpectedly carries the shibumi script");
+
+const blogScripts = scriptsOf("blog");
+if (blogScripts["ship:setup"] !== "bun scripts/ship.ts --setup --static --output-dir dist --build-script build --no-spa") {
+  drift(`blog template ship:setup changed: ${blogScripts["ship:setup"]}`);
+}
+if (blogScripts.shibumi) drift("blog template unexpectedly carries the shibumi script");
+
+// 3b. ship:webhook is the opt-in for push-to-deploy in every template, and the
+// site has to document it rather than the setup-time trigger question it replaced.
+
+for (const template of TEMPLATES) {
+  const scripts = scriptsOf(template);
+  if (scripts["ship:webhook"] !== "bun scripts/ship.ts --webhook") {
+    drift(`${template} template ship:webhook = ${JSON.stringify(scripts["ship:webhook"])}, expected "bun scripts/ship.ts --webhook"`);
+  }
+}
+const shipPage = read(join(SITE, "src", "content", "ship.md"));
+for (const [file, content] of [["dx.md", dx], ["ship.md", shipPage]] as const) {
+  if (!content.includes("bun ship:webhook")) drift(`${file}: opt-in webhook command missing`);
+}
+for (const [file, content] of [
+  ["dx.md", dx],
+  ["ship.md", shipPage],
+  ["docs/server/ship.md", read(join(SITE, "src", "content", "docs", "server", "ship.md"))],
+] as const) {
+  if (content.includes("--trigger")) drift(`${file}: names the removed ship:setup --trigger flag`);
+}
+
+// 3c. the web template is gone; no current-state surface may still offer it ----
+// Blog posts are dated records and keep whatever was true when published.
+
+const WEB_TEMPLATE_CLAIMS = /Bun web app|Bun web project|web template/i;
+for (const relative of [
+  "src/content/index.md",
+  "src/content/docs.md",
+  "src/content/dx.md",
+  "src/content/building.md",
+  "src/content/docs/index.md",
+  "src/content/docs/cli/index.md",
+  "src/pages/index.html",
+  "src/pages/docs.html",
+  "src/pages/building.html",
+  "src/pages/getnotified.html",
+  "public/llms.txt",
+]) {
+  const match = WEB_TEMPLATE_CLAIMS.exec(read(join(SITE, relative)));
+  if (match) drift(`${relative} still offers the deleted web template ("${match[0]}")`);
+}
 
 // 4. Homepage and docs/cli command lines ---------------------------------------
 
