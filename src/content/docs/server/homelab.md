@@ -17,7 +17,7 @@ Anything 64-bit that runs mainstream Linux works. Both amd64 and arm64 images ar
 
 ## Prepare the box
 
-Install Debian or Ubuntu Server, the two distributions almost every guide assumes. During setup:
+Install your favorite Linux distro (i.e. [Debian](https://www.debian.org/distrib/)). During setup:
 
 1. Create a normal user; that user will own deployments.
 2. Enable SSH with key login and turn off password authentication.
