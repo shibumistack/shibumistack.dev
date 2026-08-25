@@ -13,7 +13,7 @@ answer|Caddy       managed
 outro|1 app registered
 ```
 
-Shows domain, app ID, repository, loopback upstream, checkout, and Caddy ownership.
+Shows the domain, app ID, repository, loopback upstream, checkout, and Caddy ownership.
 
 ## Latest status
 
