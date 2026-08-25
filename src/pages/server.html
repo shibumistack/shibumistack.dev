@@ -117,7 +117,7 @@
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>Two questions, a plan, one confirm. Nothing is written before you accept the plan, and if DNS is not ready, setup keeps the generated files and prints the command needed to resume. Deploys run on <code>bun ship</code>; <code>bun ship:webhook</code> switches to push-to-deploy later if you want it.</p>
+                    <p>Setup asks two questions, then prints a plan it runs on a single confirm. Nothing is written before you accept the plan, and if DNS is not ready, setup keeps the generated files and prints the command needed to resume. Deploys run on <code>bun ship</code>; <code>bun ship:webhook</code> switches to push-to-deploy later if you want it.</p>
                     <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd. <code>shis set-repository &lt;app&gt; &lt;repository&gt;</code> repoints an already-registered app: the old checkout moves to <code>.bak</code> and the new repository is cloned in its place.</p>
                 </div>
             </section>

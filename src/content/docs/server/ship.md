@@ -36,7 +36,7 @@ Setup asks for the SSH target and the app domain, then renders a plan and runs e
 
 Nothing is written before that confirm. The GitHub sign-in and the Caddy cutover are the two exceptions that still ask for themselves, because one opens a browser and the other moves live traffic. `bun ship:setup --interactive` restores a gate on every step, and `--yes` renders the plan without asking.
 
-A missing GitHub origin is not a failure. Setup offers to create the repository with the GitHub CLI and push it, private unless `--public` is passed. There is no visibility question.
+When the project has no GitHub origin, setup offers to create the repository with the GitHub CLI and push it, private unless `--public` is passed. There is no visibility question.
 
 Deployments run on `bun ship`, which uploads the exact image and asks the server to deploy that commit. Setup installs no webhook, so it needs no GitHub sign-in and no `admin:repo_hook` grant. `bun ship:webhook` opts into push-to-deploy when you want it, and `bun ship:webhook --off` reverses both the hook and the trigger.
 

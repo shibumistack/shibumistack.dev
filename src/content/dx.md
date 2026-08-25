@@ -25,7 +25,7 @@ The CLI asks only what changes generated files:
 ```text
 Project name?
 
-  ./quiet-bamboo
+  quiet-bamboo
 
 What are you shipping?
 

@@ -61,7 +61,7 @@ The domain is suggested from the package name or Compose `SITE_URL`, so the ques
 
 `bun ship:setup --interactive` restores a gate on every step. `--yes` renders the plan and skips the confirm.
 
-A project with no GitHub origin is not an error. Setup offers to create the repository with the GitHub CLI and push it. Repositories are private by default; pass `--public` for a public one. There is no visibility question.
+When the project has no GitHub origin, setup offers to create the repository with the GitHub CLI and push it. Repositories are private by default; pass `--public` for a public one. There is no visibility question.
 
 **Ship now?** is the last stop. Enter runs the first deploy in the same session; declining prints the command for later.
 
