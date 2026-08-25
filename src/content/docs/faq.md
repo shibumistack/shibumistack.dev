@@ -1,6 +1,6 @@
 # FAQ
 
-Every question here came from a real deploy hitting a real wall. The answers explain what the tooling did and why it was right to do it.
+Every question here came from a real deploy hitting a real wall.
 
 ## Why do I need to push if Ship uploads the image?
 

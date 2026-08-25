@@ -2,7 +2,7 @@
 
 ![The scaffolded full-stack app: a counter stored in SQLite and two demo API routes](/docs/templates/full-stack.png)
 
-The recommended starting point: a complete Bun app with a database. One library per job: Hono serves the routes, Zod validates every input, Alpine runs the client behavior, SQLite with Drizzle keeps your data on a volume that survives every deploy.
+The recommended starting point, and the only template with a database. Each library does one job, and the database file sits on a volume outside the image, so deploys and rollbacks swap the code and leave the data alone.
 
 ```sh
 bun create shibumi@latest my-app --template full-stack

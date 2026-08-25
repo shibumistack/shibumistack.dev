@@ -2,7 +2,7 @@
 
 ![The scaffolded static site: plain files served from public/](/docs/templates/static.png)
 
-Plain files, served fast. Every file in `public/` is a page; the production image is busybox httpd on `scratch`, about 1.4 MB total.
+Every file in `public/` is a page. The production image is busybox httpd on `scratch`, which is where the 1.4 MB comes from: there is no runtime in it, just the server binary and your files.
 
 ```sh
 bun create shibumi@latest my-site --template static

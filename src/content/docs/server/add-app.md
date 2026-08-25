@@ -1,6 +1,6 @@
 # Add an app from the server
 
-This server-operator path registers one domain, GitHub repository, and branch at a time. Most users should start from the [local project](/docs/server/ship). Ship calls the same registration command over SSH, then configures the chosen trigger.
+This is the server-operator path, one domain and branch at a time. Most users should start from the [local project](/docs/server/ship) instead, which calls this same registration command over SSH.
 
 ## Before setup
 

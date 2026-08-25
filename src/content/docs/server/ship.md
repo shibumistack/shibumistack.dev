@@ -1,6 +1,6 @@
 # Connect project to server
 
-The project owns deployment setup. `bun ship` runs tracked TypeScript and reads commit-safe `shibumi-server.json`.
+`bun ship` runs tracked TypeScript and reads commit-safe `shibumi-server.json`.
 
 ## Add Ship to the project
 

@@ -1,6 +1,6 @@
 # Install shibumi-server
 
-Install once on a Linux VPS or homelab server as the user who will own deployments.
+Install once, as the user who will own deployments.
 
 ## Host requirements
 

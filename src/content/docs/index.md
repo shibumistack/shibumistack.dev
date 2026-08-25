@@ -1,7 +1,5 @@
 # Shibumi docs
 
-These pages describe CLI, Server, Ship, and Forms behavior.
-
 ## Start here
 
 - [create-shibumi](/docs/cli) creates a SQLite full-stack app, a blog, or a static site, and adds VPS deployment to a project you already have.

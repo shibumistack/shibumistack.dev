@@ -1,6 +1,6 @@
 # Shibumi Stack docs
 
-This page records product choices that should survive implementation changes.
+These choices should outlive any particular implementation of them.
 
 ## What works now
 

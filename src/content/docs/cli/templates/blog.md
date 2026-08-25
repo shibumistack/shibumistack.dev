@@ -2,7 +2,7 @@
 
 ![The scaffolded blog: a post list with dates and summaries](/docs/templates/blog.png)
 
-An Astro blog that publishes markdown. Write posts as files, get RSS, a sitemap, SEO meta, and an `llms.txt` without wiring anything.
+A post is a markdown file in `src/content/`. Everything around it, the feed, the sitemap, the meta tags, is generated at build time, so publishing is adding a file and running `bun ship`.
 
 ```sh
 bun create shibumi@latest my-blog --template blog

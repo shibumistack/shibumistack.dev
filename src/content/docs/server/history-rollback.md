@@ -1,7 +1,5 @@
 # History and rollback
 
-Inspect recent verified deployments or restore the previous retained image.
-
 ## Read recent history
 
 ```run

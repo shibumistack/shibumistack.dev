@@ -606,7 +606,7 @@ function docsMarkdownHtml(markdown: string): string {
     tbody: (children) => `<tbody>${children}</tbody>`,
     tr: (children) => `<tr>${children}</tr>`,
     th: (children) => `<th>${children}</th>`,
-    td: (children) => `<td>${children}</td>`,
+    td: (children) => `<td>${children === "Released" ? '<span class="docs-status-released">Released</span>' : children}</td>`,
     blockquote: (children) => {
       const callout = /^<p><strong>(Released now|Note|Warning|Important):<\/strong>/.exec(children);
       if (!callout) return `<blockquote><span class="docs-quote-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg></span><div>${children}</div></blockquote>`;
