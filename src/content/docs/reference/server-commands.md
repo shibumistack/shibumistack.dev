@@ -16,9 +16,16 @@ shis uninstall [--purge] [--yes]
 
 ```text
 shis list
-shis add <domain> [--dry-run]
+shis add <domain> [--dry-run] [--yes]
 shis remove <domain|app-id> [--yes]
+shis set-repository <domain|app-id> <repository> [--yes]
 ```
+
+`remove` deletes Shibumi config, the webhook secret, deployment status and history, the managed Caddy route, the per-app environment store, and the app containers. Its outro names what stayed: the checkout, volumes, images, and the GitHub webhook. Removing the last app stops the service.
+
+`add` on a checkout path whose Git origin points at a different repository offers to move that checkout to `<checkout>.bak` and clone the requested repository fresh. `--yes` accepts the move; the offer is refused only when `<checkout>.bak` already exists.
+
+`set-repository` repoints an app that is already registered. The old checkout moves to `<checkout>.bak`, the new repository is cloned in its place, and the Compose file path is re-detected in the new tree rather than carried over. Caddy and the app registration are otherwise untouched. Failed detection restores the original checkout from `.bak`.
 
 Explicit add requires repository, absolute checkout, and port:
 

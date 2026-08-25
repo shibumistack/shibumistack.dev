@@ -8,8 +8,8 @@ Shibumi writes files into a project. Generated apps run on their chosen librarie
 
 The package supports one deploy target, a Linux VPS running `shibumi-server`. It offers three starting points:
 
-- a Bun, Hono, Zod, and Alpine web app plus Drizzle and SQLite (recommended)
-- the same web app without a database
+- a Bun, Hono, Zod, and Alpine app plus Drizzle and SQLite (recommended)
+- an Astro blog with posts, RSS, sitemap, and SEO meta
 - a static site from any framework's build output or plain files
 
 Nanostores joins only when separate browser components need shared state.
@@ -23,12 +23,16 @@ bun create shibumi@latest my-app
 The CLI asks only what changes generated files:
 
 ```text
+Project name?
+
+  ./quiet-bamboo
+
 What are you shipping?
 
 ● Bun full-stack app (recommended)
     Hono, Alpine, and SQLite with migrations and backups
-  Bun web app
-    Hono, Alpine, and Zod; no database
+  Blog
+    Astro: posts, RSS, sitemap, SEO meta, llms.txt
   Static site
     Any framework's build output: dist/, public/, _site/, or plain files
 
@@ -37,6 +41,14 @@ Deploy to a VPS now?
 ● Yes
   Later
 ```
+
+Three stops, and the third one is the offer to deploy. Everything else that used to be a question is a default, a line in the setup plan, or an opt-in command.
+
+## Adopt an existing project
+
+`bun create shibumi .` vendors the Ship client into the project that is already in the directory instead of scaffolding a new one. It detects the built site directory from framework signals (`astro` to `dist`, `@11ty/eleventy` to `_site`, `next` to `out`, `vite` to `dist`), then from a build directory on disk, then from `public/`. The detected value is the default in a select with a free-text fallback.
+
+SPA fallback stays off unless `--spa` is passed, so there is no question about it. Adopting refuses rather than guessing when deployment files already exist, when a `start` script says the project is a server app, or when `index.html` sits at the project root with no directory to serve.
 
 Project creation must be atomic. It writes into a temporary sibling directory, runs generation checks, then renames the directory into place. Cancellation or failure leaves the destination absent. An existing path is never overwritten.
 
@@ -58,9 +70,15 @@ Normal file routing and `404.html` are the default. SPA fallback requires an exp
 
 The deployment image contains only the verified output and a pinned static server. Health checks request `/`.
 
-## Bun web app
+## Blog
 
-The Bun web project contains:
+The blog template is Astro configured for the parts a blog needs immediately: Markdown posts, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the static path, so its `ship:setup` command arrives pinned to `--output-dir dist --build-script build --no-spa`.
+
+Blog sits at the top level of the menu. An earlier design nested it under a "start from?" follow-up behind Static site, which buried the template most people asking for a blog were looking for.
+
+## SQLite full stack
+
+The full-stack project contains:
 
 ```text
 agents.md
@@ -79,9 +97,7 @@ The generated server uses Bun and Hono. Zod validates environment values and req
 
 The build produces `dist/server.js`, and the container starts that file. A packed-fixture test must catch source paths that were not copied into the image.
 
-## SQLite full stack
-
-The full-stack project adds Drizzle and `bun:sqlite`. Runtime data lives under persistent `/data`, outside the image.
+On top of that it adds Drizzle and `bun:sqlite`. Runtime data lives under persistent `/data`, outside the image.
 
 SQLite setup enables:
 
@@ -123,6 +139,7 @@ Bun apps expose:
     "ship:update": "bun scripts/ship.ts --update",
     "ship:status": "bun scripts/ship.ts --status",
     "ship:logs": "bun scripts/ship.ts --logs",
+    "ship:webhook": "bun scripts/ship.ts --webhook",
     "ship:env": "bun scripts/ship.ts --env",
     "shibumi": "bun scripts/shibumi.ts",
     "shi": "bun scripts/shibumi.ts"
@@ -131,6 +148,8 @@ Bun apps expose:
 ```
 
 The full-stack path adds `db:migrate`, `db:backup`, `db:restore`, and `db:status`. The `shibumi` script is the extension installer, with `shi` as its short alias: `bun shi add auth`, with `--dry-run` previewing every write.
+
+`ship:webhook` is the opt-in for push-to-deploy and exists in every template. Setup never installs a webhook: with the default `bun ship` trigger it buys nothing, and it costs a GitHub sign-in plus an `admin:repo_hook` grant. `bun ship:webhook` pays that cost when asked, and `bun ship:webhook --off` reverses both the hook and the trigger.
 
 Static projects get equivalent artifact, preview, and Ship commands without a Bun app server.
 

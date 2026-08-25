@@ -1,6 +1,6 @@
 # shibumistack.dev
 
-> Source, tests, agent instructions, and VPS deployment config for static, Bun web, and SQLite projects.
+> Source, tests, agent instructions, and VPS deployment config for SQLite full-stack, Astro blog, and static projects.
 
 ## Pages
 
@@ -15,9 +15,9 @@
 
 ## Available
 
-- [`create-shibumi`](/docs/cli.md): creates SQLite full-stack apps, Bun web apps, and static sites with VPS deployment.
+- [`create-shibumi`](/docs/cli.md): creates SQLite full-stack apps, Astro blogs, and static sites with VPS deployment; `bun create shibumi .` adds deployment to an existing project.
 - [Extensions](/docs/cli/extensions.md): add bundled auth, email, uploads, or admin source with `bun shi add <name>`.
-- [FAQ](/docs/faq.md): why push with a prebuilt image, dirty-tree stops, data across rollbacks, secrets, CSRF 403s.
+- [FAQ](/docs/faq.md): why push with a prebuilt image, dirty-tree stops, data across rollbacks, secrets, CSRF 403s, push-to-deploy, template choices.
 - [Shibumi Forms](/forms.md): hosted pre-alpha and self-hosted form collection for static sites using plain HTML, Bun, Hono, and SQLite.
 - [`shibumi-server`](/server.md): open-source VPS deployment service for exact locally built images, rootless Podman, Caddy, health checks, bounded rollback, and project-owned Ship source.
 

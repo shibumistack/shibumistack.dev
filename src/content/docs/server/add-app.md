@@ -34,6 +34,8 @@ Run these commands on the server as the same user that runs `shibumi-server`. A 
 
 Existing domains preserve their current upstream by default. Shibumi adds only its webhook route until a healthy first deployment and explicit cutover.
 
+If the checkout path already exists but its Git origin points at a different repository, `add` offers to move it to `<checkout>.bak` and clone the requested repository fresh instead of failing outright. `--yes` accepts that move; the offer is refused only when `<checkout>.bak` already exists. To repoint an app that is already registered, use [`shis set-repository`](/docs/server/operations#repoint-an-apps-repository) rather than removing and re-adding it.
+
 ## Automation
 
 ```sh

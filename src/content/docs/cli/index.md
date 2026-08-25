@@ -1,6 +1,6 @@
 # create-shibumi CLI
 
-`create-shibumi` creates a static site, a Bun web app, or a Bun full-stack app. All three deploy to a Linux VPS through `shibumi-server`.
+`create-shibumi` creates a Bun full-stack app, an Astro blog, or a static site. All three deploy to a Linux VPS through `shibumi-server`.
 
 ## Create a project
 
@@ -8,13 +8,110 @@
 bun create shibumi@latest my-app
 ```
 
-The CLI asks what you are shipping:
+Three questions, then the project exists:
 
-1. **Static site** for any framework or plain files. A follow-up asks where to start: plain files, or the Astro blog template with RSS, sitemap, OG meta, and markdown alternates for agents. Build command and output directory are configured later by `bun ship:setup`.
-2. **Bun web app** with Hono, plain HTML and CSS, Alpine for browser behavior, Zod at trust boundaries, tests, and `/healthz`.
-3. **Bun full-stack app** with the web starter plus Drizzle and SQLite on a persistent volume.
+```text
+┌  渋み shibumi
+│
+◆  Project name?
+│  quiet-bamboo
+│
+◆  What are you shipping?
+│  ● Bun full-stack app (recommended)
+│      Hono, Alpine, and SQLite with migrations and backups
+│  ○ Blog
+│      Astro: posts, RSS, sitemap, SEO meta, llms.txt
+│  ○ Static site
+│      Any framework's build output: dist/, public/, _site/, or plain files
+│
+◆  Deploy to a VPS now?
+│  ○ Yes / ● Later
+│
+◇  Created quiet-bamboo
+│
+◆  Template copied
+│
+◆  Git initialized; nothing committed, the first commit is yours
+│
+◆  Dependencies installed
+│
+◆  Ship client vendored (scripts/ship.ts)
+│
+│  next  cd quiet-bamboo
+│        bun dev           start the dev server (ctrl+c stops it)
+│        bun ship:setup    connect your VPS when you're ready
+│
+└  Docs: https://shibumistack.dev/docs
+```
 
-VPS deployment is the supported target. Provider choices stay out until generated fixtures prove each build and deploy path.
+Answering **Yes** to the deploy question runs `bun ship:setup` in the same session, so the project's first deploy happens before you leave the terminal. **Later** prints the command instead.
+
+Automation skips the questions:
+
+```sh
+bun create shibumi@latest my-app --template full-stack --yes
+```
+
+`--template` takes `full-stack`, `blog`, or `static`. `--no-git` and `--no-install` skip those steps. VPS deployment is the supported target; provider choices stay out until generated fixtures prove each build and deploy path.
+
+## Add deployment to an existing project
+
+A dot instead of a name adopts the current directory. Nothing is scaffolded and nothing existing is rewritten: the Ship client is vendored beside your own files.
+
+```sh
+bun create shibumi .
+```
+
+```text
+┌  渋み shibumi
+│
+●  Existing project found (Astro detected)
+│
+◆  Add deploy tooling to this project?
+│  ● Yes / ○ No
+│
+◆  Built site directory?
+│  ● dist/ (detected)
+│  ○ Somewhere else
+│
+◆  Wrote scripts/ship.ts, package.json, Dockerfile, compose.yaml, .dockerignore
+│
+◆  Added scripts: ship, ship:setup, ship:update, ship:status, ship:logs, ship:webhook
+│
+◇  Installed @clack/prompts
+│
+◆  Deploy to a VPS now?
+│  ○ Yes / ● Later
+│
+│  next  bun ship:setup    connect your VPS when you're ready
+│
+│  Deployments serve dist/. Review the generated Dockerfile and compose.yaml.
+│
+└  Docs: https://shibumistack.dev/docs
+```
+
+The build directory is detected from your dependencies and config files, with the framework signal winning over a directory that happens to be on disk:
+
+| Signal | Directory |
+| --- | --- |
+| `astro` or `astro.config.*` | `dist` |
+| `@11ty/eleventy` or `eleventy.config.*` | `_site` |
+| `next` or `next.config.*` | `out` |
+| `vite` or `vite.config.*` | `dist` |
+| a `dist`, `_site`, `out`, or `build` directory | that one |
+| a `public` directory | `public` |
+
+A dependency or a config file counts as the same signal. Astro and Eleventy both pull Vite in, so a bare Vite match loses to either of them.
+
+Pick **Somewhere else** to type a path the table missed. `--spa` makes unknown paths serve `index.html`; without it, unknown paths 404, which is what a content site wants.
+
+Adopting refuses in three cases rather than guessing:
+
+- **Deployment files already exist.** A `Dockerfile` or `compose.yaml` that Shibumi did not write may build or run something other than your site, so adopting stops and asks you to remove or rename them.
+- **The project is a server app.** A `start` script means something runs inside the container, and that is `bun ship:setup`'s job: it asks server or static and writes the matching files. To ship a static build from a project that also has a `start` script, run `bun ship:setup --static --output-dir <dir>`.
+- **`index.html` sits at the project root.** A static image serves one directory and never packages a whole checkout. Move the site down a level with `mkdir public && git mv index.html public/`, then adopt again.
+
+Without a build script, the output directory has to be committed already, so the shipped image matches the exact commit the server verifies.
 
 ## Shared project contract
 
@@ -40,18 +137,9 @@ Static publishing depends on an artifact contract rather than a framework adapte
 
 Shibumi packages the verified directory in a small static image and checks `/` before deployment. A framework's source `public/` directory does not count unless it is also the completed output.
 
-## Bun web
+## Blog
 
-Bun web projects include:
-
-- Bun and Hono server
-- plain owned templates and CSS
-- Alpine for local DOM behavior
-- Zod for environment and request validation
-- secure response headers and graceful shutdown
-- bundled `dist/server.js` runtime
-
-Nanostores remains optional until independent client islands need shared state. Alpine already covers local and simple global browser state.
+The blog template is Astro with the parts a blog needs on day one: posts in Markdown, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the same static path as any other framework's output, so `bun ship:setup` arrives pre-configured.
 
 ## Full-stack SQLite
 
@@ -78,7 +166,7 @@ Release checks use a disposable VPS fixture for setup, exact image upload, deplo
 
 ## Extensions
 
-Bun web and full-stack projects include the versioned extension command. Add bundled auth, email, or uploads source with:
+Full-stack projects include the versioned extension command. Add bundled auth, email, or uploads source with:
 
 ```sh
 bun shi add auth

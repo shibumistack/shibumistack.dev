@@ -12,6 +12,26 @@ You don't push manually. `bun ship` builds from committed HEAD, uploads the imag
 
 Ship builds with `git archive`, which packs committed HEAD and nothing else. Your uncommitted edits would not be in the deployed app, and you would not find out until production disagreed with your editor. Ship stops instead. Commit or stash, run `bun ship` again.
 
+## Why didn't setup create a GitHub webhook?
+
+Because with the default trigger it would do nothing. `bun ship` builds the image on your machine, uploads it over SSH, and asks the server to deploy that exact commit. The deploy has already happened by the time a webhook would have fired. Paying for it up front meant a GitHub sign-in that opens a browser and an `admin:repo_hook` grant, for a hook the default path never uses.
+
+Push-to-deploy is one command when you want it:
+
+```sh
+bun ship:webhook
+```
+
+That installs the hook and switches the committed trigger together, so an active hook always means pushes deploy. `bun ship:webhook --off` reverses both. Projects set up before this command existed keep the trigger they already had; `bun ship:setup` will not quietly change it.
+
+One caveat: in push-to-deploy the server builds the image itself, so a project that depends on the exact locally built artifact should stay on `bun ship`.
+
+## What happened to the Bun web app template?
+
+It was deleted, not hidden behind a flag. It was the full-stack template with the database removed, which meant two templates to keep in sync and a menu where the interesting difference between the top two options was one dependency. If you want the app without SQLite, start from full-stack and delete `src/db`, the migrations, and the `db:*` scripts. You own the source, so removing a piece is a normal edit.
+
+The menu is three items now: **Bun full-stack app**, **Blog**, and **Static site**. Blog moved up to the top level, since it used to hide behind a follow-up question under Static site.
+
 ## Does `bun dev` work before I set up a server?
 
 Yes. Without `shibumi-server.json` the app runs on port 9000. After setup it runs on the port the server assigned, which is also the first free port above 9000, so the number in your terminal is the number in production.

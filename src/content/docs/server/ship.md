@@ -22,7 +22,23 @@ bun ship:setup
 
 Use the same `user@server` target or SSH alias you already use. Password login works: enter it once per run, then Shibumi reuses a temporary SSH connection. SSH targets stay in mode-`0600` `~/.config/shibumi/config.json` (or `$XDG_CONFIG_HOME/shibumi/config.json`); they are not committed. New projects reuse the only saved server or show a picker when several are saved. Setup calls explicit `~/.local/bin/shibumi-server` remotely and exports sanitized project config.
 
-Choose **Run bun ship** (recommended) or **Deploy every GitHub push**. Recommended mode uses prebuilt images and triggers deployment over SSH. It disables the matching GitHub webhook when GitHub CLI is already authenticated, but GitHub access never blocks direct setup or shipping. Deploy-on-push switches the server to build mode, then creates, enables, repairs, and tests that webhook while keeping its secret in memory.
+Setup asks for the SSH target and the app domain, then renders a plan and runs every line of it on one **Run setup?** confirm:
+
+```text
+●  Plan
+│  Create private repo bitbonsai/quiet-bamboo, push main
+│  Connect to alpha, save target for this project
+│  Install or upgrade shibumi-server (sudo password once)
+│  Register quiet-bamboo.dev
+│  Commit and push deployment files
+│  Deploys run on: bun ship
+```
+
+Nothing is written before that confirm. The GitHub sign-in and the Caddy cutover are the two exceptions that still ask for themselves, because one opens a browser and the other moves live traffic. `bun ship:setup --interactive` restores a gate on every step, and `--yes` renders the plan without asking.
+
+A missing GitHub origin is not a failure. Setup offers to create the repository with the GitHub CLI and push it, private unless `--public` is passed. There is no visibility question.
+
+Deployments run on `bun ship`, which uploads the exact image and asks the server to deploy that commit. Setup installs no webhook, so it needs no GitHub sign-in and no `admin:repo_hook` grant. `bun ship:webhook` opts into push-to-deploy when you want it, and `bun ship:webhook --off` reverses both the hook and the trigger.
 
 Committed `shibumi-server.json` contains deployment trigger, app identity, repository, branch, webhook URL, service, remote app port, health path, and confirmed server hostname. It excludes secrets, checkout paths, SSH users, aliases, and credentials.
 
@@ -42,7 +58,7 @@ docker buildx version
 bun ship
 ```
 
-Ship checks local build tools before project tests or confirmation, then checks Git state and runs configured project checks. If Docker config names an unavailable credential helper, Ship offers to remove only stale references after writing a mode-`0600` backup. Declining or running non-interactively prints manual recovery steps. It creates build context from committed `HEAD`, builds for server's Linux platform, labels image with repository, app, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. Recommended mode asks the server over SSH to deploy exact commit, then polls status. Deploy-on-push waits for GitHub after a new push. If `HEAD` is already pushed, either mode redeploys it directly.
+Ship checks local build tools before project tests or confirmation, then checks Git state and runs configured project checks. If Docker config names an unavailable credential helper, Ship offers to remove only stale references after writing a mode-`0600` backup. Declining or running non-interactively prints manual recovery steps. It creates build context from committed `HEAD`, builds for server's Linux platform, labels image with repository, app, commit, Git tree, and platform identity, then uploads it through SSH. Only after upload succeeds does it push Git. The default trigger asks the server over SSH to deploy exact commit, then polls status. Push-to-deploy waits for GitHub after a new push. If `HEAD` is already pushed, either mode redeploys it directly.
 
 Docker layer cache stays enabled. Use `bun ship --rebuild` for a no-cache build. Git submodules are currently refused because `git archive` cannot prove their nested content identity.
 
@@ -54,11 +70,11 @@ Agents use `bun ship -y` for prompt-free routine confirmation. Clean-tree checks
 bun ship:setup
 ```
 
-Run setup again to refresh project configuration or switch deployment trigger. Automation can choose directly:
+Run setup again to refresh project configuration. It keeps whatever trigger the project already recorded, so a project configured before `ship:webhook` existed stays on push-to-deploy until you turn it off. Change the trigger with the dedicated command:
 
 ```sh
-bun ship:setup --trigger ship
-bun ship:setup --trigger github-push
+bun ship:webhook        # switch to push-to-deploy
+bun ship:webhook --off  # back to bun ship
 ```
 
 Change SSH target with `git config --local shibumi.server user@server`.

@@ -18,6 +18,7 @@
 .ship-code code { font:inherit; }
 .ship-code-command { border-color:color-mix(in srgb,var(--accent) 38%,var(--line)); box-shadow:inset .2rem 0 0 var(--accent); }
 .ship-code-json { color:var(--muted); }
+.ship-code-plan { padding-right:1.25rem; color:var(--muted); white-space:pre; }
 .ship-source { margin-top:1.25rem; border:1px solid var(--line); border-radius:.65rem; background:var(--quiet); }
 .ship-source summary { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 1rem; cursor:pointer; list-style:none; color:var(--text); font:600 var(--text-sm)/1.4 var(--font-mono); }
 .ship-source summary::-webkit-details-marker { display:none; }

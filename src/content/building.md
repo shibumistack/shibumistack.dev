@@ -7,7 +7,7 @@ This page separates working software from plans.
 - [Shibumi Forms](/forms.md), hosted pre-alpha and self-hosted source
 - [`shibumi-server`](https://server.shibumistack.dev) for Linux VPS and homelab deployment
 - [Ship](/ship.md), the project-owned client for setup, status, logs, deployment, and rollback
-- [`create-shibumi`](/docs/cli.md) for SQLite full-stack, Bun web, and static site projects
+- [`create-shibumi`](/docs/cli.md) for SQLite full-stack, Astro blog, and static site projects
 - [Extensions](/docs/cli/extensions.md) for bundled auth, email, and uploads source
 
 ## CLI

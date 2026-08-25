@@ -4,7 +4,7 @@ These pages describe CLI, Server, Ship, and Forms behavior.
 
 ## Start here
 
-- [create-shibumi](/docs/cli) creates a static site, a Bun web app, or a SQLite full-stack app and adds VPS deployment.
+- [create-shibumi](/docs/cli) creates a SQLite full-stack app, an Astro blog, or a static site, and adds VPS deployment to a project you already have.
 - [shibumi-server](/docs/server) verifies and deploys app images with rootless Podman behind Caddy.
 - [Ship](/docs/server/ship) connects a Bun project to the server through owned TypeScript and committed config.
 - [Shibumi Forms](/docs/forms) is a standalone service that accepts submissions from any static site through a plain HTML form. Hosted pre-alpha and self-hosted source are available.

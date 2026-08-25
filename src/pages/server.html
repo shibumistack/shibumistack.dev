@@ -108,17 +108,17 @@
                         <div class="setup-command"><span class="prompt-mark">›</span><code><span data-setup-typed></span><span class="typing-cursor" data-setup-cursor aria-hidden="true"></span></code><button class="terminal-replay" type="button" aria-label="Replay terminal animation" title="Replay animation">{{icon(rotate-cw)}}</button></div>
                         <div class="setup-output clack-output">
                             <span class="clack-rail" aria-hidden="true"></span>
-                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; ship</strong></div>
-                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Found repository, branch, and Compose service</span></div>
-                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">SSH target</span><span class="setup-answer">deploy@example-vps</span></div></div>
-                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Connected to shibumi-server</span></div>
-                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>DNS detected (cloudflare)</span></div>
-                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>GitHub webhook created and tested</span></div>
+                            <div class="setup-step clack-row clack-brand"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><strong>渋み&nbsp; ship setup</strong></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">SSH target (user@server or alias)</span><span class="setup-answer">deploy@example-vps</span></div></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">App domain</span><span class="setup-answer">sub.example.com</span></div></div>
+                            <div class="setup-step clack-row clack-select"><svg class="clack-glyph clack-info clack-filled"><use href="#clack-circle"/></svg><div><span class="setup-question">Plan</span><span class="setup-answer">Connect to deploy@example-vps, save target for this project<br>Install or upgrade shibumi-server <small>(sudo password once)</small><br>Register sub.example.com<br>Commit and push deployment files<br>Deploys run on: <b>bun ship</b></span></div></div>
+                            <div class="setup-step clack-row clack-prompt"><svg class="clack-glyph clack-submit"><use href="#clack-diamond"/></svg><div><span class="setup-question">Run setup?</span><span class="setup-answer">Yes</span></div></div>
+                            <div class="setup-step clack-row"><svg class="clack-glyph clack-success clack-filled"><use href="#clack-diamond"/></svg><span>Registered sub.example.com, Caddy route live</span></div>
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>If DNS or webhook delivery is not ready, setup keeps the generated files and prints the command needed to resume.</p>
-                    <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd.</p>
+                    <p>Two questions, a plan, one confirm. Nothing is written before you accept the plan, and if DNS is not ready, setup keeps the generated files and prints the command needed to resume. Deploys run on <code>bun ship</code>; <code>bun ship:webhook</code> switches to push-to-deploy later if you want it.</p>
+                    <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd. <code>shis set-repository &lt;app&gt; &lt;repository&gt;</code> repoints an already-registered app: the old checkout moves to <code>.bak</code> and the new repository is cloned in its place.</p>
                 </div>
             </section>
 
@@ -130,7 +130,7 @@
                 <div class="section-copy">
                     <p>The project owns its Ship client:</p>
                     <pre class="ship-command"><code>bun ship</code></pre>
-                    <p>Setup registers the app through confirmed SSH and writes commit-safe <code>shibumi-server.json</code>. GitHub CLI is used only when the user selects deploy-on-push.</p>
+                    <p>Setup registers the app through confirmed SSH and writes commit-safe <code>shibumi-server.json</code>. GitHub CLI is used only for creating a missing repository, or when <code>bun ship:webhook</code> opts the project into push-to-deploy.</p>
                     <p>Normal runs check Git, run project checks, build committed <code>HEAD</code> for the server platform, and upload the labeled image. Ship pushes Git after upload and follows deployment status. Caddy retries the loopback upstream for up to 20 seconds during replacement. After a server update, <code>shis caddy-refresh &lt;app-id&gt;</code> adds this retry budget to an existing managed route without replacing its other Caddy settings. Existing domains keep their old upstream until the first deployment passes health and the user approves cutover.</p>
                     <p>Ship can run newer reviewed client source for the current deployment. It saves that source to tracked <code>scripts/ship.ts</code> only after success. Network errors keep the installed client, and local edits are never replaced.</p>
                     <p>Use <code>bun ship --rebuild</code> for a no-cache build, <code>bun ship:logs</code> for the latest deployment log, or <code>bun ship --rollback</code> to restore the retained image. <a href="/ship">Add Ship to an existing project</a>.</p>

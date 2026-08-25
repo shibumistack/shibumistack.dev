@@ -67,9 +67,9 @@ Run this installer from the local Git project root:
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-It reads the domain, repository, branch, tracked Compose file, service, and health path. After SSH confirmation, it installs or updates the server component when needed, registers the app, configures the selected trigger, and writes owned project files.
+It reads the domain, repository, branch, tracked Compose file, service, and health path. Setup asks for the SSH target and the app domain, prints a plan naming every step, and runs the whole plan on one confirm. It then installs or updates the server component when needed, registers the app, and writes owned project files. Deploys run on `bun ship`; no webhook is installed.
 
-If DNS or webhook delivery is not ready, setup keeps those files and prints the next action. Resume with:
+If DNS is not ready, setup keeps those files and prints the next action. Resume with:
 
 ```sh
 bun ship:setup
@@ -77,13 +77,23 @@ bun ship:setup
 
 Server operators can register directly with `shis add sub.example.com`. `--dry-run` follows DNS detection, prompts, port selection, and validation without writing config or secrets, invoking sudo, or changing Caddy and systemd.
 
+When the checkout path already exists but its Git origin points somewhere else, `shis add` offers to move it to `<checkout>.bak` and clone fresh instead of failing. To repoint an app that is already registered, use:
+
+```sh
+shis set-repository example.com github:owner/new-repository
+```
+
+That moves the old checkout to `.bak`, clones the new repository in its place, re-detects the Compose file path in the new tree, and updates the registration without touching Caddy. If anything fails partway, the original checkout is restored from `.bak` and the registration is left alone.
+
+`shis remove <domain>` deletes Shibumi config, the webhook secret, deployment status and history, the managed Caddy route, and the app containers. Its outro states what stayed: the checkout, volumes, images, and the GitHub webhook.
+
 ## Ship from the project
 
 ```sh
 bun ship
 ```
 
-Setup recommends explicit Ship-triggered deployment. GitHub CLI can instead enable deploy-on-push. Switching modes only changes the matching webhook and committed trigger setting; webhook secrets remain on the server.
+Setup leaves deployments on `bun ship`, which uploads the exact image and asks the server to deploy that commit. `bun ship:webhook` opts into push-to-deploy, and `bun ship:webhook --off` reverses it. Either direction changes only the matching webhook and the committed trigger setting; webhook secrets remain on the server.
 
 A normal run checks Git, runs project tests and type checks, creates a build context from committed `HEAD`, and builds for the configured Linux platform. Ship labels the image with app, repository, commit, Git tree, and platform identity. It uploads through SSH before pushing Git. The server resolves the commit tree itself and rejects an image when any identity value differs.
 

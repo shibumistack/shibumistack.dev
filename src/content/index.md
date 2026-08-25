@@ -20,8 +20,8 @@ An extension adds a named file such as `agents/auth.md` and merges its rules int
 
 `create-shibumi` offers three starting points:
 
-1. **SQLite full stack** (recommended): the Bun web project plus Drizzle, migrations, persistent data, backup, and restore.
-2. **Bun web**: Hono, HTML, CSS, Alpine, Zod, tests, and a health endpoint.
+1. **Bun full-stack app** (recommended): Hono, Alpine, Zod, and SQLite with Drizzle, migrations, persistent data, backup, and restore.
+2. **Blog**: Astro with Markdown posts, RSS, sitemap, SEO meta, and an `llms.txt`.
 3. **Static site**: publish a verified build directory such as `./dist`, `public`, `_site`, `build`, or `out` from any framework.
 
 ```sh
@@ -29,6 +29,8 @@ bun create shibumi@latest my-app
 ```
 
 All three deploy to a Linux VPS or homelab through `shibumi-server`. Other providers can wait until their generated projects pass the same artifact and deployment tests.
+
+Already have a project? `bun create shibumi .` detects its build directory and adds the same deployment path without scaffolding anything.
 
 ## VPS deployment
 

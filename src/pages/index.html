@@ -38,12 +38,12 @@
             <span class="home-clack-rail" aria-hidden="true"></span>
             <div class="cli-step home-clack-row home-clack-brand">
                 <svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg>
-                <strong>渋み&nbsp; shi <span>(shibumi)</span></strong>
+                <strong>渋み&nbsp; shibumi</strong>
             </div>
 
             <div class="cli-step home-clack-row home-clack-prompt">
                 <svg class="home-clack-glyph home-clack-submit"><use href="#home-clack-diamond"/></svg>
-                <div><div class="cli-question">Where should we create your project?</div><div class="cli-muted cli-option">./quiet-bamboo</div></div>
+                <div><div class="cli-question">Project name?</div><div class="cli-muted cli-option">quiet-bamboo</div></div>
             </div>
 
             <div class="cli-step home-clack-row home-clack-prompt home-clack-select">
@@ -51,19 +51,24 @@
                 <div>
                     <div class="cli-question">What are you shipping?</div>
                     <div class="cli-selected cli-option"><span class="cli-dot">●</span> Bun full-stack app (recommended)</div>
-                    <div class="cli-muted cli-option">○ Bun web app: Hono, Alpine, Zod</div>
-                    <div class="cli-muted cli-option">○ Static site: dist/ from any framework</div>
+                    <div class="cli-muted cli-option">○ Blog: Astro, RSS, sitemap, SEO</div>
+                    <div class="cli-muted cli-option">○ Static site: any framework's output</div>
                 </div>
+            </div>
+
+            <div class="cli-step home-clack-row home-clack-prompt">
+                <svg class="home-clack-glyph home-clack-submit"><use href="#home-clack-diamond"/></svg>
+                <div><div class="cli-question">Deploy to a VPS now?</div><div class="cli-selected cli-option"><span class="cli-dot">●</span> Later</div></div>
             </div>
 
             <div class="cli-step home-clack-row">
                 <svg class="home-clack-glyph home-clack-info home-clack-filled"><use href="#home-clack-circle"/></svg>
-                <div>Writing Bun, Hono, Alpine, tests, and VPS deployment source</div>
+                <div>Template copied, dependencies installed, scripts/ship.ts vendored</div>
             </div>
 
             <div class="cli-step home-clack-row home-clack-done">
                 <svg class="home-clack-glyph"><use href="#home-clack-elbow"/></svg>
-                <div><strong>Project ready</strong><span class="home-clack-next"><b>Next:</b> cd quiet-bamboo && bun dev</span></div>
+                <div><strong>Created quiet-bamboo</strong><span class="home-clack-next"><b>Next:</b> cd quiet-bamboo && bun dev</span></div>
             </div>
         </div>
     </div>
@@ -89,8 +94,9 @@
         <p class="story-eyebrow">Create</p>
         <div class="story-copy">
             <h2>One command, a whole app<span class="dot">.</span></h2>
-            <p><a href="/docs/cli"><strong>create-shibumi</strong></a> writes you a complete Bun app from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Zod for validation, SQLite and Drizzle when you need data. Three starting sizes: full stack, web app, static site. What lands in your repo is plain source: routes, styles, tests, a Dockerfile, a deploy script, and an <code>agents.md</code> that tells your coding agent the house rules.</p>
+            <p><a href="/docs/cli"><strong>create-shibumi</strong></a> writes you a complete Bun app from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Zod for validation, SQLite and Drizzle when you need data. Three starting points: full-stack app, Astro blog, static site. What lands in your repo is plain source: routes, styles, tests, a Dockerfile, a deploy script, and an <code>agents.md</code> that tells your coding agent the house rules.</p>
             <p>When you need a feature like auth, you don't install a package. The CLI copies readable <code>.ts</code> files, migrations, tests, and an <code>agents/auth.md</code> into your repo. You own the code from day one; there's no framework underneath to outgrow.</p>
+            <p>Got a site already? Run <code>bun create shibumi .</code> in it. The CLI figures out where your build lands, drops in the deploy script and container files, and leaves everything else exactly as you had it.</p>
         </div>
     </div>
     <div class="story-block">

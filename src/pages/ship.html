@@ -17,11 +17,20 @@
                     <p>Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.</p>
                     <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
                     <p>The installer checks the Git root, adds Ship source and package commands, and starts setup. It never replaces an edited <code>scripts/ship.ts</code>.</p>
-                    <p>Setup suggests a domain, asks for the SSH target you already use, and registers the current branch. Choose <strong>Run bun ship</strong> or <strong>Deploy every GitHub push</strong>. Run <code>bun ship:setup</code> again to switch.</p>
-                    <p>In Ship mode, setup ends with a <strong>Ship now?</strong> confirm: Enter runs the first deploy in the same run.</p>
+                    <p>Setup asks two questions, the SSH target you already use and the app domain, then prints a plan and runs all of it on one <strong>Run setup?</strong> confirm. The domain question appears only when the package name and Compose <code>SITE_URL</code> cannot answer it.</p>
+                    <pre class="ship-code ship-code-plan"><code>●  Plan
+│  Create private repo bitbonsai/quiet-bamboo, push main
+│  Connect to alpha, save target for this project
+│  Install or upgrade shibumi-server (sudo password once)
+│  Register quiet-bamboo.dev
+│  Commit and push deployment files
+│  Deploys run on: bun ship</code></pre>
+                    <p>Nothing lands on disk before you accept the plan. The GitHub sign-in and the Caddy cutover still ask for themselves, because one opens a browser and the other moves live traffic. <code>bun ship:setup --interactive</code> puts a gate back on every step.</p>
+                    <p>A project without a GitHub origin is fine: setup offers to create the repository and push it, private by default, <code>--public</code> for the other kind.</p>
+                    <p>Setup ends with a <strong>Ship now?</strong> confirm: Enter runs the first deploy in the same session.</p>
                     <p>When no tracked Compose file exists, setup can generate a Bun <code>Dockerfile</code>, loopback-only <code>compose.yaml</code>, and <code>.dockerignore</code>. Review and commit them before resuming. Existing files are never replaced.</p>
-                    <p>Direct Ship mode deploys over SSH and can disable the matching webhook. Deploy-on-push creates or repairs that webhook. Pending DNS or GitHub changes leave generated files in place with a command to resume.</p>
-                    <p><strong>Cloudflare:</strong> Deploy-on-push requires <strong>Full (strict)</strong> SSL/TLS mode for proxied domains.</p>
+                    <p>Setup installs no webhook. <code>bun ship</code> already uploads the exact image and asks the server to deploy that commit, so pushes deploy only if you ask for it with <code>bun ship:webhook</code>; <code>bun ship:webhook --off</code> reverses it. Pending DNS changes leave generated files in place with a command to resume.</p>
+                    <p><strong>Cloudflare:</strong> Push-to-deploy requires <strong>Full (strict)</strong> SSL/TLS mode for proxied domains.</p>
                 </div>
             </section>
 
@@ -38,10 +47,11 @@
     "ship:setup": "bun scripts/ship.ts --setup",
     "ship:update": "bun scripts/ship.ts --update",
     "ship:logs": "bun scripts/ship.ts --logs",
-    "ship:status": "bun scripts/ship.ts --status"
+    "ship:status": "bun scripts/ship.ts --status",
+    "ship:webhook": "bun scripts/ship.ts --webhook"
   },
   "devDependencies": {
-    "@clack/prompts": "^0.7.0"
+    "@clack/prompts": "^1.7.0"
   }
 }</code></pre>
                     <details class="ship-source" data-ship-source>

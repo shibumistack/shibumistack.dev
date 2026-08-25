@@ -47,7 +47,17 @@ Interactive commands check npm with a short timeout and suggest an update when a
 shis remove example.com
 ```
 
-Removes Shibumi config, webhook secret, deployment status, deployment history, managed Caddy route, and app containers. Preserves checkout, volumes, images, and GitHub webhook. `--yes` skips confirmation but never bypasses sudo.
+Removes Shibumi config, webhook secret, deployment status, deployment history, managed Caddy route, per-app environment store, and app containers. Preserves checkout, volumes, images, and GitHub webhook, and the outro names each of those so nothing preserved is a surprise later. `--yes` skips confirmation but never bypasses sudo. Removing the last app stops the service.
+
+## Repoint an app's repository
+
+```sh
+shis set-repository example.com github:owner/new-repository
+```
+
+Moves the existing checkout to `<checkout>.bak`, clones the new repository in its place, and updates the registration. Caddy is untouched and the app is not re-registered. The Compose file path is re-detected in the new repository rather than reused: `set-repository` exists to swap in an unrelated repository, so assuming its layout matches the old one is not safe. If detection fails partway, the original checkout is restored from `.bak` and the registration is left as it was. The command refuses when `<checkout>.bak` already exists.
+
+`shis add` makes the same offer when the checkout path exists but its Git origin points at a different repository: move it to `.bak` and clone fresh, instead of a dead-end error.
 
 ## Uninstall
 
