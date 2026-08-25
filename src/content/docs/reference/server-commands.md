@@ -4,7 +4,7 @@ The installer adds `shis`. `shibumi-server` remains an alias.
 
 ## Setup
 
-```text
+```usage
 shis                              Guided installation
 shis setup                        Guided installation
 shis init                         Install only, for automation
@@ -14,7 +14,7 @@ shis uninstall [--purge] [--yes]
 
 ## Apps
 
-```text
+```usage
 shis list
 shis add <domain> [--dry-run] [--yes]
 shis remove <domain|app-id> [--yes]
@@ -29,7 +29,7 @@ shis set-repository <domain|app-id> <repository> [--yes]
 
 Explicit add requires repository, absolute checkout, and port:
 
-```text
+```usage
 shis add <domain> \
   --repository <github:owner/repo|GitHub URL> \
   --checkout <absolute-path> \
@@ -45,7 +45,7 @@ shis add <domain> \
 
 ## Deployments
 
-```text
+```usage
 shis status <app-id> [--commit <full-sha>] [--json]
 shis history <app-id> [--json]
 shis logs <app-id>
@@ -58,7 +58,7 @@ Rollback restores the one previous successful image retained for the app for up 
 
 ## Project setup data
 
-```text
+```usage
 shis client-config <app-id> [--server-hostname <host>]
 shis webhook-secret <app-id>
 ```
@@ -67,7 +67,7 @@ shis webhook-secret <app-id>
 
 ## Service commands
 
-```text
+```usage
 shis check --config <path>
 shis serve --config <path>
 ```

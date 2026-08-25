@@ -557,6 +557,13 @@ function highlightDocsCode(text: string, language = "text"): string {
       .replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, (value) => token("comment", value))
       .replace(/(&quot;[^\n]*?&quot;|'[^\n]*?'|`[^\n]*?`)/g, (value) => token("string", value))
       .replace(/\b(import|export|from|const|let|function|async|await|return|if|else|new|throw|type|interface)\b/g, (value) => token("keyword", value));
+  } else if (language === "usage") {
+    code = code
+      .replace(/(\S)(\s{2,})(\S.*)$/gm, (_match, lead, gap, description) => `${lead}${gap}${token("comment", description)}`)
+      .replace(/^(shis|shibumi-server|bun)( +)([a-z][a-z0-9:-]+)?/gm, (_match, command, gap, sub) => token("command", command) + gap + (sub ? token("keyword", sub) : ""))
+      .replace(/^(shis|shibumi-server|bun)$/gm, (value) => token("command", value))
+      .replace(/&lt;[^&\n]*?&gt;/g, (value) => token("string", value))
+      .replace(/(^|[\s[])(--?[a-z][a-z0-9-]*)(?=[\s\]=]|$)/gm, (_match, lead, value) => `${lead}${token("option", value)}`);
   } else if (language === "diff") {
     code = code.replace(/^\+.*$/gm, (value) => token("added", value)).replace(/^-.*$/gm, (value) => token("removed", value));
   }
@@ -595,7 +602,7 @@ function docsMarkdownHtml(markdown: string): string {
         const toggle = language === "run" ? '<button class="docs-return" type="button" aria-expanded="false">Output</button>' : "";
         return `<div class="docs-clack${language === "run" ? " docs-clack-collapsible" : ""}"><div class="docs-clack-command"><span>›</span><code>${highlightDocsCode(command, "sh")}</code>${toggle}<button class="docs-copy copy-command" type="button" data-copy-code aria-label="Copy session">Copy</button></div><div class="docs-clack-flow"><div class="docs-clack-brand"><span aria-hidden="true">┌</span><strong>${escapeHtml(brand)}</strong></div>${steps}<div class="docs-clack-outcome"><span aria-hidden="true">└</span><div><strong>${escapeHtml(outro?.value ?? "Complete")}</strong></div></div></div><code class="docs-clack-source">${escapeHtml(text)}</code></div>`;
       }
-      const terminal = ["sh", "bash", "shell", "text"].includes(language);
+      const terminal = ["sh", "bash", "shell", "text", "usage"].includes(language);
       return `<div class="docs-code ${terminal ? "docs-terminal" : "docs-source"}" data-language="${escapeHtml(language)}"><div class="docs-code-bar">${terminal ? "" : `<span>${escapeHtml(language)}</span>`}<button class="docs-copy copy-command" type="button" data-copy-code aria-label="Copy code">Copy</button></div><pre><code>${highlightDocsCode(text, language)}</code></pre></div>`;
     },
     link: (children, attrs: { href: string }) => isSafeHref(attrs.href) ? `<a href="${attrs.href}">${children}</a>` : children,
