@@ -66,8 +66,12 @@ describe("ship configuration", () => {
       logs: false,
       status: false,
       dev: false,
+      webhook: false,
+      off: false,
       rebuild: false,
       yes: true,
+      interactive: false,
+      publicRepo: false,
       staticSite: false,
       spa: false,
       server: "deploy@example-vps",
@@ -75,8 +79,14 @@ describe("ship configuration", () => {
     });
     expect(parseShipArgs(["--rollback", "-y"])).toMatchObject({ rollback: true, yes: true });
     expect(parseShipArgs(["--rebuild", "-y"])).toMatchObject({ rebuild: true, yes: true });
-    expect(parseShipArgs(["--setup", "--trigger", "ship"])).toMatchObject({ setup: true, trigger: "ship" });
-    expect(parseShipArgs(["--setup", "--trigger", "github-push"])).toMatchObject({ setup: true, trigger: "github-push" });
+    // v48 replaced the setup-time trigger question with ship:webhook, so
+    // --trigger is not an option any more, it is an unknown one.
+    expect(() => parseShipArgs(["--setup", "--trigger", "ship"])).toThrow("unknown ship option");
+    expect(() => parseShipArgs(["--trigger", "github-push"])).toThrow("unknown ship option");
+    expect(parseShipArgs(["--webhook"])).toMatchObject({ webhook: true, off: false });
+    expect(parseShipArgs(["--webhook", "--off"])).toMatchObject({ webhook: true, off: true });
+    expect(parseShipArgs(["--setup", "--interactive"])).toMatchObject({ setup: true, interactive: true });
+    expect(parseShipArgs(["--setup", "--public"])).toMatchObject({ setup: true, publicRepo: true });
     expect(parseShipArgs(["--logs"])).toMatchObject({ logs: true });
     expect(parseShipArgs(["--status"])).toMatchObject({ status: true });
     expect(parseShipArgs(["--dev"])).toMatchObject({ dev: true });
@@ -84,9 +94,12 @@ describe("ship configuration", () => {
     expect(() => parseShipArgs(["--yes", "--wat"])).toThrow("unknown ship option");
     expect(() => parseShipArgs(["--setup", "--rollback"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--status", "--logs"])).toThrow("choose only one");
+    expect(() => parseShipArgs(["--setup", "--webhook"])).toThrow("choose only one");
     expect(() => parseShipArgs(["--setup", "--rebuild"])).toThrow("applies only to shipping");
-    expect(() => parseShipArgs(["--trigger", "ship"])).toThrow("requires --setup");
-    expect(() => parseShipArgs(["--setup", "--trigger", "other"])).toThrow("ship or github-push");
+    expect(() => parseShipArgs(["--off"])).toThrow("--off requires --webhook");
+    expect(() => parseShipArgs(["--interactive"])).toThrow("--interactive requires --setup");
+    expect(() => parseShipArgs(["--public"])).toThrow("--public requires --setup");
+    expect(() => parseShipArgs(["--setup", "--interactive", "-y"])).toThrow("mutually exclusive");
     expect(shouldCheckForShipUpdate(parseShipArgs(["-y"]))).toBeTrue();
     expect(shouldCheckForShipUpdate(parseShipArgs(["--logs"]))).toBeFalse();
     expect(shouldCheckForShipUpdate(parseShipArgs(["--status"]))).toBeFalse();
