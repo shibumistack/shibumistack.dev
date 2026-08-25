@@ -98,15 +98,16 @@ An extension with tunable limits ships a YAML file at `src/config/<name>.yaml`, 
 ## Package layout
 
 ```text
-manifest.json
-migration.sql
-agents/
-  feature.md
-files/
-  src/
-    config/
-      feature.yaml
-    ...
+.
+├── manifest.json
+├── migration.sql
+├── agents/
+│   └── feature.md
+└── files/
+    └── src/
+        ├── config/
+        │   └── feature.yaml
+        └── ...
 ```
 
 Bundled extensions ship inside the versioned `create-shibumi` package, embedded in the project's own `scripts/shibumi.ts` and covered by its checksum.
