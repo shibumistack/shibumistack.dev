@@ -87,6 +87,9 @@ const docs: DocPage[] = [
   { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
   { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
   { path: "cli", title: "create-shibumi CLI", description: "Create SQLite full-stack, blog, and static projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
+  { path: "cli/templates/full-stack", title: "Full-stack template", description: "Bun app with Hono, Alpine, Zod, and SQLite with Drizzle, migrations, and backups.", section: "CLI", source: "src/content/docs/cli/templates/full-stack.md" },
+  { path: "cli/templates/blog", title: "Blog template", description: "Astro blog with markdown posts, RSS, sitemap, SEO meta, and llms.txt.", section: "CLI", source: "src/content/docs/cli/templates/blog.md" },
+  { path: "cli/templates/static", title: "Static template", description: "Plain files from public/ in a 1.4 MB busybox image.", section: "CLI", source: "src/content/docs/cli/templates/static.md" },
   { path: "cli/extensions", title: "Extensions", description: "Add auth, email, uploads, or admin source to a project with bun shi add.", section: "CLI", source: "src/content/docs/cli/extensions.md" },
   { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
 ];
