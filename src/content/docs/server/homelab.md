@@ -2,7 +2,7 @@
 
 A homelab is a computer at home that stays on and serves things: a mini PC on a shelf, a Raspberry Pi behind the router, an old laptop with the lid closed. shibumi-server treats it exactly like a rented VPS. If the box runs Linux, has SSH, and can receive traffic on ports 80 and 443, every page in this section applies unchanged.
 
-Why bother when a VPS costs €5 a month? Hardware you already own costs €0 a month, a used mini PC pays for itself against cloud bills within a year, and your data sleeps in your house. The trade is that reachability becomes your job: the sections below cover the parts a VPS provider normally does for you.
+Why bother when a VPS costs €5 a month? Hardware you already own costs €0 a month, a used mini PC pays for itself against cloud bills within a year, and the data never leaves the building. The trade is that reachability becomes your job. The sections below cover the parts a VPS provider normally does for you.
 
 ## Pick the hardware
 

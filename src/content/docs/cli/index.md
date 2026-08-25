@@ -1,6 +1,6 @@
 # create-shibumi CLI
 
-All three templates deploy to a Linux VPS through `shibumi-server`.
+Every template deploys to a Linux VPS through `shibumi-server`.
 
 ## Create a project
 
@@ -109,7 +109,7 @@ Adopting refuses in three cases rather than guessing:
 
 - **Deployment files already exist.** A `Dockerfile` or `compose.yaml` that Shibumi did not write may build or run something other than your site, so adopting stops and asks you to remove or rename them.
 - **The project is a server app.** A `start` script means something runs inside the container, and that is `bun ship:setup`'s job: it asks server or static and writes the matching files. To ship a static build from a project that also has a `start` script, run `bun ship:setup --static --output-dir <dir>`.
-- **`index.html` sits at the project root with no directory to serve.** This is the case where the table above found nothing at all and the site is a flat pile of files at the root. A static image serves one directory and never packages a whole checkout, so move the site down a level with `mkdir public && git mv index.html public/`, then adopt again. A project with a detected build directory adopts normally, root `index.html` or not.
+- **`index.html` sits at the project root with no directory to serve.** The table above found nothing, so the site is a flat pile of files at the root. A static image serves one directory and never packages a whole checkout, so move the site down a level with `mkdir public && git mv index.html public/`, then adopt again. A project with a detected build directory adopts normally, root `index.html` or not.
 
 Without a build script, the output directory has to be committed already, so the shipped image matches the exact commit the server verifies.
 

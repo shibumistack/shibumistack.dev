@@ -1,6 +1,6 @@
 # Shibumi Stack docs
 
-These choices should outlive any particular implementation of them.
+The choices below should outlive any particular implementation of them.
 
 ## What works now
 

@@ -1,6 +1,6 @@
 # Deployments
 
-`bun ship` builds one exact committed image locally. A signed GitHub push then starts one deployment for that app and commit.
+`bun ship` builds one exact committed image locally, uploads it, and asks the server to deploy that commit. Projects that opted into push-to-deploy with `bun ship:webhook` start the same deployment from a signed GitHub push instead.
 
 ## Client pipeline
 
