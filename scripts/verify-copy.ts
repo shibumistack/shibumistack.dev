@@ -102,18 +102,30 @@ const shipPage = read(join(SITE, "src", "content", "ship.md"));
 for (const [file, content] of [["dx.md", dx], ["ship.md", shipPage]] as const) {
   if (!content.includes("bun ship:webhook")) drift(`${file}: opt-in webhook command missing`);
 }
-for (const [file, content] of [
-  ["dx.md", dx],
-  ["ship.md", shipPage],
-  ["docs/server/ship.md", read(join(SITE, "src", "content", "docs", "server", "ship.md"))],
-] as const) {
-  if (content.includes("--trigger")) drift(`${file}: names the removed ship:setup --trigger flag`);
+for (const relative of [
+  "src/content/dx.md",
+  "src/content/ship.md",
+  "src/content/server.md",
+  "src/content/docs/faq.md",
+  "src/content/docs/server/ship.md",
+  "src/pages/ship.html",
+  "src/pages/server.html",
+]) {
+  if (read(join(SITE, relative)).includes("--trigger")) {
+    drift(`${relative}: names the removed ship:setup --trigger flag`);
+  }
 }
 
 // 3c. the web template is gone; no current-state surface may still offer it ----
-// Blog posts are dated records and keep whatever was true when published.
+// Matching the bare phrase, not just "Bun web app": the first pass at this gate
+// only caught the exact old strings, and building.md's own paraphrase ("a Bun,
+// Hono, Zod, and Alpine web app") sailed through it. Blog posts are dated
+// records and stay exempt.
 
-const WEB_TEMPLATE_CLAIMS = /Bun web app|Bun web project|web template/i;
+const WEB_TEMPLATE_CLAIMS = [/\bweb apps?\b/i, /\bweb (?:project|template)s?\b/i, /\bBun web\b/i];
+// "build any web app without React" is the hero line about the whole product,
+// not an offer of the deleted template.
+const ALLOWED_WEB_APP_PHRASES = [/build any web app without React/gi];
 for (const relative of [
   "src/content/index.md",
   "src/content/docs.md",
@@ -127,7 +139,9 @@ for (const relative of [
   "src/pages/getnotified.html",
   "public/llms.txt",
 ]) {
-  const match = WEB_TEMPLATE_CLAIMS.exec(read(join(SITE, relative)));
+  let content = read(join(SITE, relative));
+  for (const allowed of ALLOWED_WEB_APP_PHRASES) content = content.replace(allowed, "");
+  const match = WEB_TEMPLATE_CLAIMS.map((pattern) => pattern.exec(content)).find(Boolean);
   if (match) drift(`${relative} still offers the deleted web template ("${match[0]}")`);
 }
 

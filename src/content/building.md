@@ -14,11 +14,11 @@ This page separates working software from plans.
 
 `create-shibumi` offers three starting points:
 
+- a Bun, Hono, Zod, and Alpine app with Drizzle and SQLite
+- an Astro blog with posts, RSS, sitemap, and SEO meta
 - framework-agnostic static output
-- a Bun, Hono, Zod, and Alpine web app
-- the web app plus Drizzle and SQLite
 
-Each generated project includes tests or artifact checks, a root `agents.md`, current Ship source, and VPS deployment through `shibumi-server`.
+Each generated project includes tests or artifact checks, a root `agents.md`, current Ship source, and VPS deployment through `shibumi-server`. `bun create shibumi .` adds that deployment to a project that already exists.
 
 ## Release checks
 
