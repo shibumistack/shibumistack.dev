@@ -51,13 +51,13 @@ Project code stays in Git. SSH targets stay on your computer. Webhook secrets an
 
 ## Extensions
 
-From a generated project, install auth, email, or uploads as source:
+From a generated project, install auth, email, uploads, or admin as source:
 
 ```sh
 bun shi add auth
 ```
 
-The installer previews file writes and stops on conflicts.
+The installer previews file writes and stops on conflicts. Each extension brings its own `agents/<name>.md`, so a coding agent picks up the feature as soon as it lands.
 
 ## Links
 
