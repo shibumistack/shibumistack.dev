@@ -93,8 +93,14 @@
             <h2>One command, a whole app<span class="dot">.</span></h2>
             <p><a href="/docs/cli"><strong>create-shibumi</strong></a> writes you a complete Bun app from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Nanostores when state crosses components, Zod for validation, SQLite and Drizzle when you need data.</p>
             <p>Three starting points: <a href="/docs/cli/templates/full-stack">full-stack app</a>, <a href="/docs/cli/templates/blog">blog</a>, <a href="/docs/cli/templates/static">static site</a>. Each one lands in your repo as plain source: routes, styles, tests, a Dockerfile, a deploy script, and an <code>agents.md</code> that tells your coding agent the house rules.</p>
-            <p>Need a feature like auth? Run <code>bun shi add auth</code> and the CLI copies readable <code>.ts</code> files, migrations, tests, and an <code>agents/auth.md</code> into your repo instead of installing a package.</p>
             <p>Got a site already? Run <code>bun create shibumi .</code> in it. The CLI figures out where your build lands, drops in the deploy script and container files, and leaves everything else exactly as you had it.</p>
+        </div>
+    </div>
+    <div class="story-block">
+        <p class="story-eyebrow">Extensions</p>
+        <div class="story-copy">
+            <h2>Features as source, in your repo<span class="dot">.</span></h2>
+            <p>Need auth? Run <code>bun shi add auth</code> and the CLI copies readable <code>.ts</code> files, migrations, tests, and an <code>agents/auth.md</code> into your repo instead of installing a package. Email, uploads, and an admin panel install the same way, and each one brings its own <code>agents/&lt;name&gt;.md</code> so your coding agent learns the feature the moment it lands. <a href="/docs/cli/extensions">Extensions docs</a>.</p>
         </div>
     </div>
     <div class="story-block">
