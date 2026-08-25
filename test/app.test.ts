@@ -292,7 +292,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v47.ts");
+    const source = await app.request("/ship/v48.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -302,7 +302,7 @@ describe("routes", () => {
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).toContain("export function formatDevStartup");
-    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v47.ts"');
+    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v48.ts"');
     expect(sourceBody).toContain("Ship now?");
     expect(sourceBody).toContain("dev.shibumistack.static.output");
     expect(sourceBody).toContain("What are you shipping?");
@@ -317,7 +317,14 @@ describe("routes", () => {
     expect(sourceBody).not.toContain("docker-desktop://");
     expect(sourceBody).toContain("runLatestShipClient");
     expect(sourceBody).toContain("save it after a successful deployment");
-    expect(sourceBody).toContain("How do you want to deploy?");
+    // v48: the setup-time trigger question is gone, replaced by a plan block,
+    // one "Run setup?" confirm, and ship:webhook as the opt-in for push deploys.
+    expect(sourceBody).not.toContain("How do you want to deploy?");
+    expect(sourceBody).toContain("export function setupPlanLines");
+    expect(sourceBody).toContain("Run setup?");
+    expect(sourceBody).toContain("Deploys run on: ");
+    expect(sourceBody).toContain('"ship:webhook": "bun scripts/ship.ts --webhook"');
+    expect(sourceBody).toContain("Undo: bun ship:webhook --off");
     expect(sourceBody).toContain("GitHub webhook disabled");
     expect(sourceBody).toContain("shouldTriggerRedeploy");
     expect(sourceBody).toContain("Ship cannot push");
@@ -332,6 +339,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v44.ts")).status).toBe(200);
     expect((await app.request("/ship/v45.ts")).status).toBe(200);
     expect((await app.request("/ship/v46.ts")).status).toBe(200);
+    expect((await app.request("/ship/v47.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -340,18 +348,20 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v45.ts");
-    const installer = await app.request("/ship/install-v45.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v46.ts");
+    const installer = await app.request("/ship/install-v46.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v47.ts");
+    expect(installerBody).toContain("ship/v48.ts");
+    expect(installerBody).not.toContain("ship/v47.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
     expect(installerBody).toContain('"ship:logs"');
     expect(installerBody).toContain('"ship:status"');
+    expect(installerBody).toContain('"ship:webhook": "bun scripts/ship.ts --webhook"');
     expect(installerBody).toContain('const devScript = "bun scripts/ship.ts --dev"');
     expect(installerBody).toContain('"--setup", ...process.argv.slice(2)');
     expect((await app.request("/ship/install-v38.ts")).status).toBe(200);
