@@ -1,6 +1,6 @@
 # Shibumi Stack
 
-Simple apps, whole stack: build any web app without React or build pipelines. A CLI writes each one from curated parts, and one VPS or your homelab runs them all.
+Simple apps, whole stack: Bun + Hono + Alpine.js + (SQLite + Drizzle + Zod).
 
 Every generated project keeps its source, tests, and deployment config in your repository.
 
