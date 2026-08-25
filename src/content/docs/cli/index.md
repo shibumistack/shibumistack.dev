@@ -1,6 +1,6 @@
 # create-shibumi CLI
 
-`create-shibumi` creates a Bun full-stack app, an Astro blog, or a static site. All three deploy to a Linux VPS through `shibumi-server`.
+`create-shibumi` creates a Bun full-stack app, a blog, or a static site. All three deploy to a Linux VPS through `shibumi-server`.
 
 ## Create a project
 

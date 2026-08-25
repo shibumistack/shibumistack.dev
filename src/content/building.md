@@ -7,7 +7,7 @@ This page separates working software from plans.
 - [Shibumi Forms](/forms.md), hosted pre-alpha and self-hosted source
 - [`shibumi-server`](https://server.shibumistack.dev) for Linux VPS and homelab deployment
 - [Ship](/ship.md), the project-owned client for setup, status, logs, deployment, and rollback
-- [`create-shibumi`](/docs/cli.md) for SQLite full-stack, Astro blog, and static site projects
+- [`create-shibumi`](/docs/cli.md) for SQLite full-stack, blog, and static site projects
 - [Extensions](/docs/cli/extensions.md) for bundled auth, email, and uploads source
 
 ## CLI
@@ -15,7 +15,7 @@ This page separates working software from plans.
 `create-shibumi` offers three starting points:
 
 - a Bun, Hono, Zod, and Alpine app with Drizzle and SQLite
-- an Astro blog with posts, RSS, sitemap, and SEO meta
+- a blog with posts, RSS, sitemap, and SEO meta
 - framework-agnostic static output
 
 Each generated project includes tests or artifact checks, a root `agents.md`, current Ship source, and VPS deployment through `shibumi-server`. `bun create shibumi .` adds that deployment to a project that already exists.

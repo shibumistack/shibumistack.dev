@@ -85,7 +85,7 @@ const docs: DocPage[] = [
   { path: "server/history-rollback", title: "History and rollback", description: "Inspect verified deployments and restore the previous retained image.", section: "Server", source: "src/content/docs/server/history-rollback.md" },
   { path: "server/operations", title: "Operations", description: "List, update, remove, inspect, and uninstall server state safely.", section: "Server", source: "src/content/docs/server/operations.md" },
   { path: "server/security", title: "Security model", description: "Trust boundaries, secrets, webhook verification, Caddy privileges, and resource limits.", section: "Server", source: "src/content/docs/server/security.md" },
-  { path: "cli", title: "create-shibumi CLI", description: "Create SQLite full-stack, Astro blog, and static projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
+  { path: "cli", title: "create-shibumi CLI", description: "Create SQLite full-stack, blog, and static projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
   { path: "cli/extensions", title: "Extensions", description: "Add auth, email, uploads, or admin source to a project with bun shi add.", section: "CLI", source: "src/content/docs/cli/extensions.md" },
   { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
 ];
@@ -93,7 +93,7 @@ const docs: DocPage[] = [
 const pageMeta: Record<string, PageMeta> = {
   index: {
     title: "Shibumi Stack: generated source and VPS deployment",
-    description: "Generate SQLite full-stack, Astro blog, and static projects with source, tests, agent instructions, and VPS deployment config in your repository.",
+    description: "Generate SQLite full-stack, blog, and static projects with source, tests, agent instructions, and VPS deployment config in your repository.",
     path: "/",
   },
   brand: {
@@ -128,7 +128,7 @@ const pageMeta: Record<string, PageMeta> = {
   },
   getnotified: {
     title: "create-shibumi CLI: Shibumi Stack",
-    description: "Create SQLite full-stack, Astro blog, and static projects.",
+    description: "Create SQLite full-stack, blog, and static projects.",
     path: "/getnotified",
   },
 };

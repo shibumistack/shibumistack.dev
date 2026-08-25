@@ -9,7 +9,7 @@ Shibumi writes files into a project. Generated apps run on their chosen librarie
 The package supports one deploy target, a Linux VPS running `shibumi-server`. It offers three starting points:
 
 - a Bun, Hono, Zod, and Alpine app plus Drizzle and SQLite (recommended)
-- an Astro blog with posts, RSS, sitemap, and SEO meta
+- a blog with posts, RSS, sitemap, and SEO meta
 - a static site from any framework's build output or plain files
 
 Nanostores joins only when separate browser components need shared state.
