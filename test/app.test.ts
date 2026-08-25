@@ -82,7 +82,7 @@ describe("routes", () => {
     const deployments = await app.request("/docs/server/deployments");
     const deploymentsBody = await deployments.text();
     expect(deploymentsBody).toContain("Client pipeline");
-    expect(deploymentsBody).toContain("Upload happens before Git push");
+    expect(deploymentsBody).toContain("The upload happens before the Git push");
     expect(deploymentsBody).toContain("Prebuilt available memory: 512 MiB");
 
     const ship = await app.request("/docs/server/ship");
