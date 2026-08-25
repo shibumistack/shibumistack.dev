@@ -78,7 +78,7 @@
 .section-copy p { margin:0 0 1rem; }
 .section-copy a { color:var(--text); text-decoration-color:var(--accent); text-underline-offset:.2em; transition:color 160ms ease; }
 .section-copy a:hover,.section-copy a:focus-visible { color:var(--accent-hover); }
-.ship-command { margin:1.35rem 0 1.5rem; padding:1.05rem 1.2rem; overflow-x:auto; border:1px solid var(--line); border-radius:.7rem; background:var(--quiet); color:var(--text); font:600 .95rem/1.4 var(--font-mono); }
+.ship-command { margin:1.35rem 0 1.5rem; padding:1.05rem 1.2rem; overflow-x:auto; border:1px solid var(--line); border-radius:.55rem; background:light-dark(rgba(37,33,22,.045),rgba(0,0,0,.38)); box-shadow:0 .8rem 2.5rem light-dark(rgba(37,33,22,.035),rgba(0,0,0,.12)); color:var(--text); font:600 .95rem/1.4 var(--font-mono); }
 .ship-command code { color:inherit; }
 .text-link { display:inline-block; margin-top:.4rem; font-family:var(--font-sans); font-size:var(--text-sm); font-weight:700; text-decoration:none; }
 .install-terminal { width:100%; max-width:100%; margin:1.4rem 0; padding:1rem; overflow-x:auto; border:1px solid var(--line); border-radius:.5rem; background:light-dark(rgba(37,33,22,.04),rgba(0,0,0,.4)); color:var(--text); font:.82rem/1.5 var(--font-mono); }

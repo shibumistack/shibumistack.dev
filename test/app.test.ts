@@ -281,9 +281,7 @@ describe("routes", () => {
     expect(body).toContain("bun ship -y");
     expect(body).toContain("no <code>--</code> separator is needed");
     expect(body).toContain("shibumi-server.json");
-    expect(body).toContain("data-ship-source");
-    expect(body).toContain("syntax-keyword");
-    expect(body).toContain('fetch("/ship/v41.ts")');
+    expect(body).toContain("github.com/shibumistack/create-shibumi/blob/main/src/templates/ship.ts");
     expect(body).toContain("data-copy-code");
     expect(body).not.toContain('href="/ship/v12.ts"');
     expect(body).not.toContain('href="/ship" aria-current="page"');
