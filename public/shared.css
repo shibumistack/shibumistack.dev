@@ -657,6 +657,8 @@ body:has(header.menu-open) { overflow: hidden; }
     }
 }
 
+.dim { color: var(--muted); }
+
 /* Syntax colors for terminal and code blocks, shared by docs, blog, and static pages. */
 .syntax-command { color:var(--accent); font-weight:750; }
 .syntax-option { color:light-dark(#397a8f,#89dceb); }

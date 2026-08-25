@@ -32,7 +32,7 @@ Automation skips the questions:
 bun create shibumi@latest my-app --template full-stack --yes
 ```
 
-`--template` takes `full-stack`, `blog`, or `static`. `--no-git` and `--no-install` skip those steps. VPS deployment is the supported target; provider choices stay out until generated fixtures prove each build and deploy path.
+`--template` takes `full-stack`, `blog`, or `static`. `--no-git` and `--no-install` skip those steps. VPS deployment only <span class="dim">(for now)</span>; provider choices stay out until generated fixtures prove each build and deploy path.
 
 ## Add deployment to an existing project
 
