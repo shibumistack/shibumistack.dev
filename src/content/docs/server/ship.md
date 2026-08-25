@@ -24,14 +24,17 @@ Use the same `user@server` target or SSH alias you already use. Password login w
 
 Setup asks for the SSH target and the app domain, then renders a plan and runs every line of it on one **Run setup?** confirm:
 
-```text
-●  Plan
-│  Create private repo bitbonsai/quiet-bamboo, push main
-│  Connect to alpha, save target for this project
-│  Install or upgrade shibumi-server (sudo password once)
-│  Register quiet-bamboo.dev
-│  Commit and push deployment files
-│  Deploys run on: bun ship
+```clack
+bun ship:setup
+渋み  shibumi
+info|Plan
+answer|Create private repo bitbonsai/quiet-bamboo, push main
+answer|Connect to alpha, save target for this project
+answer|Install or upgrade shibumi-server (sudo password once)
+answer|Register quiet-bamboo.dev
+answer|Commit and push deployment files
+answer|Deploys run on: bun ship
+outro|Run setup?
 ```
 
 Nothing is written before that confirm. The GitHub sign-in and the Caddy cutover are the two exceptions that still ask for themselves, because one opens a browser and the other moves live traffic. `bun ship:setup --interactive` restores a gate on every step, and `--yes` renders the plan without asking.

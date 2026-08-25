@@ -656,3 +656,13 @@ body:has(header.menu-open) { overflow: hidden; }
         animation: none;
     }
 }
+
+/* Syntax colors for terminal and code blocks, shared by docs, blog, and static pages. */
+.syntax-command { color:var(--accent); font-weight:750; }
+.syntax-option { color:light-dark(#397a8f,#89dceb); }
+.syntax-string { color:light-dark(#56733d,#a6e3a1); }
+.syntax-comment { color:var(--muted); font-style:italic; }
+.syntax-key,.syntax-keyword { color:light-dark(#7c55a2,#cba6f7); }
+.syntax-literal,.syntax-number { color:light-dark(#a34f30,#fab387); }
+.syntax-added { color:var(--success-text); }
+.syntax-removed { color:light-dark(#a33f43,#f38ba8); }

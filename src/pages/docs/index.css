@@ -51,14 +51,6 @@
 .docs-copy { position:static; margin-left:auto; padding:.3rem .5rem; border:1px solid var(--line); border-radius:.3rem; background:var(--quiet); color:var(--muted); font:700 12px var(--font-mono); cursor:pointer; opacity:.5; text-transform:none; letter-spacing:0; transition:opacity .18s ease; }
 .docs-copy:hover,.docs-copy:focus-visible { color:var(--text); border-color:var(--accent); opacity:.7; }
 .docs-copy.copied { color:var(--success-text); border-color:var(--success); }
-.syntax-command { color:var(--accent); font-weight:750; }
-.syntax-option { color:light-dark(#397a8f,#89dceb); }
-.syntax-string { color:light-dark(#56733d,#a6e3a1); }
-.syntax-comment { color:var(--muted); font-style:italic; }
-.syntax-key,.syntax-keyword { color:light-dark(#7c55a2,#cba6f7); }
-.syntax-literal,.syntax-number { color:light-dark(#a34f30,#fab387); }
-.syntax-added { color:var(--success-text); }
-.syntax-removed { color:light-dark(#a33f43,#f38ba8); }
 .docs-clack { position:relative; margin:1.7rem 0; padding:1.1rem 1.25rem 1.3rem; overflow:auto; border:1px solid var(--line); border-radius:.55rem; background:light-dark(rgba(37,33,22,.045),rgba(0,0,0,.34)); color:var(--text); font:.82rem/1.55 var(--font-mono); }
 .docs-clack-command { display:flex; align-items:center; gap:.6rem; min-width:32rem; margin-bottom:1.2rem; font-weight:700; }
 .docs-clack-command>span { color:var(--accent); }

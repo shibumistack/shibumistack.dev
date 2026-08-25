@@ -15,10 +15,10 @@
                 <div class="ship-step-body">
                     <h2>Run the installer from the Git root.</h2>
                     <p>Run this from your project root. The shell downloads reviewed TypeScript to a temporary file, Bun runs it with terminal prompts, then the file is removed.</p>
-                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code>curl -fsSL https://shibumistack.dev/install/ship.sh | sh</code></pre>
+                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship installer command">{{icon(copy)}}{{icon(check)}}</button><code><span class="syntax-command">curl</span> <span class="syntax-option">-fsSL</span> https://shibumistack.dev/install/ship.sh | <span class="syntax-command">sh</span></code></pre>
                     <p>The installer checks the Git root, adds Ship source and package commands, and starts setup. It never replaces an edited <code>scripts/ship.ts</code>.</p>
                     <p>Setup asks two questions, the SSH target you already use and the app domain, then prints a plan and runs all of it on one <strong>Run setup?</strong> confirm. The domain question appears only when the package name and Compose <code>SITE_URL</code> cannot answer it.</p>
-                    <pre class="ship-code ship-code-plan"><code>●  Plan
+                    <pre class="ship-code ship-code-plan"><code><span class="syntax-command">●</span>  Plan
 │  Create private repo bitbonsai/quiet-bamboo, push main
 │  Connect to alpha, save target for this project
 │  Install or upgrade shibumi-server (sudo password once)
@@ -40,18 +40,18 @@
                     <h2>Review the files added.</h2>
                     <p>The original development command moves to <code>dev:app</code>. <code>bun dev</code> runs it on the app port stored in <code>shibumi-server.json</code>.</p>
                     <pre class="ship-code ship-code-json"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy package.json example">{{icon(copy)}}{{icon(check)}}</button><code>{
-  "scripts": {
-    "dev": "bun scripts/ship.ts --dev",
-    "dev:app": "&lt;original dev command&gt;",
-    "ship": "bun scripts/ship.ts",
-    "ship:setup": "bun scripts/ship.ts --setup",
-    "ship:update": "bun scripts/ship.ts --update",
-    "ship:logs": "bun scripts/ship.ts --logs",
-    "ship:status": "bun scripts/ship.ts --status",
-    "ship:webhook": "bun scripts/ship.ts --webhook"
+  <span class="syntax-key">"scripts"</span>: {
+    <span class="syntax-key">"dev"</span>: <span class="syntax-string">"bun scripts/ship.ts --dev"</span>,
+    <span class="syntax-key">"dev:app"</span>: <span class="syntax-string">"&lt;original dev command&gt;"</span>,
+    <span class="syntax-key">"ship"</span>: <span class="syntax-string">"bun scripts/ship.ts"</span>,
+    <span class="syntax-key">"ship:setup"</span>: <span class="syntax-string">"bun scripts/ship.ts --setup"</span>,
+    <span class="syntax-key">"ship:update"</span>: <span class="syntax-string">"bun scripts/ship.ts --update"</span>,
+    <span class="syntax-key">"ship:logs"</span>: <span class="syntax-string">"bun scripts/ship.ts --logs"</span>,
+    <span class="syntax-key">"ship:status"</span>: <span class="syntax-string">"bun scripts/ship.ts --status"</span>,
+    <span class="syntax-key">"ship:webhook"</span>: <span class="syntax-string">"bun scripts/ship.ts --webhook"</span>
   },
-  "devDependencies": {
-    "@clack/prompts": "^1.7.0"
+  <span class="syntax-key">"devDependencies"</span>: {
+    <span class="syntax-key">"@clack/prompts"</span>: <span class="syntax-string">"^1.7.0"</span>
   }
 }</code></pre>
                     <details class="ship-source" data-ship-source>
@@ -72,7 +72,7 @@
                 <div class="ship-step-label"><span>03</span><p>Deploy</p></div>
                 <div class="ship-step-body">
                     <h2>Build committed HEAD and upload it.</h2>
-                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code>bun ship</code></pre>
+                    <pre class="ship-code ship-code-command"><button class="copy-command ship-copy" type="button" data-copy-code aria-label="Copy ship command">{{icon(copy)}}{{icon(check)}}</button><code><span class="syntax-command">bun</span> ship</code></pre>
                     <p>Before tests and builds, Ship can run newer immutable reviewed source. It saves that source to tracked <code>scripts/ship.ts</code> only after a successful deployment and leaves the edit unstaged.</p>
                     <p>Ship requires a clean configured branch. It runs project checks, builds exact <code>HEAD</code> for the server's Linux platform, labels the image with repository, app, revision, Git tree, and platform, then uploads it through SSH. Git pushes only after upload. The server verifies each identity value before deployment. Ship never stages or commits files.</p>
                     <p>Docker cache stays enabled. <code>bun ship --rebuild</code> passes <code>--no-cache</code>.</p>

@@ -129,7 +129,7 @@
                 </div>
                 <div class="section-copy">
                     <p>The project owns its Ship client:</p>
-                    <pre class="ship-command"><code>bun ship</code></pre>
+                    <pre class="ship-command"><code><span class="syntax-command">bun</span> ship</code></pre>
                     <p>Setup registers the app through confirmed SSH and writes commit-safe <code>shibumi-server.json</code>. GitHub CLI is used only for creating a missing repository, or when <code>bun ship:webhook</code> opts the project into push-to-deploy.</p>
                     <p>Normal runs check Git, run project checks, build committed <code>HEAD</code> for the server platform, and upload the labeled image. Ship pushes Git after upload and follows deployment status. Caddy retries the loopback upstream for up to 20 seconds during replacement. After a server update, <code>shis caddy-refresh &lt;app-id&gt;</code> adds this retry budget to an existing managed route without replacing its other Caddy settings. Existing domains keep their old upstream until the first deployment passes health and the user approves cutover.</p>
                     <p>Ship can run newer reviewed client source for the current deployment. It saves that source to tracked <code>scripts/ship.ts</code> only after success. Network errors keep the installed client, and local edits are never replaced.</p>

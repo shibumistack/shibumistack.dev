@@ -502,10 +502,6 @@ function isSafeHref(href: string): boolean {
   return /^https?:\/\//i.test(href) || /^mailto:/i.test(href) || /^tel:/i.test(href) || /^\//.test(href) || /^#/.test(href);
 }
 
-function escapeCommentMarkers(text: string): string {
-  return text.replace(/<!--/g, "&lt;!--").replace(/-->/g, "--&gt;");
-}
-
 function safeMarkdownHtml(markdown: string): string {
   return Bun.markdown.render(markdown, {
     html: () => "",
@@ -513,10 +509,10 @@ function safeMarkdownHtml(markdown: string): string {
     paragraph: (children) => `<p>${children}</p>`,
     strong: (children) => `<strong>${children}</strong>`,
     emphasis: (children) => `<em>${children}</em>`,
-    codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
+    codespan: (text) => `<code>${escapeHtml(text)}</code>`,
     code: (text, meta?: { language?: string }) => {
       const lang = meta?.language ? ` language="${meta.language}"` : "";
-      return `<pre><code${lang}>${escapeCommentMarkers(text)}</code></pre>`;
+      return `<pre><code${lang}>${highlightDocsCode(text, (meta?.language ?? "text").toLowerCase())}</code></pre>`;
     },
     link: (children, attrs: { href: string }) => {
       if (!isSafeHref(attrs.href)) return children;
@@ -545,7 +541,7 @@ function highlightDocsCode(text: string, language = "text"): string {
     code = code
       .replace(/(^|\s)(#[^\n]*)/gm, (_match, lead, value) => `${lead}${token("comment", value)}`)
       .replace(/(&quot;[^\n]*?&quot;|'[^\n]*?')/g, (value) => token("string", value))
-      .replace(/(^|[;&|]\s*)(bun|shis|git|curl|cd|systemctl|journalctl|podman|npm)(?=\s|$)/gm, (_match, lead, value) => `${lead}${token("command", value)}`)
+      .replace(/(^|[;&|]\s*)(bun|shis|ssh|sh|git|gh|curl|cd|systemctl|journalctl|podman|npm|docker|colima|brew|mkdir|sudo)(?=\s|$)/gm, (_match, lead, value) => `${lead}${token("command", value)}`)
       .replace(/(^|\s)(--?[a-z][a-z0-9-]*)(?=\s|$)/g, (_match, lead, value) => `${lead}${token("option", value)}`);
   } else if (language === "json") {
     code = code
@@ -557,6 +553,12 @@ function highlightDocsCode(text: string, language = "text"): string {
       .replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, (value) => token("comment", value))
       .replace(/(&quot;[^\n]*?&quot;|'[^\n]*?'|`[^\n]*?`)/g, (value) => token("string", value))
       .replace(/\b(import|export|from|const|let|function|async|await|return|if|else|new|throw|type|interface)\b/g, (value) => token("keyword", value));
+  } else if (["html", "xml"].includes(language)) {
+    code = code
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, (value) => token("comment", value))
+      .replace(/(&quot;[^\n]*?&quot;)/g, (value) => token("string", value))
+      .replace(/(&lt;\/?)([a-zA-Z][a-zA-Z0-9-]*)/g, (_match, lead, name) => `${lead}${token("keyword", name)}`)
+      .replace(/([a-zA-Z][a-zA-Z0-9-]*)(=)/g, (_match, attr, eq) => `${token("key", attr)}${eq}`);
   } else if (language === "usage") {
     code = code
       .replace(/(\S)(\s{2,})(\S.*)$/gm, (_match, lead, gap, description) => `${lead}${gap}${token("comment", description)}`)
@@ -586,7 +588,7 @@ function docsMarkdownHtml(markdown: string): string {
     paragraph: (children) => `<p>${children}</p>`,
     strong: (children) => `<strong>${children}</strong>`,
     emphasis: (children) => `<em>${children}</em>`,
-    codespan: (text) => `<code>${escapeCommentMarkers(text)}</code>`,
+    codespan: (text) => `<code>${escapeHtml(text)}</code>`,
     code: (text, meta?: { language?: string }) => {
       const language = (meta?.language ?? "text").toLowerCase();
       if (language === "clack" || language === "run") {

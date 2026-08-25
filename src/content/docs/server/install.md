@@ -21,7 +21,7 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 
 The installer checks every host requirement before it writes config. It verifies a working Compose frontend and stores the available command for each app. It stages an exact npm release with lockfile-pinned production dependencies and lifecycle scripts disabled. Both launchers are installed:
 
-```text
+```usage
 ~/.local/bin/shis
 ~/.local/bin/shibumi-server
 ```
@@ -30,7 +30,7 @@ The installer checks every host requirement before it writes config. It verifies
 
 ## Files written
 
-```text
+```usage
 ~/.config/shibumi-server/config.json
 ~/.config/shibumi-server/secrets.env
 ~/.config/systemd/user/shibumi-server.service
