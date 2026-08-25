@@ -1,6 +1,6 @@
 # Shibumi Stack
 
-Simple apps, whole stack: build any web app without React, build pipelines, or 600 MB of `node_modules`. A CLI writes each one from curated parts, and one VPS or your homelab runs them all.
+Simple apps, whole stack: build any web app without React or build pipelines. A CLI writes each one from curated parts, and one VPS or your homelab runs them all.
 
 Every generated project keeps its source, tests, and deployment config in your repository.
 
