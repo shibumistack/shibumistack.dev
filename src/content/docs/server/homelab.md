@@ -33,7 +33,7 @@ This is the part a VPS gives you for free and a homelab makes you earn. The good
 
 **SSH and deploys: [Tailscale](https://tailscale.com/).** It gives the box a stable private address reachable from your laptop anywhere, so `bun ship` works from a coffee shop with SSH never touching the public internet. Install it on the box and your machine, then use the box's Tailscale hostname as the SSH target during `bun ship:setup`.
 
-**The old way, opening ports 80 and 443 on the router**, still works and lets Caddy terminate TLS with its own certificates. It also points the public internet directly at your home network and makes you responsible for a changing home IP (dynamic DNS). Take it only if you understand what you're exposing.
+**The old way, opening ports 80 and 443 on the router, is not recommended.** It works and lets Caddy terminate TLS with its own certificates, but it points the entire public internet directly at your home network: every scanner and bot on earth can now knock on the box that shares a LAN with your laptop, phones, and smart devices. You also become responsible for tracking a changing home IP with dynamic DNS. Use the tunnel unless you have a concrete reason not to and the network isolation to back it up.
 
 ## Install and ship
 
