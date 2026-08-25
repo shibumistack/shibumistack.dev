@@ -109,4 +109,4 @@ files/
     ...
 ```
 
-Bundled extensions ship inside the versioned `create-shibumi` package, embedded in the vendored `scripts/shibumi.ts` and covered by its checksum.
+Bundled extensions ship inside the versioned `create-shibumi` package, embedded in the project's own `scripts/shibumi.ts` and covered by its checksum.

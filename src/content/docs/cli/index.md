@@ -35,7 +35,7 @@ Three questions, then the project exists:
 │
 ◆  Dependencies installed
 │
-◆  Ship client vendored (scripts/ship.ts)
+◆  Deploy script added (scripts/ship.ts)
 │
 │  next  cd quiet-bamboo
 │        bun dev           start the dev server (ctrl+c stops it)
@@ -56,7 +56,7 @@ bun create shibumi@latest my-app --template full-stack --yes
 
 ## Add deployment to an existing project
 
-A dot instead of a name adopts the current directory. Instead of scaffolding, the Ship client is vendored beside your own files. Your existing files are left as they are, with one exception: `package.json` gains the `ship*` scripts and a `@clack/prompts` dev dependency, since the vendored client imports it.
+A dot instead of a name adopts the current directory. Instead of scaffolding, the deploy script is copied in next to your own files. Your existing files are left as they are, with one exception: `package.json` gains the `ship*` scripts and a `@clack/prompts` dev dependency, since the deploy script imports it.
 
 ```sh
 bun create shibumi .

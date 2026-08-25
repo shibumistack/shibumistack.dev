@@ -73,7 +73,7 @@ It installs the hook and switches the committed trigger together, in that order,
 
 ## Bring your own project
 
-`bun create shibumi .` adds deployment to a project that already exists. It reads your dependencies and config to find where the build lands (`astro` to `dist`, `@11ty/eleventy` to `_site`, `next` to `out`, `vite` to `dist`), vendors the ship client, generates the container files, and leaves everything else exactly as it was.
+`bun create shibumi .` adds deployment to a project that already exists. It reads your dependencies and config to find where the build lands (`astro` to `dist`, `@11ty/eleventy` to `_site`, `next` to `out`, `vite` to `dist`), copies in the deploy script, generates the container files, and leaves everything else exactly as it was.
 
 The interesting part was deciding when to refuse. It stops rather than guessing in three cases: a `Dockerfile` or `compose.yaml` it did not write may package something else entirely; a `start` script means the project is a server app and `bun ship:setup` is the right entry; and an `index.html` at the project root has no directory to serve, because a static image serves one directory and never the whole checkout. Each refusal prints the one command that fixes it.
 

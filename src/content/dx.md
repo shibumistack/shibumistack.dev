@@ -46,7 +46,7 @@ Three stops, and the third one is the offer to deploy. Everything else that used
 
 ## Adopt an existing project
 
-`bun create shibumi .` vendors the Ship client into the project that is already in the directory instead of scaffolding a new one. It detects the built site directory from framework signals (`astro` to `dist`, `@11ty/eleventy` to `_site`, `next` to `out`, `vite` to `dist`), then from a build directory on disk, then from `public/`. The detected value is the default in a select with a free-text fallback.
+`bun create shibumi .` copies the deploy script into the project that is already in the directory instead of scaffolding a new one. It detects the built site directory from framework signals (`astro` to `dist`, `@11ty/eleventy` to `_site`, `next` to `out`, `vite` to `dist`), then from a build directory on disk, then from `public/`. The detected value is the default in a select with a free-text fallback.
 
 SPA fallback stays off unless `--spa` is passed, so there is no question about it. Adopting refuses rather than guessing when deployment files already exist, when a `start` script says the project is a server app, or when `index.html` sits at the project root with no directory to serve.
 
