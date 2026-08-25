@@ -1,7 +1,5 @@
 # Shibumi Stack docs
 
-The choices below should outlive any particular implementation of them.
-
 ## What works now
 
 `create-shibumi` creates a SQLite full-stack app, a blog, or a static site. All three include VPS deployment, and `bun create shibumi .` adds that deployment to a project that already exists.
