@@ -79,7 +79,7 @@ const docs: DocPage[] = [
   { path: "forms", title: "Forms overview", description: "Collect static-site submissions with plain HTML and one SQLite database.", section: "Forms", source: "src/content/forms.md" },
   { path: "server", title: "Server overview", description: "Deploy signed GitHub pushes to rootless Podman behind Caddy.", section: "Server", source: "src/content/server.md" },
   { path: "server/install", title: "Install server", description: "Prepare a Linux host and install a pinned shibumi-server release.", section: "Server", source: "src/content/docs/server/install.md" },
-  { path: "server/homelab", title: "Homelab hosting", description: "Run shibumi-server on hardware at home: reachability, dynamic DNS, and CGNAT.", section: "Server", source: "src/content/docs/server/homelab.md" },
+  { path: "server/homelab", title: "Homelab hosting", description: "Run shibumi-server on hardware at home with Cloudflare Tunnel and Tailscale, no open ports.", section: "Server", source: "src/content/docs/server/homelab.md" },
   { path: "server/add-app", title: "Add an app", description: "Register a domain, repository, checkout, and Caddy route.", section: "Server", source: "src/content/docs/server/add-app.md" },
   { path: "server/ship", title: "Connect project", description: "Connect project-owned ship tooling to shibumi-server.", section: "Server", source: "src/content/docs/server/ship.md" },
   { path: "server/deployments", title: "Deployments", description: "Understand webhook checks, resource guards, health checks, and cutover.", section: "Server", source: "src/content/docs/server/deployments.md" },

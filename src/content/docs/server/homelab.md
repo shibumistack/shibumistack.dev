@@ -27,17 +27,13 @@ Also meet the [host requirements](/docs/server/install): Git, Caddy, and rootles
 
 ## Make it reachable
 
-This is the part a VPS gives you for free and a homelab makes you earn.
+This is the part a VPS gives you for free and a homelab makes you earn. The good news: the safe setup opens zero ports on your router.
 
-The direct route, when your router allows it:
+**Public traffic: [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/).** `cloudflared` runs on the box and dials out to Cloudflare, so nothing ever needs to dial in. Your domain routes through the tunnel with no forwarded ports, no dynamic DNS, and your home IP never appears in public DNS. It also works when your ISP shares one public IP across many customers (carrier-grade NAT, common on residential fiber), where inbound traffic can't reach you at all. Point the tunnel at Caddy's HTTP port; the trade is that TLS terminates at Cloudflare instead of your Caddy.
 
-1. **Point your domain at your home IP.** Create an A record (or AAAA for IPv6) with proxying off. Caddy answers the certificate challenge itself, so traffic must reach it directly.
-2. **Forward ports 80 and 443** from the router to the box's LAN address. Both are required: Caddy obtains and renews certificates on 80, apps are served on 443.
-3. **Handle a changing home IP.** Most ISPs rotate residential addresses. Run a dynamic DNS client (`ddclient`, or a small cron job against your DNS provider's API) on the box so the record follows the IP.
+**SSH and deploys: [Tailscale](https://tailscale.com/).** It gives the box a stable private address reachable from your laptop anywhere, so `bun ship` works from a coffee shop with SSH never touching the public internet. Install it on the box and your machine, then use the box's Tailscale hostname as the SSH target during `bun ship:setup`.
 
-**Can't forward ports, or stuck behind CGNAT?** If the WAN address in your router starts with `100.64.` through `100.127.`, your ISP shares one public IP across customers and inbound traffic can never reach you directly. Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/): `cloudflared` runs on the box, opens an outbound connection to Cloudflare, and your domain routes through it with no forwarded ports and no dynamic DNS. Point the tunnel at Caddy's HTTP port; the trade is that TLS terminates at Cloudflare instead of your Caddy.
-
-**For SSH and deploys, use [Tailscale](https://tailscale.com/) either way.** It gives the box a stable private address reachable from your laptop anywhere, so `bun ship` works from a coffee shop without exposing SSH to the internet. Install it on the box and your machine, then use the box's Tailscale hostname as the SSH target during `bun ship:setup`.
+**The old way, opening ports 80 and 443 on the router**, still works and lets Caddy terminate TLS with its own certificates. It also points the public internet directly at your home network and makes you responsible for a changing home IP (dynamic DNS). Take it only if you understand what you're exposing.
 
 ## Install and ship
 
@@ -54,7 +50,7 @@ Then connect a project from your machine with `bun ship:setup`, using the box's 
 - Turn on unattended security updates (`unattended-upgrades` on Debian and Ubuntu).
 - Full-stack apps back up their SQLite databases on the box; copy those backups somewhere that is not the same box.
 - Put the router and the box on a cheap smart plug or UPS if your power flickers.
-- Expose only 80 and 443. SSH stays on your LAN or your Tailscale network; it never needs a forwarded port.
+- Keep the router closed. With the tunnel for traffic and Tailscale for SSH, no port needs forwarding at all.
 
 ## Learn more
 
