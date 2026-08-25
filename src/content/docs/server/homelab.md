@@ -8,7 +8,7 @@ Why bother when a VPS costs €5 a month? Hardware you already own costs €0 a 
 
 Anything 64-bit that runs mainstream Linux works. Both amd64 and arm64 images are supported.
 
-- A used 1-liter office PC (Dell OptiPlex Micro, Lenovo ThinkCentre Tiny, HP EliteDesk Mini) is the classic pick: quiet, 10 to 15 W idle, often under €150 refurbished.
+- A used mini office desktop, the paperback-sized kind companies buy by the thousand (Dell OptiPlex Micro, Lenovo ThinkCentre Tiny, HP EliteDesk Mini), is the classic pick: quiet, 10 to 15 W idle, often under €150 refurbished.
 - A new N100 or N150 mini PC gets you the same footprint with a warranty.
 - A Raspberry Pi 5 with an NVMe HAT handles a handful of Bun apps comfortably.
 - An old laptop is free and ships with its own UPS (the battery).
@@ -29,10 +29,15 @@ Also meet the [host requirements](/docs/server/install): Git, Caddy, and rootles
 
 This is the part a VPS gives you for free and a homelab makes you earn.
 
+The direct route, when your router allows it:
+
 1. **Point your domain at your home IP.** Create an A record (or AAAA for IPv6) with proxying off. Caddy answers the certificate challenge itself, so traffic must reach it directly.
 2. **Forward ports 80 and 443** from the router to the box's LAN address. Both are required: Caddy obtains and renews certificates on 80, apps are served on 443.
 3. **Handle a changing home IP.** Most ISPs rotate residential addresses. Run a dynamic DNS client (`ddclient`, or a small cron job against your DNS provider's API) on the box so the record follows the IP.
-4. **Check for CGNAT first.** If the WAN address in your router starts with `100.64.` through `100.127.`, your ISP shares one public IP across customers and inbound traffic can never reach you. Ask the ISP for a public IP (often a small fee), or use a VPS after all.
+
+**Can't forward ports, or stuck behind CGNAT?** If the WAN address in your router starts with `100.64.` through `100.127.`, your ISP shares one public IP across customers and inbound traffic can never reach you directly. Use [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/): `cloudflared` runs on the box, opens an outbound connection to Cloudflare, and your domain routes through it with no forwarded ports and no dynamic DNS. Point the tunnel at Caddy's HTTP port; the trade is that TLS terminates at Cloudflare instead of your Caddy.
+
+**For SSH and deploys, use [Tailscale](https://tailscale.com/) either way.** It gives the box a stable private address reachable from your laptop anywhere, so `bun ship` works from a coffee shop without exposing SSH to the internet. Install it on the box and your machine, then use the box's Tailscale hostname as the SSH target during `bun ship:setup`.
 
 ## Install and ship
 
@@ -49,7 +54,7 @@ Then connect a project from your machine with `bun ship:setup`, using the box's 
 - Turn on unattended security updates (`unattended-upgrades` on Debian and Ubuntu).
 - Full-stack apps back up their SQLite databases on the box; copy those backups somewhere that is not the same box.
 - Put the router and the box on a cheap smart plug or UPS if your power flickers.
-- Expose only 80 and 443. SSH stays reachable from your LAN; it does not need a forwarded port.
+- Expose only 80 and 443. SSH stays on your LAN or your Tailscale network; it never needs a forwarded port.
 
 ## Learn more
 
