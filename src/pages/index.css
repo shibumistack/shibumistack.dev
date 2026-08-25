@@ -275,7 +275,11 @@
             font-size: 0.95rem;
             font-style: italic;
             line-height: 1.6;
+            opacity: 0.5;
+            transition: opacity 0.25s ease;
         }
+
+        .name-meaning:hover { opacity: 1; }
 
         .name-meaning p { margin: 0; font-family: var(--font-serif); font-size: var(--text-md); }
 

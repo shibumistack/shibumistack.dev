@@ -32,7 +32,7 @@ What are you shipping?
 ● Bun full-stack app (recommended)
     Hono, Alpine, and SQLite with migrations and backups
   Blog
-    Astro: posts, RSS, sitemap, SEO meta, llms.txt
+    with RSS, sitemap, SEO
   Static site
     Any framework's build output: dist/, public/, _site/, or plain files
 
