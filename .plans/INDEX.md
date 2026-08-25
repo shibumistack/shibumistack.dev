@@ -17,15 +17,11 @@
 
 ## Recently shipped (2026-08-24, second wave)
 
+- [x] **Site polish wave + releases (2026-08-25 morning)**: create-shibumi 0.3.2 and shibumi-server 0.10.8 published, digest-verified, tagged; alpha on 0.10.8. Homepage refactored (dek cut, extensions story block, template links, bottom-aligned hero command, hover definition box), docs intro dedup + sitewide unslop, template pages with live screenshots (`/docs/cli/templates/*`), homelab page (`/docs/server/homelab`, tunnel-first: Cloudflare Tunnel + Tailscale, port-forwarding not recommended), green Released pills, server docs rewritten to normal English, "vendored"/"Astro blog" purged from user copy. Plan archived: `.plans/.archive/flows.md`.
 - [x] **Flow rework released** (2026-08-25 morning): create-shibumi 0.3.0 + shibumi-server 0.10.8 on npm, both digest-verified and tagged (0.10.7 skipped: digit-sum gate). Site docs sweep live (3-item menu everywhere, plan-summary setup, ship:webhook opt-in, adopt mode, replay re-recorded, blog post, rebuilt copy gate), /ship/v48.ts + latest.ts + install-v46 live and byte-verified, shibumiServerVersion pinned 0.10.8, alpha updated to 0.10.8 (set-repository live).
 - [x] **Flow simplification code merged** (2026-08-25 00:xx): create-shibumi main c5dfcfd (3-item menu, web template deleted, ship v48: webhook opt-in via `bun ship:webhook`, plan-summary setup, gh repo create private-default, adopt mode), shibumi-server main 05eda65 (`shis set-repository`, PATH symlink install, remove/add outros, non-TTY guards). Agent team + adversarial review, 59 findings fixed.
 - [x] **kunstfy.com landing restored on alpha** as static shibumi app (repo bitbonsai/kunstfy-landing, app kunstfy-com); old full-stack checkout parked at `~/shibumi/kunstfy-com-fullstack-bak`, code intact in bitbonsai/kunstfy-dogfood.
 - [x] **create-shibumi 0.2.9 published** (release commit fcfeb2f, tag v0.2.9): Ship v47 vendor, static clack dep fix, favicon/generator meta, static landing restyle, full blog polish. Registry integrity verified against local npm pack (shasum fc4d04d5).
 
-- [x] **shibumi-server 0.10.6 on npm**; install chain site → v0.10.6 install.sh → npm verified. `shis update` on alpha agrees with source install.
-- [x] **create-shibumi 0.2.1–0.2.8 published** through the day (branded installer, `shi` alias, clean test output, Ship v46 `bun dev` pre-setup). npm 0.2.8 == commit 1bdb699 only; later polish awaits 0.2.9.
-- [x] **Ship v47 live**: `--no-spa` (pinned in blog/static), commit-and-continue after deploy-file generation, generated compose drops `init: true` (catatonit exit-125 trap found by the blog deploy).
-- [x] **Template dogfood on real domains**: blog.kunstfy.com (first real static pipeline deploy; RSS/sitemap `application/xml` proven, llms.txt, md alternates, clean URLs), static.kunstfy.com, web.kunstfy.com. Findings fixed: static template missing clack dep, generated-compose init, SPA question on preconfigured setups.
-- [x] **Design pass everywhere**: kozo paper background site-only (canonical shibumi.css, pure-blur header), noise texture removed, cache-hash asset links on both sites, `/extensions` folded into docs as `/docs/cli/extensions` with `bun shi` canonical, FAQ page at `/docs/faq`, docs sidebar sans labels, rotate-cw replay icons.
 
 Archived plans: .plans/.archive/

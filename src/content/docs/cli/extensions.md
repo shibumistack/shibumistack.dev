@@ -51,7 +51,7 @@ Cookie sessions with password and login-link sign-in. `Bun.password` hashing, sh
 
 ### Email
 
-A Resend-backed send helper over plain fetch, environment validation, HTML-escaping template rendering, webhook signature verification, and a fixture that proves template variables and delivery handling. No tables.
+A [Resend](https://resend.com)-backed send helper over plain fetch, environment validation, HTML-escaping template rendering, webhook signature verification, and a fixture that proves template variables and delivery handling. No tables.
 
 ### Uploads
 
