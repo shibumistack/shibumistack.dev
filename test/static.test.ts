@@ -17,6 +17,8 @@ describe("static artifact", () => {
     expect(await Bun.file(resolve(root, "dist/docs/server.md")).text()).toContain("# shibumi-server");
     expect(await Bun.file(resolve(root, "dist/docs/forms.md")).text()).toContain("# Shibumi Forms");
     expect(await Bun.file(resolve(root, "dist/docs/cli.md")).text()).toContain("## Full-stack SQLite");
+    expect(await Bun.file(resolve(root, "dist/docs/ship/troubleshooting/index.html")).text()).toContain('id="docker-engine"');
+    expect(await Bun.file(resolve(root, "dist/docs/ship/troubleshooting.md")).text()).toContain("podman machine restart");
     expect(await Bun.file(resolve(root, "dist/404.html")).text()).toContain("Nothing here.");
     expect((await Bun.file(resolve(root, "dist/install/ship.sh")).text()).startsWith("#!/bin/sh")).toBeTrue();
     expect(await Bun.file(resolve(root, "dist/install/server")).text()).toContain("raw.githubusercontent.com/bitbonsai/shibumi-server");

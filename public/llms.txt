@@ -31,6 +31,7 @@
 - [Install server](/docs/server/install.md)
 - [Add an app](/docs/server/add-app.md)
 - [Connect project](/docs/server/ship.md)
+- [Ship troubleshooting](/docs/ship/troubleshooting.md)
 - [Deployments](/docs/server/deployments.md)
 - [History and rollback](/docs/server/history-rollback.md)
 - [Operations](/docs/server/operations.md)

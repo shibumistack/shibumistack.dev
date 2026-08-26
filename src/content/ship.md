@@ -12,6 +12,8 @@ docker compose version
 docker buildx version
 ```
 
+If Ship cannot reach the container engine, follow [Ship troubleshooting](/docs/ship/troubleshooting#docker-engine).
+
 Ship checks these tools before it runs project tests or asks to deploy. When Docker config refers to a missing credential helper, Ship can remove only that reference after writing a mode-`0600` backup. Declining prints the manual repair steps.
 
 ## 1. Connect
@@ -135,7 +137,7 @@ The installer adds `scripts/ship.ts` and these package entries:
 
 `bun ship:setup` refreshes project config. It keeps whatever trigger the project already recorded, so a project set up before `ship:webhook` existed stays on push-to-deploy until `bun ship:webhook --off` says otherwise. Direct Ship uses prebuilt images and needs no GitHub access at all; push-to-deploy uses server builds and is `bun ship:webhook`'s business.
 
-Source: <https://shibumistack.dev/ship/v48.ts>
+Source: <https://shibumistack.dev/ship/v49.ts>
 
 - Commit `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Keep SSH targets in local Shibumi config.

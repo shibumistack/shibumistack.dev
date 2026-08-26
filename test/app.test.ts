@@ -90,6 +90,17 @@ describe("routes", () => {
     expect(shipBody).toContain("checks mutable latest pointer against immutable reviewed source");
     expect(shipBody).toContain("bun ship --rebuild");
 
+    const troubleshooting = await app.request("/docs/ship/troubleshooting");
+    const troubleshootingBody = await troubleshooting.text();
+    expect(troubleshooting.status).toBe(200);
+    expect(troubleshootingBody).toContain('id="docker-engine"');
+    expect(troubleshootingBody).toContain("https://shibumistack.dev/ship/latest.ts");
+    const troubleshootingMarkdown = await app.request("/docs/ship/troubleshooting.md");
+    expect(troubleshootingMarkdown.status).toBe(200);
+    const troubleshootingSource = await troubleshootingMarkdown.text();
+    expect(troubleshootingSource).toContain("colima restart");
+    expect(troubleshootingSource).toContain("podman machine restart");
+
     const rollback = await app.request("/docs/server/history-rollback");
     const rollbackBody = await rollback.text();
     expect(rollback.status).toBe(200);
@@ -290,7 +301,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v48.ts");
+    const source = await app.request("/ship/v49.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -300,7 +311,9 @@ describe("routes", () => {
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).toContain("export function formatDevStartup");
-    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v48.ts"');
+    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v49.ts"');
+    expect(sourceBody).toContain("Docker cannot reach your container engine.");
+    expect(sourceBody).toContain("https://shibumistack.dev/docs/ship/troubleshooting#docker-engine");
     expect(sourceBody).toContain("Ship now?");
     expect(sourceBody).toContain("dev.shibumistack.static.output");
     expect(sourceBody).toContain("What are you shipping?");
@@ -311,7 +324,7 @@ describe("routes", () => {
     expect(sourceBody).toContain('["docker-compose"]');
     expect(sourceBody).toContain('["docker", "buildx", "version"]');
     expect(sourceBody).toContain("brew install docker-buildx");
-    expect(sourceBody).not.toContain("Docker Desktop");
+    expect(sourceBody).toContain("Docker Desktop: open or restart Docker Desktop");
     expect(sourceBody).not.toContain("docker-desktop://");
     expect(sourceBody).toContain("runLatestShipClient");
     expect(sourceBody).toContain("save it after a successful deployment");
@@ -338,6 +351,7 @@ describe("routes", () => {
     expect((await app.request("/ship/v45.ts")).status).toBe(200);
     expect((await app.request("/ship/v46.ts")).status).toBe(200);
     expect((await app.request("/ship/v47.ts")).status).toBe(200);
+    expect((await app.request("/ship/v48.ts")).status).toBe(200);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -346,14 +360,14 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v46.ts");
-    const installer = await app.request("/ship/install-v46.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v47.ts");
+    const installer = await app.request("/ship/install-v47.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v48.ts");
-    expect(installerBody).not.toContain("ship/v47.ts");
+    expect(installerBody).toContain("ship/v49.ts");
+    expect(installerBody).not.toContain("ship/v48.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
@@ -369,17 +383,18 @@ describe("routes", () => {
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
-    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v29.sh");
-    const bootstrap = await app.request("/ship/bootstrap-v29.sh");
+    expect(bootstrapRedirect.headers.get("location")).toBe("/ship/bootstrap-v30.sh");
+    const bootstrap = await app.request("/ship/bootstrap-v30.sh");
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
     const bootstrapBody = await bootstrap.text();
-    expect(bootstrapBody).toContain("ship/install-v39.ts");
+    expect(bootstrapBody).toContain("ship/install-v47.ts");
     expect(bootstrapBody).toContain('bun "$temporary" "$@"');
     expect((await app.request("/ship/bootstrap-v28.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(404);
     expect((await app.request("/ship/bootstrap-v27.sh")).status).toBe(404);
     expect((await app.request("/ship/bootstrap-v29.sh")).status).toBe(200);
+    expect((await app.request("/ship/bootstrap-v30.sh")).status).toBe(200);
   });
 
   test("redirects the server installer to its source", async () => {
