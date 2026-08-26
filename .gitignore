@@ -6,6 +6,7 @@ bun.lockb
 dist/
 .DS_Store
 *.log
+.codex/
 .plans/next.md
 .plans/next.prev.md
 
