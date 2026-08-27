@@ -48,7 +48,7 @@ for (const route of htmlRoutes.filter((route) => route.startsWith("/docs"))) {
 await write(join(output, "ship", "latest.ts"), await responseBody("/ship/latest.ts"));
 await write(join(output, "install", "ship"), await responseBody("/ship/install-v47.ts"));
 await write(join(output, "install", "ship.sh"), await responseBody("/ship/bootstrap-v30.sh"));
-await write(join(output, "install", "server"), `#!/bin/sh\nset -eu\ncurl -fsSL https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh | bash\n`);
+await write(join(output, "install", "server"), `#!/bin/sh\nset -eu\ncurl -fsSL https://raw.githubusercontent.com/shibumistack/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh | bash\n`);
 
 const urls = htmlRoutes.map((route) => `  <url><loc>https://shibumistack.dev${route === "/" ? route : `${route}/`}</loc></url>`).join("\n");
 await write(join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);

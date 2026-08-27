@@ -113,4 +113,4 @@ curl -fsSL https://shibumistack.dev/install/server | bash
 
 The website copies this command. It never connects to a server or asks for SSH credentials.
 
-Source: <https://github.com/bitbonsai/shibumi-server>
+Source: <https://github.com/shibumistack/shibumi-server>

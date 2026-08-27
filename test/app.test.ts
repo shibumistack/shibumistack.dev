@@ -401,7 +401,7 @@ describe("routes", () => {
     const res = await app.request("/install/server");
 
     expect(res.status).toBe(302);
-    expect(res.headers.get("location")).toBe(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh`);
+    expect(res.headers.get("location")).toBe(`https://raw.githubusercontent.com/shibumistack/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh`);
   });
 
   test("extensions moved into the docs", async () => {

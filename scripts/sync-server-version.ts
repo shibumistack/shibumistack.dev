@@ -20,7 +20,7 @@ const version = value && typeof value === "object" ? (value as { version?: unkno
 if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) throw new Error("npm registry returned an invalid shibumi-server version");
 if (expected !== undefined && version !== expected) throw new Error(`npm returned ${version}; waiting for ${expected}`);
 
-const source = await fetch(`https://raw.githubusercontent.com/bitbonsai/shibumi-server/v${version}/install.sh`);
+const source = await fetch(`https://raw.githubusercontent.com/shibumistack/shibumi-server/v${version}/install.sh`);
 if (!source.ok || !(await source.text()).startsWith("#!/")) throw new Error(`GitHub tag v${version} has no reviewed install.sh`);
 
 if (packageJson.shibumiServerVersion === version) {

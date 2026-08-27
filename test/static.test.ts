@@ -21,7 +21,7 @@ describe("static artifact", () => {
     expect(await Bun.file(resolve(root, "dist/docs/ship/troubleshooting.md")).text()).toContain("podman machine restart");
     expect(await Bun.file(resolve(root, "dist/404.html")).text()).toContain("Nothing here.");
     expect((await Bun.file(resolve(root, "dist/install/ship.sh")).text()).startsWith("#!/bin/sh")).toBeTrue();
-    expect(await Bun.file(resolve(root, "dist/install/server")).text()).toContain("raw.githubusercontent.com/bitbonsai/shibumi-server");
+    expect(await Bun.file(resolve(root, "dist/install/server")).text()).toContain("raw.githubusercontent.com/shibumistack/shibumi-server");
     expect(await Bun.file(resolve(root, "dist/httpd.conf")).text()).toContain("E404:404.html");
   });
 
