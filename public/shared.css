@@ -526,7 +526,7 @@ body:has(header.menu-open) { overflow: hidden; }
     header::before { position: absolute; }
     .menu-toggle { display: inline-grid; place-items: center; }
 
-    nav {
+    #primary-nav {
         display: none;
         position: fixed;
         inset: 0;
@@ -543,7 +543,7 @@ body:has(header.menu-open) { overflow: hidden; }
         font-size: 1.25rem;
     }
 
-    header.menu-open nav { display: flex; }
+    header.menu-open #primary-nav { display: flex; }
 
     .nav-links {
         display: flex;

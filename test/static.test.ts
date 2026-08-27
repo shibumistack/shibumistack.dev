@@ -23,6 +23,9 @@ describe("static artifact", () => {
     expect((await Bun.file(resolve(root, "dist/install/ship.sh")).text()).startsWith("#!/bin/sh")).toBeTrue();
     expect(await Bun.file(resolve(root, "dist/install/server")).text()).toContain("raw.githubusercontent.com/shibumistack/shibumi-server");
     expect(await Bun.file(resolve(root, "dist/httpd.conf")).text()).toContain("E404:404.html");
+    const sharedStyles = await Bun.file(resolve(root, "dist/shared.css")).text();
+    expect(sharedStyles).toMatch(/#primary-nav \{\s+display: none;\s+position: fixed;/);
+    expect(sharedStyles).not.toMatch(/^\s+nav \{\s+display: none;\s+position: fixed;/m);
   });
 
   test("contains no unresolved template markers", async () => {
