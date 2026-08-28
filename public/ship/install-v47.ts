@@ -6,7 +6,7 @@ import { join, resolve } from "node:path";
 const root = process.cwd();
 const packagePath = join(root, "package.json");
 const sourcePath = join(root, "scripts/ship.ts");
-const sourceUrl = "https://shibumistack.dev/ship/v49.ts";
+const sourceUrl = "https://shibumistack.dev/ship/v50.ts";
 const knownSourceHashes = new Set([
   "d4210fd31e0aea625c479c83f74e1d8f6299328a8cdf283bd5c9dceca9ea4b3d",
   "1faf5c7770705567f7d301ea8824eba8edcaf7cf536424c17a5359a4a08d771b",
@@ -53,6 +53,8 @@ const knownSourceHashes = new Set([
   "d9bad68786b288d027bb00b2183583905e266069f4506c34e364d3e93ce77cb5",
   "bf1a6efb177a8a5e20e36b7e2c0bcec6bc5a8598dfd4f86e7ff129af92a0e648",
   "7c4bee760498bea9f857934088e9fc1e3c1b835dfd49deb382d103248adedc63",
+  "425a8ca3d0b9b8b27660906ea38ec9acb3441a0e0fcf0bd3be191a8e3bd5bea6",
+  "9c9de7cbb7c2d82ce18e429edf216c4c61df24d16a9781035db56bf70d3fad78",
 ]);
 const expectedScripts = {
   ship: "bun scripts/ship.ts",
@@ -132,7 +134,7 @@ const existingInstall = await existingFile.exists() && await Bun.file(join(root,
 if (await existingFile.exists()) {
   const existing = await existingFile.text();
   if (existing !== source && !knownSourceHashes.has(hash(existing))) {
-    fail("scripts/ship.ts contains owned changes.\nNext: review and merge https://shibumistack.dev/ship/v49.ts manually.");
+    fail("scripts/ship.ts contains owned changes.\nNext: review and merge https://shibumistack.dev/ship/v50.ts manually.");
   }
 }
 

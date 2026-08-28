@@ -776,7 +776,7 @@ app.get("/extensions.md", (c) => c.redirect("/docs/cli/extensions.md", 301));
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/shibumistack/shibumi-server/v${serverVersion}/install.sh`, 302));
 app.get("/install/ship", (c) => c.redirect("/ship/install-v47.ts", 302));
 app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v30.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v49.ts"), 200, {
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v50.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",
