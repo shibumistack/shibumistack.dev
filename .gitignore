@@ -9,6 +9,3 @@ dist/
 .codex/
 .plans/next.md
 .plans/next.prev.md
-
-# Local-only leftovers from the migrated CLI prototype
-shibumi-cli/
