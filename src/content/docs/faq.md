@@ -26,12 +26,6 @@ That installs the hook and switches the committed trigger together, so an active
 
 One caveat: in push-to-deploy the server builds the image itself, so a project that depends on the exact locally built artifact should stay on `bun ship`.
 
-## What happened to the Bun web app template?
-
-It was deleted outright, and there is no flag that brings it back. It was the full-stack template with the database removed, which meant two templates to keep in sync and a menu where the interesting difference between the top two options was one dependency. If you want the app without SQLite, start from full-stack and delete `src/db`, the migrations, and the `db:*` scripts. You own the source, so removing a piece is a normal edit.
-
-The menu is three items now: **Bun full-stack app**, **Blog**, and **Static site**. Blog moved up to the top level, since it used to hide behind a follow-up question under Static site.
-
 ## Does `bun dev` work before I set up a server?
 
 Yes. Without `shibumi-server.json` the app runs on port 9000. After setup it runs on the port the server assigned, which is also the first free port above 9000, so the number in your terminal is the number in production.
