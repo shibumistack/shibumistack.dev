@@ -18,6 +18,12 @@ Register the page URL and owner email, confirm the email link, then use the gene
 
 Named text fields become submission fields. Standard HTML posts need no client JavaScript. The endpoint also accepts multipart text fields and JSON from an approved origin.
 
+## Where hosted data lives
+
+On the free hosted service, Shibumi Stack stores your account email, form settings, submissions, and private notes in one SQLite database on a persistent volume attached to the server running `forms.shibumistack.dev`. Your static site keeps only the form endpoint; each submission is sent to that server.
+
+Deleting a record removes it from the live database. Deleted records may remain in encrypted backups for up to 30 days. You can delete individual submissions, a whole form, or your account and all its data.
+
 ## Review submissions
 
 Email links provide passwordless access to an endpoint's submissions. Owners can page through results, inspect every field, add private notes, export CSV, disable collection, or delete a submission.
@@ -26,7 +32,7 @@ The application renders submitted values as text. Database queries check account
 
 ## Run it yourself
 
-The application runs as an unprivileged Bun container with one SQLite database on a persistent volume. SQLite uses WAL mode. The repository includes:
+When you self-host, the same data stays on your server in `/data/shibumi-forms.sqlite`, mounted on a persistent volume. The application runs as an unprivileged Bun container, and SQLite uses WAL mode. The repository includes:
 
 - `GET /healthz` for process liveness
 - `GET /readyz` for database readiness

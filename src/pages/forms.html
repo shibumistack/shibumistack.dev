@@ -37,16 +37,16 @@
 
 <section class="forms-operations" aria-labelledby="forms-operations-title">
     <div>
-        <p class="eyebrow">Self-hosting</p>
-        <h2 id="forms-operations-title">SQLite on a persistent volume.</h2>
+        <p class="eyebrow">Storage</p>
+        <h2 id="forms-operations-title">Where submissions live.</h2>
     </div>
     <div class="forms-operations-copy">
-        <p>One unprivileged Bun container runs the app. The repository includes health and readiness endpoints, tracked migrations, backup, restore, and operational counts.</p>
+        <p>On the free hosted service, Shibumi Stack stores your account email, form settings, submissions, and private notes in <code>/data/shibumi-forms.sqlite</code> on a persistent volume attached to the server running <code>forms.shibumistack.dev</code>. Your static site keeps only the form endpoint. Deleting a record removes it from the live database; encrypted backups expire within 30 days. When you self-host, the same data stays on your server.</p>
         <dl>
-            <div><dt>Administration</dt><dd>Passwordless magic links</dd></div>
-            <div><dt>Storage</dt><dd>SQLite in WAL mode</dd></div>
-            <div><dt>Integration</dt><dd>HTML, multipart, or JSON</dd></div>
-            <div><dt>Deployment</dt><dd>Docker or Podman Compose</dd></div>
+            <div><dt>Hosted</dt><dd>Shibumi Stack server</dd></div>
+            <div><dt>Self-hosted</dt><dd>Your server</dd></div>
+            <div><dt>Live data</dt><dd>SQLite in WAL mode</dd></div>
+            <div><dt>Deletion</dt><dd>Encrypted backups expire within 30 days</dd></div>
         </dl>
     </div>
 </section>
