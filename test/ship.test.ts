@@ -202,7 +202,7 @@ describe("ship configuration", () => {
     const built = deploymentFileTemplates(true);
     expect(built.Dockerfile).toContain("RUN bun run build");
     expect(built.Dockerfile).toContain('CMD ["bun", "run", "start"]');
-    expect(built["compose.yaml"]).toContain('127.0.0.1:${SHIBUMI_PORT:-9001}:3000');
+    expect(built["compose.yaml"]).toContain('127.0.0.1:${SHIBUMI_PORT:-9001}:9001');
     expect(built["compose.yaml"]).toContain('memory: 512M');
     expect(built[".dockerignore"]).toContain(".env.*");
     expect(deploymentFileTemplates(false).Dockerfile).not.toContain("RUN bun run build");
@@ -224,7 +224,7 @@ describe("ship configuration", () => {
       });
       expect(result.exitCode).toBe(0);
       expect(await readFile(join(directory, "Dockerfile"), "utf8")).toContain("RUN bun run build");
-      expect(await readFile(join(directory, "compose.yaml"), "utf8")).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
+      expect(await readFile(join(directory, "compose.yaml"), "utf8")).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:9001");
       expect(await readFile(join(directory, ".dockerignore"), "utf8")).toContain(".env.*");
     } finally {
       await rm(directory, { recursive: true, force: true });
@@ -328,7 +328,7 @@ describe("static output shipping", () => {
     expect(plain.Dockerfile).toContain("COPY --chown=65534:65534 dist /www");
     expect(plain.Dockerfile).not.toContain("RUN");
     expect(plain[".dockerignore"]).toBe("*\n!dist\n");
-    expect(plain["compose.yaml"]).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:3000");
+    expect(plain["compose.yaml"]).toContain("127.0.0.1:${SHIBUMI_PORT:-9001}:9001");
 
     const spa = staticDeploymentFileTemplates({ outputDir: "out", spa: true });
     expect(spa.Dockerfile).toContain("oven/bun:alpine");

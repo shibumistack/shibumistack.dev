@@ -24,7 +24,7 @@ This lands in `create-shibumi` 0.3.0 and `shibumi-server` 0.10.7.
 │  ● Bun full-stack app (recommended)
 │      Hono, Alpine, and SQLite with migrations and backups
 │  ○ Blog
-│      Astro: posts, RSS, sitemap, SEO meta, llms.txt
+│      Hono: posts, RSS, sitemap, SEO meta, llms.txt
 │  ○ Static site
 │      Any framework's build output: dist/, public/, _site/, or plain files
 │

@@ -10,6 +10,8 @@ import packageJson from "../package.json";
 const app = new Hono();
 const serverVersion = packageJson.shibumiServerVersion;
 if (!/^\d+\.\d+\.\d+$/.test(serverVersion)) throw new Error("package.json shibumiServerVersion must be a stable semantic version");
+const createShibumiVersion = packageJson.createShibumiVersion;
+if (!/^\d+\.\d+\.\d+$/.test(createShibumiVersion)) throw new Error("package.json createShibumiVersion must be a stable semantic version");
 
 type MediaRange = {
   type: string;
@@ -89,7 +91,7 @@ const docs: DocPage[] = [
   { path: "ship/troubleshooting", title: "Ship troubleshooting", description: "Recover from Docker engine and other local Ship failures.", section: "Server", source: "src/content/docs/ship/troubleshooting.md" },
   { path: "cli", title: "create-shibumi CLI", description: "Create SQLite full-stack, blog, and static projects with VPS deployment.", section: "CLI", source: "src/content/docs/cli/index.md" },
   { path: "cli/templates/full-stack", title: "Full-stack template", description: "Bun app with Hono, Alpine, Zod, and SQLite with Drizzle, migrations, and backups.", section: "CLI", source: "src/content/docs/cli/templates/full-stack.md" },
-  { path: "cli/templates/blog", title: "Blog template", description: "Astro blog with markdown posts, RSS, sitemap, SEO meta, and llms.txt.", section: "CLI", source: "src/content/docs/cli/templates/blog.md" },
+  { path: "cli/templates/blog", title: "Blog template", description: "Bun + Hono blog engine with markdown posts, RSS, sitemap, SEO meta, and llms.txt.", section: "CLI", source: "src/content/docs/cli/templates/blog.md" },
   { path: "cli/templates/static", title: "Static template", description: "Plain files from public/ in a 1.4 MB busybox image.", section: "CLI", source: "src/content/docs/cli/templates/static.md" },
   { path: "cli/extensions", title: "Extensions", description: "Add auth, email, uploads, or admin source to a project with bun shi add.", section: "CLI", source: "src/content/docs/cli/extensions.md" },
   { path: "reference/server-commands", title: "Server commands", description: "shis command and option reference.", section: "Reference", source: "src/content/docs/reference/server-commands.md" },
@@ -205,7 +207,7 @@ function parseFrontmatter(text: string): { frontmatter: Record<string, unknown>;
   };
 }
 
-async function discoverBlogPosts(): Promise<BlogPost[]> {
+export async function discoverBlogPosts(): Promise<BlogPost[]> {
   const dir = "src/content/blog";
   const posts: BlogPost[] = [];
 
@@ -417,6 +419,7 @@ async function html(files: PageFiles, active?: ActivePage, meta?: PageMeta): Pro
     description: meta?.description ?? "Generated web projects with source, tests, and deployment config in your repository.",
     canonical: `https://shibumistack.dev${canonicalPath(meta?.path ?? files.routePath)}`,
     "asset-version": assetVersion,
+    "generator-version": createShibumiVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
@@ -667,6 +670,7 @@ async function renderDocs(path: string): Promise<string | undefined> {
     description: meta.description,
     canonical: `https://shibumistack.dev${canonicalPath(meta.path)}`,
     "asset-version": assetVersion,
+    "generator-version": createShibumiVersion,
   });
   layout = insert(layout, "meta", await metaTags(meta));
   layout = insert(layout, "page-style", await pageStyle("src/pages/docs/index.css"));
@@ -695,6 +699,7 @@ async function renderBlogList(): Promise<string> {
     description: "Development notes from Shibumi Stack.",
     canonical: "https://shibumistack.dev/blog/",
     "asset-version": assetVersion,
+    "generator-version": createShibumiVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
@@ -748,14 +753,20 @@ async function renderBlogPost(slug: string): Promise<string | undefined> {
     description: "Development notes from Shibumi Stack.",
     canonical: `https://shibumistack.dev/blog/${slug}/`,
     "asset-version": assetVersion,
+    "generator-version": createShibumiVersion,
   });
   const footer = await part("footer", { year: String(packageJson.siteYear) });
   const installDialog = await part("install-dialog");
 
+  const baseMeta = await metaTags({ title: `${title}: Shibumi Stack`, description: "Development notes from Shibumi Stack.", path: `/blog/${slug}` });
   layout = insert(
     layout,
     "meta",
-    await metaTags({ title: `${title}: Shibumi Stack`, description: "Development notes from Shibumi Stack.", path: `/blog/${slug}` }),
+    baseMeta.replace('<meta property="og:type" content="website">', '<meta property="og:type" content="article">') +
+      [
+        `<meta property="article:published_time" content="${date.toISOString()}">`,
+        `<link rel="alternate" type="text/markdown" href="/blog/${slug}.md">`,
+      ].join("\n    "),
   );
   layout = insert(layout, "page-style", await pageStyle("src/pages/blog/post.css"));
   layout = insert(layout, "nav", await nav("blog"));
@@ -773,10 +784,20 @@ const EXTENSIONS_MOVED = '<!doctype html><html lang="en"><head><meta charset="ut
 app.get("/extensions", (c) => c.html(EXTENSIONS_MOVED));
 app.get("/extensions.md", (c) => c.redirect("/docs/cli/extensions.md", 301));
 
+app.get("/sitemap.xml", async (c) => {
+  const routes = await staticHtmlRoutes();
+  const urls = routes
+    .map((route) => `  <url><loc>https://shibumistack.dev${route === "/" ? route : `${route}/`}</loc></url>`)
+    .join("\n");
+  return c.body(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, 200, {
+    "content-type": "application/xml; charset=utf-8",
+  });
+});
+
 app.get("/install/server", (c) => c.redirect(`https://raw.githubusercontent.com/shibumistack/shibumi-server/v${serverVersion}/install.sh`, 302));
-app.get("/install/ship", (c) => c.redirect("/ship/install-v47.ts", 302));
+app.get("/install/ship", (c) => c.redirect("/ship/install-v48.ts", 302));
 app.get("/install/ship.sh", (c) => c.redirect("/ship/bootstrap-v30.sh", 302));
-app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v50.ts"), 200, {
+app.get("/ship/latest.ts", async (c) => c.body(await read("public/ship/v51.ts"), 200, {
   "Cache-Control": "no-cache",
   "Content-Disposition": 'inline; filename="ship.ts"',
   "Content-Type": "text/plain; charset=utf-8",
@@ -821,6 +842,14 @@ app.use("*", async (c, next) => {
 
   if (pathname === "/blog") {
     return c.html(await renderBlogList());
+  }
+
+  const blogMarkdownMatch = pathname.match(/^\/blog\/([a-z0-9][a-z0-9-]*)\.md$/);
+  if (blogMarkdownMatch) {
+    const posts = await discoverBlogPosts();
+    const post = posts.find((candidate) => candidate.slug === blogMarkdownMatch[1]);
+    if (post) return markdown(c, post.path, "text/plain");
+    return next();
   }
 
   const blogMatch = pathname.match(blogPostPattern);

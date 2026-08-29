@@ -1,6 +1,6 @@
 # shibumistack.dev
 
-> Source, tests, agent instructions, and VPS deployment config for SQLite full-stack, Astro blog, and static projects.
+> Source, tests, agent instructions, and VPS deployment config for SQLite full-stack, Bun + Hono markdown blog, and static projects.
 
 ## Pages
 
@@ -13,9 +13,16 @@
 - [DX plan](/dx.md)
 - [Brand](/brand.md)
 
+## Posts
+
+Every blog post is also available as plain markdown at the `.md` links below.
+
+- [Dogfooding Shibumi](/blog/dogfooding.md): The website found gaps in the CLI and deployment model before release.
+- [Two questions and a plan](/blog/two-questions-and-a-plan.md): Create and setup lost seven prompts between them. What is left is two real inputs, a plan you approve once, and one opt-in command.
+
 ## Available
 
-- [`create-shibumi`](/docs/cli.md): creates SQLite full-stack apps, Astro blogs, and static sites with VPS deployment; `bun create shibumi .` adds deployment to an existing project.
+- [`create-shibumi`](/docs/cli.md): creates SQLite full-stack apps, Bun + Hono markdown blogs, and static sites with VPS deployment; `bun create shibumi .` adds deployment to an existing project.
 - [Extensions](/docs/cli/extensions.md): add bundled auth, email, uploads, or admin source with `bun shi add <name>`.
 - [FAQ](/docs/faq.md): why push with a prebuilt image, dirty-tree stops, data across rollbacks, secrets, CSRF 403s, push-to-deploy, template choices.
 - [Shibumi Forms](/forms.md): hosted pre-alpha and self-hosted form collection for static sites using plain HTML, Bun, Hono, and SQLite.

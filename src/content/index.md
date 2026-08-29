@@ -21,7 +21,7 @@ An extension adds a named file such as `agents/auth.md` and merges its rules int
 `create-shibumi` offers three starting points:
 
 1. **Bun full-stack app** (recommended): Hono, Alpine, Zod, and SQLite with Drizzle, migrations, persistent data, backup, and restore.
-2. **Blog**: Astro with Markdown posts, RSS, sitemap, SEO meta, and an `llms.txt`.
+2. **Blog**: the shibumistack.dev engine — Bun + Hono markdown posts, RSS, sitemap, SEO meta, and an `llms.txt`.
 3. **Static site**: publish a verified build directory such as `./dist`, `public`, `_site`, `build`, or `out` from any framework.
 
 ```sh

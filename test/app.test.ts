@@ -301,7 +301,7 @@ describe("routes", () => {
     expect(markdown.status).toBe(200);
     expect(await markdown.text()).toContain("# Ship an existing project");
 
-    const source = await app.request("/ship/v50.ts");
+    const source = await app.request("/ship/v51.ts");
     expect(source.status).toBe(200);
     expect(source.headers.get("content-type")).toContain("text/plain");
     expect(source.headers.get("cache-control")).toContain("immutable");
@@ -311,7 +311,7 @@ describe("routes", () => {
     expect(sourceBody).toContain("export function domainFromProject");
     expect(sourceBody).toContain("export function runShipCli");
     expect(sourceBody).toContain("export function formatDevStartup");
-    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v50.ts"');
+    expect(sourceBody).toContain('const CURRENT_SOURCE = "https://shibumistack.dev/ship/v51.ts"');
     expect(sourceBody).toContain("Docker cannot reach your container engine.");
     expect(sourceBody).toContain("https://shibumistack.dev/docs/ship/troubleshooting#docker-engine");
     expect(sourceBody).toContain("the Docker socket refused your user");
@@ -363,15 +363,15 @@ describe("routes", () => {
 
     const installerRedirect = await app.request("/install/ship");
     expect(installerRedirect.status).toBe(302);
-    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v47.ts");
-    const installer = await app.request("/ship/install-v47.ts");
+    expect(installerRedirect.headers.get("location")).toBe("/ship/install-v48.ts");
+    const installer = await app.request("/ship/install-v48.ts");
     expect(installer.status).toBe(200);
     expect(installer.headers.get("cache-control")).toContain("immutable");
     const installerBody = await installer.text();
     expect(installerBody).toContain("First installation runs setup with Clack");
-    expect(installerBody).toContain("ship/v50.ts");
+    expect(installerBody).toContain("ship/v51.ts");
     expect(installerBody).not.toContain("ship/v48.ts");
-    expect(installerBody).not.toContain("ship/v49.ts");
+    expect(installerBody).not.toContain("ship/v50.ts");
     expect(installerBody).toContain("Setup files were kept so setup can resume");
     expect(installerBody).not.toContain("Installer changes were rolled back");
     expect(installerBody).toContain('"ship:update"');
@@ -392,7 +392,7 @@ describe("routes", () => {
     expect(bootstrap.status).toBe(200);
     expect(bootstrap.headers.get("cache-control")).toContain("immutable");
     const bootstrapBody = await bootstrap.text();
-    expect(bootstrapBody).toContain("ship/install-v47.ts");
+    expect(bootstrapBody).toContain("ship/install-v48.ts");
     expect(bootstrapBody).toContain('bun "$temporary" "$@"');
     expect((await app.request("/ship/bootstrap-v28.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(404);

@@ -6,10 +6,10 @@ services:
     # unless-stopped. Docker treats both alike; rootless podman does not.
     restart: always
     ports:
-      - "127.0.0.1:${SHIBUMI_PORT:-9001}:3000"
+      - "127.0.0.1:${SHIBUMI_PORT:-9001}:9001"
     healthcheck:
       # Static root is the liveness signal. Shibumi also checks it from host.
-      test: ["CMD", "/busybox", "wget", "-q", "-T", "5", "-O", "/dev/null", "http://127.0.0.1:3000/"]
+      test: ["CMD", "/busybox", "wget", "-q", "-T", "5", "-O", "/dev/null", "http://127.0.0.1:9001/"]
       interval: 60s
       timeout: 10s
       retries: 3

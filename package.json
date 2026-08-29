@@ -1,5 +1,6 @@
 {
   "name": "shibumistack.dev",
+  "createShibumiVersion": "0.3.4",
   "shibumiServerVersion": "0.11.0",
   "siteYear": 2026,
   "scripts": {

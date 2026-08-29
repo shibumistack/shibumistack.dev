@@ -137,7 +137,7 @@ The installer adds `scripts/ship.ts` and these package entries:
 
 `bun ship:setup` refreshes project config. It keeps whatever trigger the project already recorded, so a project set up before `ship:webhook` existed stays on push-to-deploy until `bun ship:webhook --off` says otherwise. Direct Ship uses prebuilt images and needs no GitHub access at all; push-to-deploy uses server builds and is `bun ship:webhook`'s business.
 
-Source: <https://shibumistack.dev/ship/v50.ts>
+Source: <https://shibumistack.dev/ship/v51.ts>
 
 - Commit `scripts/ship.ts`, `shibumi-server.json`, and package changes.
 - Keep SSH targets in local Shibumi config.

@@ -72,7 +72,7 @@ The deployment image contains only the verified output and a pinned static serve
 
 ## Blog
 
-The blog template is Astro configured for the parts a blog needs immediately: Markdown posts, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the static path, so its `ship:setup` command arrives pinned to `--output-dir dist --build-script build --no-spa`.
+The blog template uses the same engine as this site — a Bun + Hono markdown renderer — for the parts a blog needs immediately: Markdown posts, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the static path, so its `ship:setup` command arrives pinned to `--output-dir dist --build-script build --no-spa`.
 
 Blog sits at the top level of the menu. An earlier design nested it under a "start from?" follow-up behind Static site, which buried the template most people asking for a blog were looking for.
 

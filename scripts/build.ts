@@ -2,7 +2,7 @@
 
 import { cp, mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import app, { staticHtmlRoutes } from "../src/app";
+import app, { discoverBlogPosts, staticHtmlRoutes } from "../src/app";
 import packageJson from "../package.json";
 
 const output = "dist";
@@ -40,18 +40,24 @@ for (const name of [...contentFiles, "README.md", "CONTRIBUTING.md"]) {
 }
 await write(join(output, "dx"), await responseBody("/dx"));
 
+// Markdown alternates for blog posts: agents can read the source of the
+// writing (the article pages and llms.txt link here). The router serves
+// them; build keeps a static copy for the immutable site image.
+for (const post of await discoverBlogPosts()) {
+  await write(join(output, "blog", `${post.slug}.md`), await responseBody(`/blog/${post.slug}.md`));
+}
+
 for (const route of htmlRoutes.filter((route) => route.startsWith("/docs"))) {
   const path = route === "/docs" ? "docs/index.md" : `${route.slice(1)}.md`;
   await write(join(output, path), await responseBody(route, "text/markdown"));
 }
 
 await write(join(output, "ship", "latest.ts"), await responseBody("/ship/latest.ts"));
-await write(join(output, "install", "ship"), await responseBody("/ship/install-v47.ts"));
+await write(join(output, "install", "ship"), await responseBody("/ship/install-v48.ts"));
 await write(join(output, "install", "ship.sh"), await responseBody("/ship/bootstrap-v30.sh"));
 await write(join(output, "install", "server"), `#!/bin/sh\nset -eu\ncurl -fsSL https://raw.githubusercontent.com/shibumistack/shibumi-server/v${packageJson.shibumiServerVersion}/install.sh | bash\n`);
 
-const urls = htmlRoutes.map((route) => `  <url><loc>https://shibumistack.dev${route === "/" ? route : `${route}/`}</loc></url>`).join("\n");
-await write(join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+await write(join(output, "sitemap.xml"), await responseBody("/sitemap.xml"));
 await write(join(output, "httpd.conf"), [
   "E404:404.html",
   "I:index.html",

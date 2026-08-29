@@ -37,7 +37,7 @@ case "$terminal" in
     ;;
 esac
 
-curl -fsSL https://shibumistack.dev/ship/install-v47.ts -o "$temporary"
+curl -fsSL https://shibumistack.dev/ship/install-v48.ts -o "$temporary"
 
 if [ -n "$terminal_device" ]; then
   bun "$temporary" "$@" <"$terminal_device"

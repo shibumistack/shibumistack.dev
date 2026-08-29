@@ -38,7 +38,7 @@ cd my-app
 bun dev
 ```
 
-Full-stack projects add Hono, Alpine, Zod, Drizzle, persistent SQLite, migrations, backup, and restore. The blog is Astro with posts, RSS, a sitemap, and SEO meta. Static projects provide a build command and output directory.
+Full-stack projects add Hono, Alpine, Zod, Drizzle, persistent SQLite, migrations, backup, and restore. The blog is the same Bun + Hono engine this site runs on, with posts, RSS, a sitemap, and SEO meta. Static projects provide a build command and output directory.
 
 ### Copy extension code
 

@@ -104,7 +104,7 @@ Shibumi packages the verified directory in a small static image and checks `/` b
 
 ## Blog
 
-The blog template is Astro with the parts a blog needs on day one: posts in Markdown, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the same static path as any other framework's output, so `bun ship:setup` arrives pre-configured.
+The blog template runs on the same engine as this site — a Bun + Hono markdown renderer — with the parts a blog needs on day one: posts in Markdown, RSS, a sitemap, SEO meta tags, and an `llms.txt` for agents. It builds to `dist/` and ships through the same static path, so `bun ship:setup` arrives pre-configured.
 
 ## Full-stack SQLite
 

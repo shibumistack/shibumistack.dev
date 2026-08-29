@@ -12,5 +12,5 @@ FROM scratch
 COPY --from=busybox /bin/busybox /busybox
 COPY --from=build --chown=65534:65534 /app/dist /www
 USER 65534:65534
-EXPOSE 3000
-ENTRYPOINT ["/busybox", "httpd", "-f", "-p", "3000", "-h", "/www", "-c", "/www/httpd.conf"]
+EXPOSE 9001
+ENTRYPOINT ["/busybox", "httpd", "-f", "-p", "9001", "-h", "/www", "-c", "/www/httpd.conf"]
