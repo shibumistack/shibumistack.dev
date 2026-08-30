@@ -342,19 +342,13 @@ describe("routes", () => {
     expect(sourceBody).toContain("shouldTriggerRedeploy");
     expect(sourceBody).toContain("Ship cannot push");
     expect(sourceBody).not.toContain("note(");
-    expect((await app.request("/ship/v39.ts")).status).toBe(200);
-    expect((await app.request("/ship/v40.ts")).status).toBe(200);
-    expect((await app.request("/ship/v1.ts")).status).toBe(404);
-    expect((await app.request("/ship/v38.ts")).status).toBe(404);
-    expect((await app.request("/ship/v41.ts")).status).toBe(200);
-    expect((await app.request("/ship/v42.ts")).status).toBe(200);
-    expect((await app.request("/ship/v43.ts")).status).toBe(200);
-    expect((await app.request("/ship/v44.ts")).status).toBe(200);
-    expect((await app.request("/ship/v45.ts")).status).toBe(200);
-    expect((await app.request("/ship/v46.ts")).status).toBe(200);
-    expect((await app.request("/ship/v47.ts")).status).toBe(200);
-    expect((await app.request("/ship/v48.ts")).status).toBe(200);
+    // Retention window: current + previous two (v49/v50/v51) stay; older
+    // releases are pruned (installers and bootstraps keep current only).
     expect((await app.request("/ship/v49.ts")).status).toBe(200);
+    expect((await app.request("/ship/v50.ts")).status).toBe(200);
+    expect((await app.request("/ship/v1.ts")).status).toBe(404);
+    expect((await app.request("/ship/v39.ts")).status).toBe(404);
+    expect((await app.request("/ship/v48.ts")).status).toBe(404);
     expect((await app.request("/ship/v999.ts")).status).toBe(404);
     const latest = await app.request("/ship/latest.ts");
     expect(latest.status).toBe(200);
@@ -380,10 +374,9 @@ describe("routes", () => {
     expect(installerBody).toContain('"ship:webhook": "bun scripts/ship.ts --webhook"');
     expect(installerBody).toContain('const devScript = "bun scripts/ship.ts --dev"');
     expect(installerBody).toContain('"--setup", ...process.argv.slice(2)');
-    expect((await app.request("/ship/install-v38.ts")).status).toBe(200);
     expect((await app.request("/ship/install-v1.ts")).status).toBe(404);
-    expect((await app.request("/ship/install-v37.ts")).status).toBe(404);
-    expect((await app.request("/ship/install-v39.ts")).status).toBe(200);
+    expect((await app.request("/ship/install-v38.ts")).status).toBe(404);
+    expect((await app.request("/ship/install-v47.ts")).status).toBe(404);
 
     const bootstrapRedirect = await app.request("/install/ship.sh");
     expect(bootstrapRedirect.status).toBe(302);
@@ -394,10 +387,10 @@ describe("routes", () => {
     const bootstrapBody = await bootstrap.text();
     expect(bootstrapBody).toContain("ship/install-v48.ts");
     expect(bootstrapBody).toContain('bun "$temporary" "$@"');
-    expect((await app.request("/ship/bootstrap-v28.sh")).status).toBe(200);
     expect((await app.request("/ship/bootstrap-v1.sh")).status).toBe(404);
     expect((await app.request("/ship/bootstrap-v27.sh")).status).toBe(404);
-    expect((await app.request("/ship/bootstrap-v29.sh")).status).toBe(200);
+    expect((await app.request("/ship/bootstrap-v28.sh")).status).toBe(404);
+    expect((await app.request("/ship/bootstrap-v29.sh")).status).toBe(404);
     expect((await app.request("/ship/bootstrap-v30.sh")).status).toBe(200);
   });
 
