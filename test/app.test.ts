@@ -23,6 +23,44 @@ describe("routes", () => {
     expect(body).toContain("get release updates");
   });
 
+  test("keeps template setup and verification claims accurate in HTML and Markdown", async () => {
+    for (const [route, text] of [
+      ["/docs/cli/templates/full-stack", "Auth and uploads add APIs"],
+      ["/docs/cli/templates/blog", "Production serves static files"],
+      ["/docs/cli/templates/static", "There is no build step"],
+      ["/docs/cli", "does not deploy to a server"],
+    ]) {
+      for (const suffix of ["", ".md"]) {
+        const response = await app.request(route + suffix);
+        expect(response.status).toBe(200);
+        expect(await response.text()).toContain(text!);
+      }
+    }
+    for (const accept of ["text/html", "text/markdown"]) {
+      const response = await app.request("/", { headers: { accept } });
+      expect(await response.text()).toContain("Full-stack includes app tests and container files");
+    }
+  });
+
+  test("guides the first local run before asking users to deploy", async () => {
+    for (const path of ["/docs", "/docs/index.md"]) {
+      const response = await app.request(path);
+      expect(response.status).toBe(200);
+      const text = await response.text();
+      expect(text).toContain("Quick start: run your first app");
+      expect(text).toContain("No Docker, domain or VPS is needed");
+      expect(text).toContain("localhost:9001");
+      expect(text).toContain("Put it online when you are ready");
+      expect(text).toContain(packageJson.engines.bun.replace(">=", ""));
+      expect(text.indexOf("Quick start: run your first app")).toBeLessThan(text.indexOf("Put it online when you are ready"));
+    }
+    const home = await (await app.request("/")).text();
+    expect(home).toContain('aria-label="Copy local development command"');
+    expect(home).toContain('data-copy="cd my-app &amp;&amp; bun dev"');
+    expect(home).toContain('href="/docs" data-dialog-close>Follow the quick start</a>');
+    expect(home).not.toContain("npm</span> create shibumi");
+  });
+
   test("shows create command and CLI page", async () => {
     const home = await app.request("/");
     const homeBody = await home.text();

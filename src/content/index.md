@@ -1,8 +1,10 @@
 # Shibumi Stack
 
-Simple apps, whole stack: Bun + Hono + Alpine.js + (SQLite + Drizzle + Zod).
+Simple apps, whole stack.
 
-Every generated project keeps its source, tests, and deployment config in your repository.
+Generate a Bun app, blog, or static site as source you own. Run it locally, then deploy it to your Linux server. [Follow the quick start](/docs). Bun 1.4.4+ required; no VPS needed to try it.
+
+Every generated project gives you source you own, a deploy script, and an `agents.md` with the house rules. Full-stack includes app tests and container files. Blog and static generate their container files during `bun ship:setup`.
 
 Shibumi (渋み) is a Japanese idea associated with quiet, understated beauty. Here it means fewer layers and code you can inspect.
 
@@ -38,8 +40,9 @@ Already have a project? `bun create shibumi .` detects its build directory and a
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/server | bash
-shibumi-server add example.com
 ```
+
+From the generated project's root, run `bun ship:setup`. It detects the Compose service and health path and registers the app over SSH, avoiding mismatched manual registration settings.
 
 `bun ship` builds committed code on your computer, uploads the exact image through SSH, then pushes Git and asks the server to deploy that commit. Caddy retries the loopback upstream for up to 20 seconds during replacement. The server retains one previous image for up to 12 hours.
 

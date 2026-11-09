@@ -231,6 +231,14 @@ if (!shipMd.includes(shipLock.url)) {
   drift(`ship.md does not reference the CLI's vendored Ship source ${shipLock.url}`);
 }
 
+// 8. Onboarding advertises the same Bun floor enforced by the CLI --------------
+const cliEngine = (JSON.parse(read(join(CLI_REPO, "package.json"))) as { engines: { bun: string } }).engines.bun;
+const siteEngine = (JSON.parse(read(join(SITE, "package.json"))) as { engines: { bun: string } }).engines.bun;
+if (siteEngine !== cliEngine) drift(`site Bun engine ${siteEngine} differs from CLI ${cliEngine}`);
+for (const path of ["src/parts/install-dialog.html", "src/pages/index.html", "src/content/index.md", "src/content/docs/index.md", "src/content/docs/cli/index.md"]) {
+  if (!read(join(SITE, path)).includes(cliEngine.replace(/^>=/, ""))) drift(`${path} does not show the CLI's minimum Bun version ${cliEngine}`);
+}
+
 if (findings.length > 0) {
   console.error(`Copy gate: ${findings.length} drift finding(s)\n`);
   for (const finding of findings) console.error(`  - ${finding}`);

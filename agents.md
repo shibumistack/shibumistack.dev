@@ -6,11 +6,11 @@ This repo is the current public site for Shibumi Stack at `shibumistack.dev`.
 It is also the first dogfood artifact for the product idea: a small, Bun-first
 web stack built around Hono, Zod, Drizzle, SQLite, Alpine, and Nanostores.
 
-The scaffolder source lives in the public `shibumistack/create-shibumi` repository (local checkout `../shibumi-create`); this repo keeps no package source since 2026-08-23. `create-shibumi@0.2.0` was published to npm 2026-08-24 (tag `v0.2.0`), so `bun create shibumi@latest` is real; releases stay manual and owner-only per `../shibumi-create/PUBLISHING.md`. Shipped scope: Bun/Hono/Alpine/Drizzle/SQLite full stack, the Astro blog template, static output, and the extension installer with auth, email, uploads, and admin. The Bun web template (Hono + Alpine + Zod, no DB) was deleted outright in 0.3.0 with no flag to restore it; the create menu is three items. VPS deployment through `shibumi-server` is the only target. The `shibumi-server` implementation lives in the separate public `shibumi-server` repository; its npm release must stay compatible with the vendored Ship client (Ship v45 requires `shis env`, server >= 0.10.6).
+The scaffolder source lives in the public `shibumistack/create-shibumi` repository (local checkout `../shibumi-create`); this repo keeps no package source since 2026-08-23. `create-shibumi@0.2.0` was published to npm 2026-08-24 (tag `v0.2.0`), so `bun create shibumi@latest` is real; releases stay manual and owner-only per `../shibumi-create/PUBLISHING.md`. Shipped scope: Bun/Hono/Alpine/Drizzle/SQLite full stack, the Bun/Hono blog template (live development renderer, prerendered `dist/` in production), static output, and the extension installer with auth, email, uploads, and admin. The Bun web template (Hono + Alpine + Zod, no DB) was deleted outright in 0.3.0 with no flag to restore it; the create menu is three items. VPS deployment through `shibumi-server` is the only target. The `shibumi-server` implementation lives in the separate public `shibumi-server` repository; its npm release must stay compatible with the vendored Ship client (Ship v45 requires `shis env`, server >= 0.10.6).
 
 ## Stack
 
-- Runtime and package manager: Bun.
+- Runtime and package manager: Bun >=1.4.4. Type checking is native `bun check`; package scripts use `bun check --no-script` to avoid recursive dispatch. Keep `@types/bun`, but no standalone `typescript` dependency is needed.
 - Development renderer: Hono in `src/app.ts`.
 - Static build: `scripts/build.ts` renders known routes and copies `public/` to `dist/`.
 - Templates: `src/layout.html`, page bodies in `src/pages/`, and fragments in
@@ -33,7 +33,7 @@ bun dev        # Ship wrapper starts hot reload on configured app port (currentl
 bun start      # run dynamic development server
 bun run build  # render deterministic static output to dist/
 bun test       # route and artifact tests
-bun check      # TypeScript check without emitting files
+bun run check  # TypeScript check without emitting files
 bun ship       # build static image, upload, push, and follow deployment
 ```
 
@@ -221,6 +221,7 @@ If adding routes or Markdown negotiation behavior, add focused route tests in
 - Site copy gate: `bun run verify:copy` checks dx.md/index.md/docs-cli/extensions.md+html command tables against the sibling `../shibumi-create` templates + `scripts/shibumi.lock.json` (per-extension {name,version}). Edit a generated script string here and it fails until the site matches. Since 0.3.0 it also pins the shipped template set to exactly blog/full-stack/static, derives the dx.md command table from the full-stack template (the old `web` baseline is gone), requires `ship:webhook` in every template, rejects any mention of the removed `--trigger` flag, and fails if a current-state surface still offers the deleted "Bun web app" (blog posts are exempt as dated records).
 - Gate scripts run bare, never piped: `bun run verify:copy 2>&1 | tail` makes the pipeline exit tail's 0 and `&&` continues past a failing gate. Two copy-gate drifts shipped that way this session before being caught.
 - Ship self-update race on THIS repo only: the deploy that flips `/ship/latest.ts` to vN runs its update check pre-deploy against the still-live vN-1, downgrading the freshly committed `scripts/ship.ts`. Deploy succeeds; `git restore scripts/ship.ts` after. Recurs every version flip.
+- Template copy must distinguish shipped files from setup-generated files: full-stack includes its Dockerfile and Compose file; blog/static generate them in `bun ship:setup`. Agent/non-interactive setup pauses for review, commit and push, so a successful setup invocation is not by itself evidence of a deployment. Verify the exact commit in server status. Blog/static have no app test suite; blog has check/build commands, while static previews plain `public/` files.
 - Fresh git worktree has no node_modules: `bun test` fails 2/4 with import errors and `bun run check` reports `tsc: command not found`. Looks like breakage, is not; `bun install` first.
 
 - Theme choice is per-origin `localStorage`, so a visitor's light/dark pick does not follow them between shibumistack.dev and the server/forms subdomains. Sharing it would need a cookie on `.shibumistack.dev`.

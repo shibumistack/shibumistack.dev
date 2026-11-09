@@ -9,7 +9,7 @@
     "start": "bun run serve.ts",
     "build": "bun scripts/build.ts",
     "test": "bun test test/app.test.ts test/static.test.ts",
-    "check": "tsc --noEmit",
+    "check": "bun check --no-script",
     "sync:server": "bun scripts/sync-server-version.ts",
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
@@ -24,7 +24,9 @@
   },
   "devDependencies": {
     "@clack/prompts": "^1.7.0",
-    "@types/bun": "^1.4.0",
-    "typescript": "^7.0.2"
+    "@types/bun": "^1.4.0"
+  },
+  "engines": {
+    "bun": ">=1.4.4"
   }
 }

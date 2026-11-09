@@ -1,6 +1,8 @@
 # create-shibumi CLI
 
-Every template deploys to a Linux VPS through `shibumi-server`.
+Every template runs locally with Bun and deploys to a Linux VPS through `shibumi-server`. Start with the [quick start](/docs) for a working local app, then return here for flags and project details.
+
+Requires **Bun 1.4.4 or newer** and Git. Check `bun --version` and use `bun upgrade` if needed. The CLI refuses an older runtime before creating files, including when printing the extension installer. Full-stack and blog use Bun's native `bun check`, not a separate TypeScript compiler dependency.
 
 ## Create a project
 
@@ -24,7 +26,7 @@ info|Next: cd quiet-bamboo, bun dev, and bun ship:setup when you're ready
 outro|Docs: https://shibumistack.dev/docs
 ```
 
-Answering **Yes** to the deploy question runs `bun ship:setup` in the same session, so the project's first deploy happens before you leave the terminal. **Later** prints the command instead.
+Answering **Yes** to the deploy question runs `bun ship:setup` in the same session. Interactive setup offers to commit generated files and ship; stopping or declining leaves the next command printed in the terminal. **Later** defers setup.
 
 Automation skips the questions:
 
@@ -82,11 +84,11 @@ Without a build script, the output directory has to be committed already, so the
 
 Generated projects import their libraries directly. Each applicable project includes:
 
-- route or artifact tests and TypeScript checks
-- root `agents.md` guidance
-- current reviewed `scripts/ship.ts`
-- loopback-only Compose configuration, resource limits, and a health check
-- package commands for development, setup, status, logs, rollback, and shipping
+- root `agents.md` guidance and reviewed `scripts/ship.ts`
+- package commands for development, setup, status, logs and shipping
+- loopback-only Compose configuration, resource limits and a health check, either included or generated during setup
+
+Full-stack includes an app test suite and TypeScript checking. Blog includes TypeScript checking and a static build. The plain-file static starter needs neither a compiler nor an app test suite. All three use the shared Ship client for deployment and rollback.
 
 Project creation initializes Git only when selected. It never stages or commits user files. Existing paths are never overwritten silently, and failed creation leaves the destination absent or unchanged.
 
@@ -112,22 +114,21 @@ A full-stack project stores its database under persistent `/data` and enables WA
 
 > **Important:** Image rollback does not reverse a database migration. Generated guidance requires backward-compatible migrations and a reviewed restore path before destructive schema changes.
 
-The project includes database infrastructure and tested queries without an unauthenticated demo mutation endpoint.
+The demo counter is deliberately public: one shared row, clamped by a database constraint and rate-limited. Other mutations that touch user data need authentication. Auth and uploads extensions add APIs; they do not generate login or upload pages.
 
 ## Release acceptance
 
-Tests run against the packed npm artifact, not repository source. Every starting point passes its applicable matrix:
+Packed-artifact checks install the CLI outside its source checkout and run the commands each template actually declares. `bun test` in the CLI checkout does not deploy to a server.
 
-```sh
-bun install --frozen-lockfile
-bun test
-bun run check
-bun run build
-```
+| Template | Installation | Local checks | Build |
+| --- | --- | --- | --- |
+| Full-stack | `bun install --frozen-lockfile` | `bun test`, `bun run check` | `bun run build` |
+| Blog | `bun install --frozen-lockfile` | `bun run check` | `bun run build` |
+| Static | `bun install --frozen-lockfile` | Plain files; verified by artifact and live checks | None |
 
-Static output must package only the configured artifact. Bun containers must start on the assigned loopback port and pass their health URL. Full-stack deployment must preserve SQLite data across container replacement and prove backup and restore behavior.
+The separate opt-in live matrix scaffolds every current template from a Bun-packed artifact and runs each journey twice against a disposable VPS app. It covers setup, image upload, HTTPS browser checks, redeployment, health-failure recovery and rollback to the expected commit. Full-stack also checks sessions, SQLite values and uploaded bytes across replacement; blog checks posts, feeds, metadata and draft exclusion; static checks nested pages, assets and 404s.
 
-Release checks use a disposable VPS fixture for setup, exact image upload, deployment, health, status, logs, and rollback.
+These checks require an explicitly disposable registration and keep their reports outside the checkout. They are not a claim that every interactive prompt, every extension or every VPS architecture has been tested.
 
 ## Extensions
 
@@ -141,6 +142,6 @@ The command previews writes, stops on conflicts, records a named guide under `ag
 
 ## Deferred
 
-Cloudflare, Vercel, Fly.io, background jobs, payments, admin, and a public extension registry remain planned. They stay out until fixture projects can install, build, run, and deploy them without special cases.
+Cloudflare, Vercel, Fly.io, background jobs, payments, and a public extension registry remain planned. They stay out until fixture projects can install, build, run, and deploy them without special cases.
 
 Working server commands are documented in [Server commands](/docs/reference/server-commands).

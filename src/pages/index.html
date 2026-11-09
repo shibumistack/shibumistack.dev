@@ -6,6 +6,8 @@
                 >whole stack<span class="dot">.</span></span
             >
         </h1>
+        <p>Generate a Bun app, blog, or static site as source you own. Run it locally, then deploy it to your Linux server.</p>
+        <p><a href="/docs">Follow the quick start</a>. Bun 1.4.4+ required; no VPS needed to try it.</p>
         <p class="status-badge">Bun + Hono + Alpine.js + (SQLite + Drizzle + Zod)</p>
         <div class="hero-command">
             <span class="prompt-mark">›</span>
@@ -92,7 +94,7 @@
         <div class="story-copy">
             <h2>One command, a whole app<span class="dot">.</span></h2>
             <p><a href="/docs/cli"><strong>create-shibumi</strong></a> writes you a complete Bun app from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Nanostores when state crosses components, Zod for validation, SQLite and Drizzle when you need data.</p>
-            <p>Three starting points: <a href="/docs/cli/templates/full-stack">full-stack app</a>, <a href="/docs/cli/templates/blog">blog</a>, <a href="/docs/cli/templates/static">static site</a>. Each one lands in your repo as plain source: routes, styles, tests, a Dockerfile, a deploy script, and an <code>agents.md</code> that tells your coding agent the house rules.</p>
+            <p>Three starting points: <a href="/docs/cli/templates/full-stack">full-stack app</a>, <a href="/docs/cli/templates/blog">blog</a>, <a href="/docs/cli/templates/static">static site</a>. Each one gives you source you own, a deploy script, and an <code>agents.md</code> with the house rules. Full-stack includes app tests and container files. Blog and static generate their container files during <code>bun ship:setup</code>.</p>
             <p>Got a site already? Run <code>bun create shibumi .</code> in it. The CLI figures out where your build lands, drops in the deploy script and container files, and leaves everything else exactly as you had it.</p>
         </div>
     </div>
@@ -107,7 +109,8 @@
         <p class="story-eyebrow">Ship</p>
         <div class="story-copy">
             <h2>A server you own<span class="dot">.</span></h2>
-            <p><a href="https://server.shibumistack.dev"><strong>shibumi-server</strong></a> is the other half: rent a €5 VPS or use your homelab, install it once, and it hosts every app you build. <code>bun ship</code> builds the exact committed code on your machine and uploads it over SSH; the server verifies commit, image, and health before swapping behind Caddy, and keeps a rollback for 12 hours. You never touch a PaaS dashboard, and your whole side-project portfolio costs €5 a month.</p>
+            <p><a href="https://server.shibumistack.dev"><strong>shibumi-server</strong></a> is the other half: rent a €5 VPS or use your homelab, install it once, and it hosts every app you build. <code>bun ship</code> builds the exact committed code on your machine and uploads it over SSH; the server verifies the commit and image, checks health behind Caddy, and restores the previous image if health fails. It keeps a rollback for 12 hours. You never touch a PaaS dashboard, and your whole side-project portfolio costs €5 a month.</p>
+            <p>From your project root, run <code>bun ship:setup</code>. It detects the Compose service and health path and registers the app over SSH, rather than asking you to match those settings by hand.</p>
         </div>
     </div>
     <div class="story-block">

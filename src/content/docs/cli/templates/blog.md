@@ -10,12 +10,29 @@ bun create shibumi@latest my-blog --template blog
 
 ## What lands in your repo
 
-- The shibumistack.dev blog engine: a Hono app (`src/app.ts`) rendered live by `bun dev` and pre-rendered to `dist/` by `bun run build` — no framework dependency
+- A Bun + Hono app (`src/app.ts`) rendered live by `bun dev` and pre-rendered to `dist/` by `bun run build`; Markdown uses Bun's built-in renderer
 - Markdown posts with YAML frontmatter; drafts stay out of the build
 - RSS feed and sitemap, SEO meta and OpenGraph tags, clean URLs
 - `llms.txt` and markdown alternates for every post, so agents read your writing as text
-- The same deploy path as every template: `Dockerfile`, `compose.yaml`, deploy script
+- `scripts/ship.ts` and package commands for deployment; setup generates `Dockerfile`, `compose.yaml` and `.dockerignore`
 
 ## Writing
 
-`bun dev` runs the renderer live on port 9001. A post is a file in `src/content/blog/` with a `title` (max 60), `description` (50 to 160), and `date`; set `url` in `src/site.ts` to your domain, then commit and `bun ship` to publish.
+`bun dev` runs the renderer live on port 9001. A post is a file in `src/content/blog/` with a `title` (max 60 characters), `description` (50 to 160 characters), and `date`. Set `draft: true` to exclude a post from public pages, feeds and Markdown alternates.
+
+Before publishing, set `url` in `src/site.ts` to your real HTTPS origin. Canonical URLs, OpenGraph URLs, RSS links, the sitemap and `llms.txt` all derive from it. The default `https://example.com` is a placeholder, not a deployment setting.
+
+```sh
+cd my-blog
+bun run check
+bun run build
+bun preview
+```
+
+Preview serves the built `dist/` on port 9001; stop `bun dev` before starting it. Check a post, its `.md` alternate, `/rss.xml`, `/sitemap.xml` and a missing page before deployment.
+
+## Ship it
+
+Commit your source, then run `bun ship:setup`. It is already configured to publish `dist/` as a normal static site, not an SPA. Setup generates the container files; interactive runs offer to commit them and continue. In an agent or non-interactive run, review, commit and push those generated files, then rerun `bun ship:setup`.
+
+After setup, `bun ship` builds and deploys the exact committed source. Production serves static files, not the development Hono process.

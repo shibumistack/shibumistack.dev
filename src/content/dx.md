@@ -133,7 +133,7 @@ Bun apps expose:
     "start": "bun dist/server.js",
     "build": "bun build src/server.ts --outdir dist --target bun",
     "test": "bun test",
-    "check": "tsc --noEmit",
+    "check": "bun check --no-script",
     "ship": "bun scripts/ship.ts",
     "ship:setup": "bun scripts/ship.ts --setup",
     "ship:update": "bun scripts/ship.ts --update",

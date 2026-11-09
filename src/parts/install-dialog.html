@@ -5,14 +5,22 @@
       <span class="kanji">渋み</span>
       <span id="notify-dialog-title">Create a Shibumi project</span>
     </div>
-    <p class="install-dialog-hint">Run this from the directory that will contain your project.</p>
+    <p class="install-dialog-hint">Start locally. You need <strong>Bun 1.4.4 or newer</strong>; <a href="https://bun.com/docs/installation">install Bun</a> or run <code>bun upgrade</code>. No Docker, domain or VPS is needed yet.</p>
     <div class="notify-preview">
+      <p class="install-dialog-hint">In the directory that will contain your project:</p>
       <div class="install-dialog-command">
         <span class="prompt-mark">›</span>
         <code><span class="syntax-command">bun</span> create shibumi@latest my-app</code>
         <button class="copy-command" type="button" data-copy="bun create shibumi@latest my-app" aria-label="Copy create command">{{icon(copy)}}{{icon(check)}}</button>
       </div>
-      <p class="install-dialog-alt">or <code><span class="syntax-command">npm</span> create shibumi@latest my-app</code></p>
+      <p class="install-dialog-hint">For a first app, choose <strong>Bun full-stack app</strong>, then <strong>Later</strong> for deployment. When creation finishes:</p>
+      <div class="install-dialog-command">
+        <span class="prompt-mark">›</span>
+        <code><span class="syntax-command">cd</span> my-app &amp;&amp; bun dev</code>
+        <button class="copy-command" type="button" data-copy="cd my-app &amp;&amp; bun dev" aria-label="Copy local development command">{{icon(copy)}}{{icon(check)}}</button>
+      </div>
+      <p class="install-dialog-hint">Open <a href="http://localhost:9001">localhost:9001</a>. Click <strong>Count</strong>, then reload; the value should remain.</p>
+      <p class="install-dialog-hint"><a href="/docs" data-dialog-close>Follow the quick start</a> for blog, static and deployment instructions.</p>
     </div>
   </div>
 </dialog>

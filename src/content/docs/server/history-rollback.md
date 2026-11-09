@@ -36,3 +36,11 @@ shis rollback example-com --yes
 ```
 
 Receiver pauses during rollback and restarts afterward, preventing webhook deployment from racing operator action.
+
+From a connected project, `bun ship --rollback` invokes the same retained-image rollback over SSH.
+
+## What rollback does not undo
+
+Rollback restores an image, not database contents or uploaded files. Persistent volumes stay in place. Keep migrations backward-compatible and use an explicit database backup/restore for data recovery.
+
+Service recreation can interrupt requests. Caddy retries within a finite window, but a slow startup or recovery from an unhealthy release can exceed it. Deployment output records the measured restore time and retry-budget headroom or overrun. A successful recovery means the previous release is healthy again; it is not a guarantee of zero failed requests during the replacement.

@@ -4,7 +4,7 @@
 
 ## Add Ship to the project
 
-From local Git project root:
+Generated Shibumi projects already include Ship; skip this installer and continue with **Connect to the server** below. For an existing project without Ship, run this from its local Git root:
 
 ```sh
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
@@ -47,7 +47,11 @@ Committed `shibumi-server.json` contains deployment trigger, app identity, repos
 
 ## Ship
 
-Local prebuilt shipping requires Colima with Docker CLI, Docker Compose, and Buildx. Recommended macOS setup:
+Run these checks on your computer, not on the VPS. Server-side rootless Podman does not replace the local image builder.
+
+## Local build requirements
+
+Use Docker CLI, Docker Compose and Buildx connected to a running container engine. On **macOS**, one supported setup is Colima:
 
 ```sh
 brew install colima docker docker-compose docker-buildx
@@ -56,6 +60,20 @@ docker info
 docker compose version
 docker buildx version
 ```
+
+On **Linux**, install Docker Engine, the Compose plugin and Buildx using the [Docker installation instructions](https://docs.docker.com/engine/install/) for your distribution, or use Docker Desktop. Start the engine and confirm these commands all succeed in the same terminal where you will ship:
+
+```sh
+docker info
+docker compose version
+docker buildx version
+```
+
+`docker info` must show server details, not a socket or permission error. [Troubleshooting](/docs/ship/troubleshooting#docker-engine) covers engine startup and Linux group permissions. On Windows, follow the Linux path inside WSL2 with a working Docker connection; native Windows shipping is not covered by our live acceptance runs.
+
+## Deploy committed source
+
+Review and commit your source before shipping. Ship refuses a dirty tree; it does not silently publish uncommitted edits.
 
 ```sh
 bun ship

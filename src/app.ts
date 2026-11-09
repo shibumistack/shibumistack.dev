@@ -75,7 +75,7 @@ const assetVersion = createHash("sha256")
   .slice(0, 12);
 
 const docs: DocPage[] = [
-  { path: "", title: "Shibumi docs", description: "Reference for create-shibumi, extensions, Forms, Server, and Ship.", section: "Start", source: "src/content/docs/index.md" },
+  { path: "", title: "Shibumi docs", description: "Run your first Bun project locally, then prepare and deploy it to your Linux server.", section: "Start", source: "src/content/docs/index.md" },
   { path: "decisions", title: "Product and server choices", description: "Recorded choices for generated projects, extensions, deployment, and operations.", section: "Start", source: "src/content/docs.md" },
   { path: "faq", title: "FAQ", description: "Why push with a prebuilt image, dirty-tree stops, data across rollbacks, secrets, CSRF 403s.", section: "Start", source: "src/content/docs/faq.md" },
   { path: "forms", title: "Forms overview", description: "Collect static-site submissions with plain HTML and one SQLite database.", section: "Forms", source: "src/content/forms.md" },
@@ -110,7 +110,7 @@ const pageMeta: Record<string, PageMeta> = {
   },
   docs: {
     title: "Docs: Shibumi Stack",
-    description: "Reference for create-shibumi, extensions, Shibumi Forms, Server, and Ship.",
+    description: "Run your first Bun project locally, then prepare and deploy it to your Linux server.",
     path: "/docs",
   },
   forms: {
