@@ -20,7 +20,7 @@ The upload happens before the Git push, so a webhook can never race a missing im
 
 Before reading the full payload, the receiver checks the route, method, content type, GitHub event, delivery UUID, and signature shape. It then enforces the body size, verifies the HMAC, parses the payload, and matches the repository, branch, and full commit SHA.
 
-Duplicate verified deliveries are acknowledged without deploying twice. One deployment runs per app; a second request gets `409 Conflict` instead of entering a hidden queue.
+Duplicate verified deliveries are acknowledged without deploying twice. One deployment runs per app. While it runs, the installed receiver accepts one pending commit; later verified requests replace that pending commit. The pending deployment starts when active work finishes, including after failure. Queue state survives service restart.
 
 ## Server pipeline
 

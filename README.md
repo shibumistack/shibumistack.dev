@@ -9,6 +9,8 @@ Shibumi Stack uses Bun, Hono, Zod, Drizzle, SQLite, Alpine, and optional Nanosto
 
 ## Run locally
 
+Requires Bun 1.4.4 or newer and Git. Docker is needed for shipping, not local development.
+
 ```sh
 bun install
 bun dev
@@ -52,11 +54,20 @@ bun ship:update  # update only owned ship client source
 
 ## Deployment
 
-Local prebuilt shipping uses Colima with Docker CLI, Docker Compose, and Buildx:
+Local prebuilt shipping needs Docker CLI, Compose, Buildx, and a running container engine.
+
+On macOS, Colima is one option:
 
 ```sh
 brew install colima docker docker-compose docker-buildx
 colima start
+```
+
+On Linux, install Docker Engine, the Compose plugin, and Buildx using the [Docker installation instructions](https://docs.docker.com/engine/install/) for your distribution, then start the engine.
+
+Verify all three commands in the same terminal where you will run `bun ship`:
+
+```sh
 docker info
 docker compose version
 docker buildx version
@@ -79,7 +90,7 @@ Production runs a scratch container containing only a static BusyBox binary and 
 ## Related projects
 
 - [`Shibumi Forms`](https://shibumistack.dev/forms) is open-source form collection for static sites. Hosted pre-alpha and self-hosted source are available.
-- [`shibumi-server`](https://shibumistack.dev/server) is the released, open-source webhook deploy service for rootless Podman behind Caddy. It builds exact commit images locally, uploads them through SSH, and checks server memory/disk headroom before cutover. Its public repository contains code and generic templates only; instance configuration and secrets stay on the VPS.
+- [`shibumi-server`](https://shibumistack.dev/server) deploys apps with rootless Podman behind Caddy. Ship builds exact commit images locally, uploads them over SSH, and requests deployment over SSH by default; push-to-deploy webhooks are optional. The server checks image identity and available memory/disk before replacement, then checks the new container's health. Instance configuration and secrets stay on the server.
 
 ## Status
 

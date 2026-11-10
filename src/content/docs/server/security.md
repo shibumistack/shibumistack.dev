@@ -30,4 +30,4 @@ Preflight memory and disk floors protect the host before each deployment. Buildi
 
 ## Known limits
 
-The replay cache does not survive service restarts, and deployments are not queued. GitHub commit statuses and external registry workflows are future work.
+The replay cache is in memory and resets on service restart. The installed receiver persists one pending deployment per app; later verified requests replace the pending commit rather than forming a FIFO queue. GitHub commit statuses and external registry workflows are future work.
