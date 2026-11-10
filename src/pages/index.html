@@ -84,9 +84,9 @@
     <div class="story-block">
         <p class="story-eyebrow">The bet</p>
         <div class="story-copy">
-            <p>You know how starting a "simple" website in 2026 means a meta-framework, React, a build pipeline, and 600 MB of <code>node_modules</code> before you've written a line?</p>
-            <p>Shibumi is a bet that most apps don't need any of that, and that there's a second reason to go small now: coding agents. A codebase small enough to fit in your head also fits in an agent's context window, so both of you can actually reason about it.</p>
-            <p>It's two core tools.</p>
+            <p>A small website can turn into a framework project before you've written the first page. Shibumi starts with server routes, HTML, and a database when you need one.</p>
+            <p>The generated files include instructions for coding agents: where routes live, which checks to run, and which security rules to preserve. You and your agent work on the same source.</p>
+            <p>Two tools handle creation and deployment.</p>
         </div>
     </div>
     <div class="story-block">
@@ -95,21 +95,21 @@
             <h2>One command, a whole app<span class="dot">.</span></h2>
             <p><a href="/docs/cli"><strong>create-shibumi</strong></a> writes you a complete Bun app from a short list of curated parts, one library per job: Hono for routes, Alpine for browser behavior, Nanostores when state crosses components, Zod for validation, SQLite and Drizzle when you need data.</p>
             <p>Three starting points: <a href="/docs/cli/templates/full-stack">full-stack app</a>, <a href="/docs/cli/templates/blog">blog</a>, <a href="/docs/cli/templates/static">static site</a>. Each one gives you source you own, a deploy script, and an <code>agents.md</code> with the house rules. Full-stack includes app tests and container files. Blog and static generate their container files during <code>bun ship:setup</code>.</p>
-            <p>Got a site already? Run <code>bun create shibumi .</code> in it. The CLI figures out where your build lands, drops in the deploy script and container files, and leaves everything else exactly as you had it.</p>
+            <p>Got a site already? Run <code>bun create shibumi .</code> in it. The CLI detects your build directory and adds the deploy script and container files. Your application source stays in place.</p>
         </div>
     </div>
     <div class="story-block">
         <p class="story-eyebrow">Extensions</p>
         <div class="story-copy">
             <h2>Features as source, in your repo<span class="dot">.</span></h2>
-            <p>Need auth? Run <code>bun shi add auth</code> and the CLI copies readable <code>.ts</code> files, migrations, tests, and an <code>agents/auth.md</code> into your repo instead of installing a package. Email, uploads, and an admin panel install the same way, and each one brings its own <code>agents/&lt;name&gt;.md</code> so your coding agent learns the feature the moment it lands. <a href="/docs/cli/extensions">Extensions docs</a>.</p>
+            <p>In a full-stack project, run <code>bun shi add auth</code> to copy the implementation, migrations, tests, and <code>agents/auth.md</code> into your repo. The installer adds the dependencies the feature needs. Email, uploads, and an admin panel install the same way, each with its own agent instructions. Auth and uploads add APIs; you build the login and upload screens your app needs. <a href="/docs/cli/extensions">Extensions docs</a>.</p>
         </div>
     </div>
     <div class="story-block">
         <p class="story-eyebrow">Ship</p>
         <div class="story-copy">
             <h2>A server you own<span class="dot">.</span></h2>
-            <p><a href="https://server.shibumistack.dev"><strong>shibumi-server</strong></a> is the other half: rent a €5 VPS or use your homelab, install it once, and it hosts every app you build. <code>bun ship</code> builds the exact committed code on your machine and uploads it over SSH; the server verifies the commit and image, checks health behind Caddy, and restores the previous image if health fails. It keeps a rollback for 12 hours. You never touch a PaaS dashboard, and your whole side-project portfolio costs €5 a month.</p>
+            <p><a href="https://server.shibumistack.dev"><strong>shibumi-server</strong></a> runs registered apps in rootless Podman on your Linux VPS or homelab. <code>bun ship</code> builds committed code with Docker on your computer and uploads the image over SSH. The server verifies it against the pushed commit, starts it behind Caddy, and restores the previous image if startup or health checks fail. The default rollback window is 12 hours. Recovery can interrupt requests, and image rollback does not undo database changes. Server costs depend on the provider and the apps you run.</p>
             <p>From your project root, run <code>bun ship:setup</code>. It detects the Compose service and health path and registers the app over SSH, rather than asking you to match those settings by hand.</p>
         </div>
     </div>

@@ -19,7 +19,7 @@ https://example.com
 
 Ship builds committed `HEAD` for the server's Linux platform, uploads the tagged image, then pushes Git. In the recommended mode it asks the server over SSH to deploy that exact commit.
 
-The running app stays up while the server checks the commit, checkout, image labels, platform, and Compose config. It then replaces the container and checks the configured loopback health endpoint. Caddy retries the upstream for up to 20 seconds during that restart. The server retains one previous image for up to 12 hours.
+The running app stays up while the server checks the commit, checkout, image labels, platform, and Compose config. It then replaces the container and checks the configured loopback health endpoint. Caddy retries the upstream for up to 20 seconds during replacement. Startup or recovery can take longer and interrupt requests. The default rollback window is 12 hours; image rollback does not undo database changes.
 
 A deployment request must match the webhook secret, repository, branch, and full commit. Replayed requests do not deploy. Each app runs one deployment at a time. Invalid config, failed tests, or a mismatched image stops before replacement.
 
@@ -67,7 +67,7 @@ Run this installer from the local Git project root:
 curl -fsSL https://shibumistack.dev/install/ship.sh | sh
 ```
 
-It reads the domain, repository, branch, tracked Compose file, service, and health path. Setup asks for the SSH target and the app domain, prints a plan naming every step, and runs the whole plan on one confirm. It then installs or updates the server component when needed, registers the app, and writes owned project files. Deploys run on `bun ship`; no webhook is installed.
+It reads the domain, repository, branch, tracked Compose file, service, and health path. Setup asks for the SSH target and app domain, then shows a plan for confirmation. It installs or updates the server component when needed, registers the app, and writes owned project files. Missing container files need review and a commit; non-interactive setup can pause there without deploying. Deploys run on `bun ship`; no webhook is installed.
 
 If DNS is not ready, setup keeps those files and prints the next action. Resume with:
 

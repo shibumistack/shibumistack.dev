@@ -17,6 +17,11 @@ This repo is the org's publishing point: the artifacts the other shibumistack re
 - `shibumiServerVersion`: bump on every shibumi-server release — `/install/server` and the docs' `{{server-version}}` tokens read it.
 - Both are validated as stable semver at app boot; a bump with no release behind it fails nowhere, a release with no bump drifts the published tag.
 
+## Gotchas
+
+- Publish commands must stay single-line: a detached `--tag next` runs separately after npm has already published to `latest`.
+- Registry propagation can lag successful publication. Verify version metadata, public tarball bytes, and dist-tags before deploying pages that use `@latest`.
+
 ## Shared design tokens
 
 `public/shibumi.css` is the canonical design layer; forms and server vendor copies and re-pull with their `sync-shibumi-css.sh`. Change it here with plain selectors scoped under `.shell`, never bare `header`/`footer` (child apps nest those).

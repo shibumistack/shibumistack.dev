@@ -53,13 +53,13 @@
             <section class="server-intro" aria-labelledby="small-title">
                 <p class="eyebrow">Deployment model</p>
                 <h2 id="small-title">One service behind<br>your existing Caddy.</h2>
-                <p><code>bun ship</code> builds committed <code>HEAD</code> for the server's Linux platform and uploads it through SSH before pushing Git. The current app stays up during commit, image, platform, and Compose checks. The server retains one previous image for up to 12 hours.</p>
+                <p><code>bun ship</code> builds committed <code>HEAD</code> for the server's Linux platform and uploads it through SSH before pushing Git. The current app stays up during commit, image, platform, and Compose checks. Health is checked after replacement starts. The default rollback window is 12 hours; recovery can interrupt requests, and image rollback does not undo database changes.</p>
             </section>
 
             <section class="server-principles" aria-label="Deployment guarantees">
                 <article><span>01</span><h3>Match the signed commit.</h3><p>The webhook must match its secret, repository, branch, and full SHA. Replayed requests do not deploy.</p></article>
                 <article><span>02</span><h3>Check host capacity.</h3><p>Images build on the client. The server still checks available memory and disk before deployment.</p></article>
-                <article><span>03</span><h3>Check identity and health.</h3><p>A mismatched image, invalid Compose config, failed app test, or failed health request stops replacement.</p></article>
+                <article><span>03</span><h3>Check identity and health.</h3><p>Image identity, Compose config and app tests are checked before replacement. Health is checked after the new container starts; failure triggers recovery.</p></article>
             </section>
 
             <section class="dogfood-section" aria-labelledby="dogfood-title">
@@ -117,7 +117,7 @@
                             <div class="setup-step clack-row clack-done"><svg class="clack-glyph"><use href="#clack-elbow"/></svg><span>Deployment setup ready for <strong>sub.example.com</strong></span></div>
                         </div>
                     </div>
-                    <p>Setup asks two questions, then prints a plan it runs on a single confirm. Nothing is written before you accept the plan, and if DNS is not ready, setup keeps the generated files and prints the command needed to resume. Deploys run on <code>bun ship</code>; <code>bun ship:webhook</code> switches to push-to-deploy later if you want it.</p>
+                    <p>Setup asks for the SSH target and domain, then shows a plan for confirmation. Missing container files must be reviewed and committed; non-interactive setup can pause at this step without deploying. If DNS is not ready, setup keeps the generated files and prints the command needed to resume. Deploys run on <code>bun ship</code>; <code>bun ship:webhook</code> opts into push-to-deploy.</p>
                     <p><code>shis add sub.example.com</code> remains available for server operators and automation. Add <code>--dry-run</code> to preview setup without writing config or secrets, invoking sudo, or changing Caddy or systemd. <code>shis set-repository &lt;app&gt; &lt;repository&gt;</code> repoints an already-registered app: the old checkout moves to <code>.bak</code> and the new repository is cloned in its place.</p>
                 </div>
             </section>
